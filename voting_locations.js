@@ -70,6 +70,7 @@ console.log('next set up map:');
 // set up map
 map = L.map('map', {closePopupOnClick: true});
 
+console.log('next set up tile layer:');
 
 L.tileLayer( 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
 	attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
@@ -78,6 +79,7 @@ L.tileLayer( 'http://services.arcgisonline.com/arcgis/rest/services/World_Street
 }).addTo( map );
 
 
+console.log('next set up globals:');
 
 // LAYERS
 // layer to hold all location icons and add to map
@@ -99,6 +101,8 @@ Voter.latlngAdjustment = -.07;
 
 // set up sort booleans for re-sorting when new items added or removed from all location array
 Voter.isSortListByMaxWait = true;
+
+console.log('next set up data:');
 
 // pull in data from API, assign to global locations array
 var url = "voting_locations_json.js";
