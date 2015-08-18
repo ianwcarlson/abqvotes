@@ -95,6 +95,7 @@ Voter.locations = [];
 Voter.zoomList = [];
 Voter.heat = [];
 Voter.maxWait = 60;
+Voter.maxDistance = 3;
 
 // set global variable to adjust location to center of off-center map view when list is overlayed on left of map.
 Voter.latlngAdjustment = -.07;
@@ -197,8 +198,8 @@ function onLocationFound(e) {
 	Voter.currentLat = e.latlng.lat;
 	Voter.currentLng = e.latlng.lng;
 
-	map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12);
-
+	changeLocations(true);
+/*
 	var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
 		" meters of this point. </strong><br/>" +
 		"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + false + ")'>" +
@@ -234,12 +235,15 @@ function onLocationFound(e) {
 	L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
 
+	map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+
 	// fixme is this the right function to recalc distance etc.
 	//checkForLocations(Voter.currentLat, Voter.currentLng);
 	changeLocations(true);
 
 	// fixme doesn't work set up zoom events
 	resetZoomEvents();
+	*/
 }
 
 
@@ -528,7 +532,7 @@ function buildHeatMap(){
 	var theLocationId;
 	for (things=0; things< Voter.all.length; things++) {
 		theLocationId = "id" + Voter.all[things].UniqueID;
-		if(checkMaxWait(theLocationId)) {
+		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId)) {
 			distances.push(Voter.all[things].Distance);
 			withinDistances.push(theLocationId);
 		}
@@ -602,7 +606,7 @@ function build(listLocation, whichArray){
 		// rebuild the layers and list for given array
 		for(count = 0; count < array.length; count++) {
 			theLocationId = "id" + array[count].UniqueID;
-			if(checkMaxWait(theLocationId)) {
+			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId)) {
 				//rebuild zoom List
 				counter = count + counta;
 				buildListItem(	theLocationId,
@@ -841,7 +845,6 @@ function showAll(){
 function changeMaxWait(dollars) {
 	console.log ('changeMaxWait fires now');
 
-	// fixme: validate input!
 	// ensure input is number format and reset maxWait to value of input
 	Voter.maxWait = Number(dollars);
 
@@ -902,6 +905,71 @@ function unselectMaxWait() {
 
 
 
+// Max Distance FILTER
+// change max distance, apply if checkbox is checked
+function changeMaxDistance(miles) {
+	console.log ('changeMaxDistance fires now');
+
+	// ensure input is number format and reset maxDistance to value of input
+	Voter.maxDistance = Number(miles);
+
+	// ensure both
+	document.getElementById("theMaxDistance").value = Voter.maxDistance;
+	document.getElementById("theMobileMaxDistance").value = Voter.maxDistance;
+
+
+	if(document.getElementById("isMaxDistance").checked){
+		rebuildAll();
+	}
+
+}
+
+// toggle maxDistance on
+function selectMaxDistance (){
+	console.log ('selectMaxDistance fires now');
+
+	// switch onclick function for max wait checkboxes
+	document.getElementById("isMaxDistance").setAttribute( "onclick", "unselectMaxDistance()" );
+	document.getElementById("isMobileMaxDistance").setAttribute( "onclick", "unselectMaxDistance()" );
+
+	// make sure both checkboxes are "checked"
+	document.getElementById("isMaxDistance").checked = true;
+	document.getElementById("isMobileMaxDistance").checked = true;
+
+	rebuildAll();
+
+}
+
+// toggle maxDistance off
+function unselectMaxDistance() {
+	console.log ('unselectMaxDistance fires now');
+
+	// assign current max wait to temp value
+	var tempMaxDistance = Voter.maxDistance;
+
+	// set maxDistance to 0 to show all locations
+	Voter.maxDistance = 10000;
+
+
+	// switch onclick function for max wait checkbox
+	document.getElementById("isMaxDistance").setAttribute("onclick", "selectMaxDistance()");
+	document.getElementById("isMobileMaxDistance").setAttribute("onclick", "selectMaxDistance()");
+
+	// make sure both checkboxes are not "checked"
+	document.getElementById("isMaxDistance").checked = false;
+	document.getElementById("isMobileMaxDistance").checked = false;
+
+	// rebuild all layers
+	rebuildAll();
+
+
+	// reset maxDistance to previous number
+	Voter.maxDistance = tempMaxDistance;
+}
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 /*
  * Helper and Highlight Functions
@@ -944,6 +1012,15 @@ function checkMaxWait(theId){
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
 	if (!document.getElementById('isMaxWait').checked
 		|| Voter.locations[theId].count <= Voter.maxWait) {
+		return true;
+	}
+}
+
+// check if meets max wait time criteria set by user
+function checkMaxDistance(theId){
+	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
+	if (!document.getElementById('isMaxDistance').checked
+		|| Voter.locations[theId].Distance <= Voter.maxDistance) {
 		return true;
 	}
 }
@@ -1177,12 +1254,12 @@ function hideReset(){
 
 
 function hideFilterBar() {
-	document.getElementById("collapsingFilter").innerHTML = "SHOW FILTER OPTIONS <span class='caret'></span>";
+	document.getElementById("collapsingFilter").innerHTML = "SHOW FILTER OPTIONS";
 	document.getElementById('collapsingFilter').setAttribute("onclick", "showFilterBar()");
 }
 
 function showFilterBar() {
-	document.getElementById("collapsingFilter").innerHTML = "HIDE FILTER OPTIONS <span class='caret'></span>";
+	document.getElementById("collapsingFilter").innerHTML = "HIDE FILTER OPTIONS";
 	document.getElementById('collapsingFilter').setAttribute("onclick", "hideFilterBar()");
 }
 
