@@ -2,7 +2,7 @@
  * Created by Zach Grant on 8/17/15.
  */
 
-
+console.log('start script');
 // code to extend L.Marker and enable adding of id's to each marker --
 // KEEP AT TOP
 (function(L) {
@@ -64,6 +64,8 @@ $('body').on('click', function (e) {
 
 // create global:
 window.Voter = window.Voter || {};
+
+console.log('next set up map:');
 
 // set up map
 map = L.map('map', {closePopupOnClick: true});
