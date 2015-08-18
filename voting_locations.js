@@ -99,7 +99,7 @@ Voter.latlngAdjustment = -.07;
 Voter.isSortListByMaxWait = true;
 
 // pull in data from API, assign to global locations array
-var url = "/js/temp_voting_json.js";
+var url = "voting_locations_json.js";
 //var url = "http://where2vote.unm.edu/locationinfo/";
 $.ajax({
 	url     : url,
