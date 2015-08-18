@@ -105,7 +105,7 @@ Voter.isSortListByMaxWait = true;
 console.log('next set up data:');
 
 // pull in data from API, assign to global locations array
-var url = "data/voting_locations_json.json";
+var url = "data/voting_locations.json";
 //var url = "http://where2vote.unm.edu/locationinfo/";
 $.ajax({
 	url     : url,
@@ -724,7 +724,10 @@ function rebuildAll() {
 	console.log ('rebuildAll fires now');
 	// remove all layers and reset
 	tearDown();
-	findListLocation();
+
+	document.getElementById("mapListLive").innerHTML = "";
+	var listLocation = "mapListLive";
+	buildIconsAndLists(listLocation);
 }
 
 function tearDown(){
@@ -735,16 +738,6 @@ function tearDown(){
 
 	// reset layers
 	Voter.allIconsLayer = L.layerGroup().addTo(map);
-
-}
-
-
-function findListLocation(){
-	console.log ('findListLocation fires now');
-	// find location of live base list and reset
-	document.getElementById("mapListLive").innerHTML = "";
-	var listLocation = "mapListLive";
-	buildIconsAndLists(listLocation);
 }
 
 
@@ -887,7 +880,7 @@ function unselectMaxWait() {
 	var tempMaxWait = Voter.maxWait;
 
 	// set maxWait to 0 to show all locations
-	Voter.maxWait = 0;
+	Voter.maxWait = 10000;
 
 
 	// switch onclick function for max wait checkbox

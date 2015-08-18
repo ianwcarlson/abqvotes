@@ -103,7 +103,7 @@
 
 .tabs{
 	background: sandybrown;
-	width: 100%;
+	width: 105%;
 	margin-top: -1px;
 	margin-left: -1px;
 }
@@ -432,10 +432,10 @@ border-radius: 0px;
 
 .name{
 	/*padding-top: .48em;*/
-	padding-right: 5px;
-	padding-left: 5px;
+	padding-right: 10px;
+	padding-left: 30px;
 	margin-bottom: 0px;
-	text-align: left;
+	text-align: center;
 	/*font-size: 1.25em;*/
 	/*font-weight: 400;*/
 	/*overflow: hidden;*/
