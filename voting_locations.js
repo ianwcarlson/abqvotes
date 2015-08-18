@@ -105,7 +105,7 @@ Voter.isSortListByMaxWait = true;
 console.log('next set up data:');
 
 // pull in data from API, assign to global locations array
-var url = "voting_locations_json.js";
+var url = "/data/voting_locations_json.js";
 //var url = "http://where2vote.unm.edu/locationinfo/";
 $.ajax({
 	url     : url,
