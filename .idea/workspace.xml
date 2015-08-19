@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0d2a8b68-7aa5-42bc-a39a-a82a0c2bb038" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/voting_locations.js" afterPath="$PROJECT_DIR$/voting_locations.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="abqvotes.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -43,18 +42,18 @@
           <file leaf-file-name="voting_locations.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/voting_locations.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.616568" vertical-offset="14944" max-vertical-offset="19065">
+                <state vertical-scroll-proportion="0.6748705" vertical-offset="14944" max-vertical-offset="19065">
                   <caret line="1031" column="52" selection-start-line="1031" selection-start-column="52" selection-end-line="1031" selection-end-column="52" />
                   <folding>
-                    <marker date="1439937532000" expanded="true" signature="3933:3951" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="4165:4198" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="5263:5281" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="5672:5706" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="8091:8109" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="8324:8357" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="9283:9301" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="9681:9715" placeholder="..." />
-                    <marker date="1439937532000" expanded="true" signature="17971:17989" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="3933:3951" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="4165:4198" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="5263:5281" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="5672:5706" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="8091:8109" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="8324:8357" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="9283:9301" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="9681:9715" placeholder="..." />
+                    <marker date="1439950678000" expanded="true" signature="17971:17989" placeholder="..." />
                   </folding>
                 </state>
               </provider>
@@ -90,8 +89,8 @@
           <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/index.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.49695495" vertical-offset="3012" max-vertical-offset="4455">
-                  <caret line="228" column="20" selection-start-line="228" selection-start-column="20" selection-end-line="228" selection-end-column="20" />
+                <state vertical-scroll-proportion="0.36096257" vertical-offset="0" max-vertical-offset="4455">
+                  <caret line="18" column="55" selection-start-line="17" selection-start-column="55" selection-end-line="18" selection-end-column="55" />
                   <folding>
                     <element signature="n#style#0;n#header#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                     <element signature="n#style#0;n#div#0;n#header#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -549,26 +548,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/voting_locations.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.616568" vertical-offset="14944" max-vertical-offset="19065">
+        <state vertical-scroll-proportion="0.6748705" vertical-offset="14944" max-vertical-offset="19065">
           <caret line="1031" column="52" selection-start-line="1031" selection-start-column="52" selection-end-line="1031" selection-end-column="52" />
           <folding>
-            <marker date="1439937532000" expanded="true" signature="3933:3951" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="4165:4198" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="5263:5281" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="5672:5706" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="8091:8109" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="8324:8357" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="9283:9301" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="9681:9715" placeholder="..." />
-            <marker date="1439937532000" expanded="true" signature="17971:17989" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="3933:3951" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="4165:4198" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="5263:5281" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="5672:5706" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="8091:8109" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="8324:8357" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="9283:9301" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="9681:9715" placeholder="..." />
+            <marker date="1439950678000" expanded="true" signature="17971:17989" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49695495" vertical-offset="3012" max-vertical-offset="4455">
-          <caret line="228" column="20" selection-start-line="228" selection-start-column="20" selection-end-line="228" selection-end-column="20" />
+        <state vertical-scroll-proportion="0.36096257" vertical-offset="0" max-vertical-offset="4455">
+          <caret line="18" column="55" selection-start-line="17" selection-start-column="55" selection-end-line="18" selection-end-column="55" />
           <folding>
             <element signature="n#style#0;n#header#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#header#0;n#body#0;n#html#0;n#!!top" expanded="true" />
