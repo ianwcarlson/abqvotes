@@ -1016,7 +1016,7 @@ function checkMaxWait(theId){
 	}
 }
 
-// check if meets max wait time criteria set by user
+// check if meets max distance criteria set by user
 function checkMaxDistance(theId){
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
 	if (!document.getElementById('isMaxDistance').checked

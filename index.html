@@ -59,7 +59,7 @@
 				</div>
 				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1 " >
 					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  aria-haspopup="true" aria-expanded="false" data-canvas="body" >
-						<span>F</span>
+						<span class = "glyphicon glyphicon-filter"></span>
 					</button>
 					<ul id = "filterDrowdownArea" class="dropdown-menu mega-dropdown-menu dropdown-filter" style = "text-align: center; padding: 5px 10px">
 						<span style =" font-size: 20px;"><strong>FILTERS</strong></span>
@@ -229,10 +229,15 @@
 			<div class=" panel-default hidden-xs filterBar"  id="filter-collapsible">
 				<div class="panel-heading filter-panel">
 					<h2 class="panel-title filter-panel-title" >
+						<!--<span class = "glyphicon glyphicon-filter"></span>-->
 						<a class = "buttonDetails"  data-toggle="collapse" data-parent="accordion" href="#collapseF" onclick = "showFilterBar()">
-							SHOW FILTER OPTIONS
+							FILTER
+							<span class = "glyphicon glyphicon-filter"></span>
+
+							<span class="caret" style = "margin-left: -2px"></span>
+
 						</a>
-						<span class="caret" style = "margin-left: -2px"></span>
+						<!--<span class="caret" style = "margin-left: -2px"></span>-->
 					</h2>
 				</div>
 				<section class="panel-collapse collapse filters" id='collapseF'>
