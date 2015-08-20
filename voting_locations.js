@@ -199,51 +199,51 @@ function onLocationFound(e) {
 	Voter.currentLng = e.latlng.lng;
 
 	changeLocations(true);
-/*
-	var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
-		" meters of this point. </strong><br/>" +
-		"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + false + ")'>" +
-		"Use Default Address Instead</button></div>";
+	/*
+	 var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
+	 " meters of this point. </strong><br/>" +
+	 "<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + false + ")'>" +
+	 "Use Default Address Instead</button></div>";
 
 
-	// build html to use in icon
-	var currentLocationMarker = "You!" +
-		"<div class='leaflet-popup-tip-container' style='margin-top: 0px; margin-left: -5px'>" +
-		"<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
+	 // build html to use in icon
+	 var currentLocationMarker = "You!" +
+	 "<div class='leaflet-popup-tip-container' style='margin-top: 0px; margin-left: -5px'>" +
+	 "<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
 
-	var iconAnchor = turf.point([Voter.currentLocation[1], Voter.currentLocation[0]]);
-
-
-	// build custom icon
-	myLocationIcon = L.divIcon({
-		iconSize   : [30, 30],
-		className  : "your-location-icon",
-		iconAnchor : iconAnchor,
-		popupAnchor: [0, -35],
-		html       : currentLocationMarker
-	});
+	 var iconAnchor = turf.point([Voter.currentLocation[1], Voter.currentLocation[0]]);
 
 
-	// build popup for use in switching
-	Voter.currentPopup = L.popup().setContent(locationDetails);
+	 // build custom icon
+	 myLocationIcon = L.divIcon({
+	 iconSize   : [30, 30],
+	 className  : "your-location-icon",
+	 iconAnchor : iconAnchor,
+	 popupAnchor: [0, -35],
+	 html       : currentLocationMarker
+	 });
 
 
-	// add icon and range circle to map
-	L.marker(Voter.currentLocation, {icon: myLocationIcon, title: "Current Location"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.currentPopup).openPopup();
-
-	L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
+	 // build popup for use in switching
+	 Voter.currentPopup = L.popup().setContent(locationDetails);
 
 
-	map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	 // add icon and range circle to map
+	 L.marker(Voter.currentLocation, {icon: myLocationIcon, title: "Current Location"}).addTo(Voter.locationsLayer)
+	 .bindPopup(Voter.currentPopup).openPopup();
 
-	// fixme is this the right function to recalc distance etc.
-	//checkForLocations(Voter.currentLat, Voter.currentLng);
-	changeLocations(true);
+	 L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
-	// fixme doesn't work set up zoom events
-	resetZoomEvents();
-	*/
+
+	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+
+	 // fixme is this the right function to recalc distance etc.
+	 //checkForLocations(Voter.currentLat, Voter.currentLng);
+	 changeLocations(true);
+
+	 // fixme doesn't work set up zoom events
+	 resetZoomEvents();
+	 */
 }
 
 
