@@ -199,51 +199,51 @@ function onLocationFound(e) {
 	Voter.currentLng = e.latlng.lng;
 
 	changeLocations(true);
-/*
-	var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
-		" meters of this point. </strong><br/>" +
-		"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + false + ")'>" +
-		"Use Default Address Instead</button></div>";
+	/*
+	 var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
+	 " meters of this point. </strong><br/>" +
+	 "<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + false + ")'>" +
+	 "Use Default Address Instead</button></div>";
 
 
-	// build html to use in icon
-	var currentLocationMarker = "You!" +
-		"<div class='leaflet-popup-tip-container' style='margin-top: 0px; margin-left: -5px'>" +
-		"<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
+	 // build html to use in icon
+	 var currentLocationMarker = "You!" +
+	 "<div class='leaflet-popup-tip-container' style='margin-top: 0px; margin-left: -5px'>" +
+	 "<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
 
-	var iconAnchor = turf.point([Voter.currentLocation[1], Voter.currentLocation[0]]);
-
-
-	// build custom icon
-	myLocationIcon = L.divIcon({
-		iconSize   : [30, 30],
-		className  : "your-location-icon",
-		iconAnchor : iconAnchor,
-		popupAnchor: [0, -35],
-		html       : currentLocationMarker
-	});
+	 var iconAnchor = turf.point([Voter.currentLocation[1], Voter.currentLocation[0]]);
 
 
-	// build popup for use in switching
-	Voter.currentPopup = L.popup().setContent(locationDetails);
+	 // build custom icon
+	 myLocationIcon = L.divIcon({
+	 iconSize   : [30, 30],
+	 className  : "your-location-icon",
+	 iconAnchor : iconAnchor,
+	 popupAnchor: [0, -35],
+	 html       : currentLocationMarker
+	 });
 
 
-	// add icon and range circle to map
-	L.marker(Voter.currentLocation, {icon: myLocationIcon, title: "Current Location"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.currentPopup).openPopup();
-
-	L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
+	 // build popup for use in switching
+	 Voter.currentPopup = L.popup().setContent(locationDetails);
 
 
-	map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	 // add icon and range circle to map
+	 L.marker(Voter.currentLocation, {icon: myLocationIcon, title: "Current Location"}).addTo(Voter.locationsLayer)
+	 .bindPopup(Voter.currentPopup).openPopup();
 
-	// fixme is this the right function to recalc distance etc.
-	//checkForLocations(Voter.currentLat, Voter.currentLng);
-	changeLocations(true);
+	 L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
-	// fixme doesn't work set up zoom events
-	resetZoomEvents();
-	*/
+
+	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+
+	 // fixme is this the right function to recalc distance etc.
+	 //checkForLocations(Voter.currentLat, Voter.currentLng);
+	 changeLocations(true);
+
+	 // fixme doesn't work set up zoom events
+	 resetZoomEvents();
+	 */
 }
 
 
@@ -766,11 +766,15 @@ function sortArray(isWhatType){
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byLowestLive').style.color = "white";
+		document.getElementById('lowestCaretLive').className = "caret";
 
-		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNearestLive').style.color = "#999999";
-		document.getElementById('byNameLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('nearestCaretLive').className = "right-caret";
+
+		document.getElementById('byNameLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNameLive').style.color = "#999999";
+		document.getElementById('nameCaretLive').className = "right-caret";
 
 		theArray.sort(function(a, b) {
 			return a.count - b.count
@@ -780,11 +784,17 @@ function sortArray(isWhatType){
 
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNearestLive').style.color = "white";
+		document.getElementById('nearestCaretLive').className = "caret";
 
-		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+
+		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byLowestLive').style.color = "#999999";
-		document.getElementById('byNameLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('lowestCaretLive').className = "right-caret";
+
+		document.getElementById('byNameLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNameLive').style.color = "#999999";
+		document.getElementById('nameCaretLive').className = "right-caret";
+
 
 		theArray.sort(function(a, b) {
 			return a.Distance - b.Distance
@@ -794,11 +804,16 @@ function sortArray(isWhatType){
 
 		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNameLive').style.color = "white";
+		document.getElementById('nameCaretLive').className = "caret";
 
-		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byLowestLive').style.color = "#999999";
-		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('lowestCaretLive').className = "right-caret";
+
+		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNearestLive').style.color = "#999999";
+		document.getElementById('nearestCaretLive').className = "right-caret";
+
 
 		theArray.sort(function(a, b) {
 			if(a.MVCName < b.MVCName) return -1;
@@ -1135,6 +1150,10 @@ function buildCombinedView(){
 	document.getElementById("byNearest").						setAttribute('id', 'byNearestLive');
 	document.getElementById("byName").							setAttribute('id', 'byNameLive');
 
+	document.getElementById("lowestCaret").						setAttribute('id', 'lowestCaretLive');
+	document.getElementById("nearestCaret").						setAttribute('id', 'nearestCaretLive');
+	document.getElementById("nameCaret").							setAttribute('id', 'nameCaretLive');
+
 	// add new ids to scrollable list for hiding
 	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
 	document.getElementById("listRow").							setAttribute('id', 'liveListRow');
@@ -1161,6 +1180,13 @@ function buildCombinedView(){
 	document.getElementById("byLowestLive").					setAttribute('id', 'byLowest');
 	document.getElementById("byNearestLive").					setAttribute('id', 'byNearest');
 	document.getElementById("byNameLive").						setAttribute('id', 'byName');
+
+
+	document.getElementById("lowestCaretLive").						setAttribute('id', 'lowestCaret');
+	document.getElementById("nearestCaretLive").						setAttribute('id', 'nearestCaret');
+	document.getElementById("nameCaretLive").							setAttribute('id', 'nameCaret');
+
+
 
 	// reset scrollable list
 	document.getElementById("liveScrollableList").						setAttribute('id', 'scrollableList');
