@@ -764,15 +764,15 @@ function sortArray(isByWaitTime){
 	if(isByWaitTime) {
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byLowestLive').style.color = "white";
-		document.getElementById('byNearestLive').style.backgroundColor = "sandybrown";
-		document.getElementById('byNearestLive').style.color = "black";
+		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byNearestLive').style.color = "#999999";
 
 		theArray.sort(function(a, b) {
 			return a.count - b.count
 		})
 	} else {
-		document.getElementById('byLowestLive').style.backgroundColor = "sandybrown";
-		document.getElementById('byLowestLive').style.color = "black";
+		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byLowestLive').style.color = "#999999";
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNearestLive').style.color = "white";
 
