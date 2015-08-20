@@ -766,11 +766,15 @@ function sortArray(isWhatType){
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byLowestLive').style.color = "white";
+		document.getElementById('lowestCaretLive').className = "caret";
 
-		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNearestLive').style.color = "#999999";
-		document.getElementById('byNameLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('nearestCaretLive').className = "right-caret";
+
+		document.getElementById('byNameLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNameLive').style.color = "#999999";
+		document.getElementById('nameCaretLive').className = "right-caret";
 
 		theArray.sort(function(a, b) {
 			return a.count - b.count
@@ -780,11 +784,17 @@ function sortArray(isWhatType){
 
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNearestLive').style.color = "white";
+		document.getElementById('nearestCaretLive').className = "caret";
 
-		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+
+		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byLowestLive').style.color = "#999999";
-		document.getElementById('byNameLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('lowestCaretLive').className = "right-caret";
+
+		document.getElementById('byNameLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNameLive').style.color = "#999999";
+		document.getElementById('nameCaretLive').className = "right-caret";
+
 
 		theArray.sort(function(a, b) {
 			return a.Distance - b.Distance
@@ -794,11 +804,16 @@ function sortArray(isWhatType){
 
 		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNameLive').style.color = "white";
+		document.getElementById('nameCaretLive').className = "caret";
 
-		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byLowestLive').style.color = "#999999";
-		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('lowestCaretLive').className = "right-caret";
+
+		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
 		document.getElementById('byNearestLive').style.color = "#999999";
+		document.getElementById('nearestCaretLive').className = "right-caret";
+
 
 		theArray.sort(function(a, b) {
 			if(a.MVCName < b.MVCName) return -1;
@@ -1135,6 +1150,10 @@ function buildCombinedView(){
 	document.getElementById("byNearest").						setAttribute('id', 'byNearestLive');
 	document.getElementById("byName").							setAttribute('id', 'byNameLive');
 
+	document.getElementById("lowestCaret").						setAttribute('id', 'lowestCaretLive');
+	document.getElementById("nearestCaret").						setAttribute('id', 'nearestCaretLive');
+	document.getElementById("nameCaret").							setAttribute('id', 'nameCaretLive');
+
 	// add new ids to scrollable list for hiding
 	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
 	document.getElementById("listRow").							setAttribute('id', 'liveListRow');
@@ -1161,6 +1180,13 @@ function buildCombinedView(){
 	document.getElementById("byLowestLive").					setAttribute('id', 'byLowest');
 	document.getElementById("byNearestLive").					setAttribute('id', 'byNearest');
 	document.getElementById("byNameLive").						setAttribute('id', 'byName');
+
+
+	document.getElementById("lowestCaretLive").						setAttribute('id', 'lowestCaret');
+	document.getElementById("nearestCaretLive").						setAttribute('id', 'nearestCaret');
+	document.getElementById("nameCaretLive").							setAttribute('id', 'nameCaret');
+
+
 
 	// reset scrollable list
 	document.getElementById("liveScrollableList").						setAttribute('id', 'scrollableList');

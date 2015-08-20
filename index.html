@@ -218,13 +218,13 @@
 					</div>
 					<div class='btn-group btn-group-justified ' role='group'>
 						<div id = "byNearest" onclick = "sortArray('distance');" class = "btn btn-default tabLink activeSort" role='group' >
-							Nearest <span class="caret"></span>
+							Nearest <div id ="nearestCaret" class="caret"></div>
 						</div>
 						<div id = "byName" onclick = "sortArray('name');" class = "btn btn-default tabLink " role='group' >
-							Name <span class="caret"></span>
+							Name <div id = "nameCaret" class="right-caret"></div>
 						</div>
 						<div id = "byLowest" onclick = "sortArray('time');" class = "btn btn-default tabLink" role='group' >
-							Wait Time <span class="caret"></span>
+							Wait Time <div id = "lowestCaret" class="right-caret"></div>
 						</div>
 					</div>
 					<div class="scrollable-list" id = "scrollableList" >
