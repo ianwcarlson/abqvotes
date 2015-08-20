@@ -1,5 +1,5 @@
 #mapListContainer {
-	width: 106%;
+	/*width: 106%;*/
 	height: 642.222px;
 	position: relative;
 	/*padding-right: 35px;*/
@@ -85,7 +85,7 @@
 }
 
 .scrollable-list {
-	height: 521px;
+	height: 513px;
 	overflow: scroll;
 	/*padding: 10px;*/
 	/*margin-left: -1px;*/
@@ -102,8 +102,8 @@
 
 
 .tabs{
-	background: sandybrown;
-	width: 105%;
+	background: #FFE0B2;
+	width: 106%;
 	margin-top: -1px;
 	margin-left: -1px;
 }
@@ -190,12 +190,12 @@ button.sortButtons:focus {
 	position: relative;
 	/* display: block; */
 	padding: 10px 15px;
-	color: black;
+	color: white;
 	font-weight: bolder;
 	border-bottom: 0px !important;
-	border-radius: 4px 4px 0 0 !important;
+	border-radius: 0px 0px 0 0 !important;
 	text-align: center;
-	background-color : sandybrown;
+	background-color : #A54A4A;
 }
 
 .aTab{
@@ -462,9 +462,19 @@ border-radius: 0px;
 	text-align: center;
 	margin-top: 0px;
 	padding-right: 0px;
-
-
 }
+
+
+
+.filterBar {
+	color: black;
+	font-weight: bolder;
+	background-color: sandybrown;
+	/*border: 0px;*/
+	/*text-align: left;*/
+	padding: 10px;
+}
+
 
 
 .filter-panel-title {
@@ -498,14 +508,6 @@ border-radius: 0px;
 	border-top: 1px solid white;
 }
 
-.filterBar {
-	color: white;
-	font-weight: bolder;
-	background-color: #A54A4A;
-	/*border: 0px;*/
-	/*text-align: left;*/
-	padding: 10px;
-}
 
 #preferred-box {
 	margin-top: 12px;

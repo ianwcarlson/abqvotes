@@ -41,41 +41,41 @@
 
 	</head>
 	<body>
-		<header class="navbar navbar-default" style = "margin-bottom: 0px; margin-top: -9px;">
-			<div class="navbar-header" style="width: 100%" id = "header-button">
-				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "mapToggler" style = "">
+		<header class="navbar navbar-default" style = "margin-bottom: 0px; margin-top: -9px; border:none">
+			<div class="navbar-header" style="width: 100%; background-color: sandybrown" id = "header-button">
+				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "mapToggler" style = "z-index: 10000;">
 					<button type="button" class="btn btn-lg filterButton" onclick = "showMobileMap()">
 						<span class = "glyphicon glyphicon-map-marker" ></span>
 					</button>
 				</div>
-				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "listToggler" style = "display:none;">
+				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "listToggler" style = "z-index: 10000; display:none;">
 					<button type="button" class="btn btn-lg filterButton dropdown-toggle" onclick = "hideMobileMap()">
 						<span class = "glyphicon glyphicon-th-list" ></span>
 					</button>
 				</div>
-				<div class = "col-lg-12 col-md-12 col-sm-12 col-xs-8" style = "padding: 0px; margin-right: -15px;" id = "appendViewHeading">
-					<h1  class = "hidden-xs" style = "text-align: center; width: 100%; font-weight: bold">ABQ Votes</h1>
-					<h2  class = "hidden-lg hidden-md hidden-sm" style = "text-align: center; width: 100%; font-weight: bold">ABQ Votes</h2>
+				<div class = "col-lg-12 col-md-12 col-sm-12 col-xs-8" style = "padding: 0px; margin-right: -15px; background-color: sandybrown;" id = "appendViewHeading">
+					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find Your Quickest ABQ Voting Location</h3>
+					<h1 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">Vote Now</h1>
 				</div>
-				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1 " >
+				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: -10px;">
 					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  aria-haspopup="true" aria-expanded="false" data-canvas="body" >
 						<span class = "glyphicon glyphicon-filter"></span>
 					</button>
-					<ul id = "filterDrowdownArea" class="dropdown-menu mega-dropdown-menu dropdown-filter" style = "text-align: center; padding: 5px 10px">
+					<ul id = "filterDrowdownArea" class="dropdown-menu mega-dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
 						<span style =" font-size: 20px;"><strong>FILTERS</strong></span>
 						<br/>
 						<hr/>
 						<div style="text-align: right;">
-							<div class='btn-group btn-group-justified' role='group'>
-								<div class='btn-group' role='group' >
-									<button id = "basicsButton" class="btn btn-info btn-lg dropdown-filter-buttons" type="button" aria-haspopup="true" aria-expanded="false" onclick="showBasics()">
-										View
-										<span class="caret"></span>
-									</button>
-								</div>
-							</div>
-							<div id="hiddenBasics" style="display:none">
-								<ul style="list-style-type: none; margin-top: 10px;">
+							<!--<div class='btn-group btn-group-justified' role='group'>-->
+								<!--<div class='btn-group' role='group' >-->
+									<!--<button id = "basicsButton" class="btn btn-info btn-lg dropdown-filter-buttons" type="button" aria-haspopup="true" aria-expanded="false" onclick="showBasics()">-->
+										<!--View-->
+										<!--<span class="caret"></span>-->
+									<!--</button>-->
+								<!--</div>-->
+							<!--</div>-->
+							<!--<div id="hiddenBasics" style="display:none">-->
+								<!--<ul style="list-style-type: none; margin-top: 10px;">-->
 									<li class = "filter-items">
 										<label for="onlyOpenMobile" style="text-align: right">Show Only Open Locations</label>
 										<input id="onlyOpenMobile" onclick="selectOnlyOpen()" name="onlyOpenMobile" type="checkbox" value="onlyOpenMobile">
@@ -92,7 +92,7 @@
 										<input id="isMobileMaxWait" onclick="unselectMaxWait()" checked="checked" name="isMaxWait" type="checkbox" value="isMaxWait">
 									</li>
 									<li class = "filter-items">
-										<input id="theMobileMaxWait" class="minFeeFilter" onchange="changeMaxWait(this.value)" name="mobile_max_wait" type="number" value="60"> minutes
+										<em>minutes:</em><input id="theMobileMaxWait" class="minFeeFilter" onchange="changeMaxWait(this.value)" name="mobile_max_wait" type="number" value="60">
 									</li>
 									<br/>
 
@@ -101,10 +101,10 @@
 										<input id="isMobileMaxDistance" onclick="unselectMaxDistance()" checked="checked" name="isMobileMaxDistance" type="checkbox" value="isMobileMaxDistance">
 									</li>
 									<li class = "filter-items">
-										<input id="theMobileMaxDistance" class="minFeeFilter" onchange="changeMaxDistance(this.value)" name="mobile_max_distance" type="number" value="3"> miles
+										<em>miles:</em><input id="theMobileMaxDistance" class="minFeeFilter" onchange="changeMaxDistance(this.value)" name="mobile_max_distance" type="number" value="3">
 									</li>
-								</ul>
-							</div>
+								<!--</ul>-->
+							<!--</div>-->
 							<hr id = "basicsHr" style = "display:none; margin-bottom: 10px;"/>
 						</div>
 
@@ -123,18 +123,19 @@
 			<div class="panel-heading" style="padding-right: 0px">
 				<h4 class="panel-title list-title"  >
 					<a class = "buttonDetails" id = "list-href" data-toggle="collapse" data-parent="accordion" href="insertHrefHere">
-						<div class="col-xs-1 price" >
-							<!--<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>-->
-							<span id="list-waitTime"> </span>
+						<div class= "col-xs-1 distance" style = "">
+							<span id="list-distance"> </span> mi.
 						</div>
-						<div class= "col-xs-8 name">
+
+						<div class= "col-xs-9 name">
 							<span class="caret"></span>
 							<div style = "display: inline;">
 								<span id="list-name"> </span>
 							</div>
 						</div>
-						<div class= "col-xs-2 distance" style = "">
-							<span id="list-distance"> </span> mi.
+						<div class="col-xs-1 price" >
+							<!--<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>-->
+							<span id="list-waitTime"> </span>
 						</div>
 					</a>
 				</h4>
@@ -200,15 +201,30 @@
 				<div class=" tabs" id = "zoomTabLink" >
 					<div class='btn-group btn-group-justified ' role='group'>
 						<div class='btn-group tabLink' role='group' >
-							All Locations In View
+							<h2 class="panel-title filter-panel-title " >
+								<!--<span class = "glyphicon glyphicon-filter"></span>-->
+								<a class = "buttonDetails hidden-xs"  data-toggle="collapse" data-parent="accordion" href="#collapseF">
+									<span class = "glyphicon glyphicon-filter" style = "margin-bottom: 10px"></span>
+									<!--<span class="dropup"  style = "margin-left: -5px">-->
+										 <!--<span class="caret"></span>-->
+									<!--</span>-->
+								</a>
+								<a class = "buttonDetails hidden-lg hidden-md hidden-sm"  onclick = "">
+									<!--<span class = "glyphicon glyphicon-filter" style = "margin-bottom: 10px"></span>-->
+									<span>At Your Quickest Location</span>
+								</a>
+							</h2>
 						</div>
 					</div>
 					<div class='btn-group btn-group-justified ' role='group'>
-						<div id = "byLowest" onclick = "sortArray(true);" class = "btn btn-default tabLink activeSort" role='group' >
-							By Shortest Wait
+						<div id = "byNearest" onclick = "sortArray('distance');" class = "btn btn-default tabLink activeSort" role='group' >
+							Nearest <span class="caret"></span>
 						</div>
-						<div id = "byNearest" onclick = "sortArray(false);" class = "btn btn-default tabLink" role='group' >
-							By Nearest
+						<div id = "byName" onclick = "sortArray('name');" class = "btn btn-default tabLink " role='group' >
+							Name <span class="caret"></span>
+						</div>
+						<div id = "byLowest" onclick = "sortArray('time');" class = "btn btn-default tabLink" role='group' >
+							Wait Time <span class="caret"></span>
 						</div>
 					</div>
 					<div class="scrollable-list" id = "scrollableList" >
@@ -226,18 +242,19 @@
 		<!--NON-HIDDEN STARTS HERE-->
 		<div class="container-fluid center">
 			<!--filter bar on large views-->
-			<div class=" panel-default hidden-xs filterBar"  id="filter-collapsible">
-				<div class="panel-heading filter-panel">
-					<h2 class="panel-title filter-panel-title" >
-						<!--<span class = "glyphicon glyphicon-filter"></span>-->
-						<a class = "buttonDetails"  data-toggle="collapse" data-parent="accordion" href="#collapseF" onclick = "showFilterBar()">
-							<span class = "glyphicon glyphicon-filter"></span>
-							<!--<span class="caret" style = "margin-left: -2px"></span>-->
-						</a>
-
-					</h2>
-				</div>
-				<section class="panel-collapse collapse filters" id='collapseF'>
+			<!--<div class=" panel-default hidden-xs filterBar"  id="filter-collapsible">-->
+				<!--<div class="panel-heading filter-panel">-->
+					<!--<h2 class="panel-title filter-panel-title" >-->
+						<!--&lt;!&ndash;<span class = "glyphicon glyphicon-filter"></span>&ndash;&gt;-->
+						<!--<a class = "buttonDetails"  data-toggle="collapse" data-parent="accordion" href="#collapseF" onclick = "showFilterBar()">-->
+							<!--<span class = "glyphicon glyphicon-filter" style = "margin-bottom: 10px"></span>-->
+						<!--</a>-->
+						<!--<span class="dropup"  style = "margin-left: -5px">-->
+							 <!--<span class="caret"></span>-->
+						<!--</span>-->
+					<!--</h2>-->
+				<!--</div>-->
+				<section class="panel-collapse collapse filters filterBar" id='collapseF'>
 					<div class="row">
 						<div class="col-lg-4 col-md-4 col-sm-4 hidden-xs " >
 							<div class="row">
@@ -283,7 +300,7 @@
 
 					</div>
 				</section>
-			</div>
+			<!--</div>-->
 		</div>
 
 
