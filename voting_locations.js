@@ -101,7 +101,7 @@ Voter.maxDistance = 3;
 Voter.latlngAdjustment = -.07;
 
 // set up sort booleans for re-sorting when new items added or removed from all location array
-Voter.isSortListByMaxWait = true;
+Voter.isSortByType = 'distance';
 
 console.log('next set up data:');
 
@@ -755,36 +755,62 @@ function tearDown(){
  */
 
 // sort list by waitTime or by distance
-function sortArray(isByWaitTime){
+function sortArray(isWhatType){
 	console.log("sortArray fires now");
 
 	var theArray = Voter.zoomList;
 
-	// check for byWaitTime or byNearest
-	if(isByWaitTime) {
+	// check type of sort
+	if(isWhatType === 'time') {
+		console.log("sortArray TIME fires now");
+
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byLowestLive').style.color = "white";
+
 		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
 		document.getElementById('byNearestLive').style.color = "#999999";
+		document.getElementById('byNameLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byNameLive').style.color = "#999999";
 
 		theArray.sort(function(a, b) {
 			return a.count - b.count
 		})
-	} else {
-		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
-		document.getElementById('byLowestLive').style.color = "#999999";
+	} else if ((isWhatType === 'distance')) {
+		console.log("sortArray DISTANCE fires now");
+
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNearestLive').style.color = "white";
 
+		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byLowestLive').style.color = "#999999";
+		document.getElementById('byNameLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byNameLive').style.color = "#999999";
+
 		theArray.sort(function(a, b) {
 			return a.Distance - b.Distance
+		})
+	} else if ((isWhatType === 'name')) {
+		console.log("sortArray NAME fires now");
+
+		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
+		document.getElementById('byNameLive').style.color = "white";
+
+		document.getElementById('byLowestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byLowestLive').style.color = "#999999";
+		document.getElementById('byNearestLive').style.backgroundColor = "#FFE0B2";
+		document.getElementById('byNearestLive').style.color = "#999999";
+
+		theArray.sort(function(a, b) {
+			if(a.MVCName < b.MVCName) return -1;
+			if(a.MVCName > b.MVCName) return 1;
+			return 0;
 		})
 	}
 	//console.log ('zoomList AFTER SORT: ');
 	//console.log (Voter.zoomList);
 
 	//reset the sort boolean to new value
-	Voter.isSortListByMaxWait = isByWaitTime;
+	Voter.isSortByType = isWhatType;
 	rebuildAll();
 }
 
@@ -1107,6 +1133,7 @@ function buildCombinedView(){
 
 	document.getElementById("byLowest").						setAttribute('id', 'byLowestLive');
 	document.getElementById("byNearest").						setAttribute('id', 'byNearestLive');
+	document.getElementById("byName").							setAttribute('id', 'byNameLive');
 
 	// add new ids to scrollable list for hiding
 	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
@@ -1133,6 +1160,7 @@ function buildCombinedView(){
 
 	document.getElementById("byLowestLive").					setAttribute('id', 'byLowest');
 	document.getElementById("byNearestLive").					setAttribute('id', 'byNearest');
+	document.getElementById("byNameLive").						setAttribute('id', 'byName');
 
 	// reset scrollable list
 	document.getElementById("liveScrollableList").						setAttribute('id', 'scrollableList');
@@ -1192,7 +1220,7 @@ function resetZoomList () {
 	console.log ('resetZoomList is done:');
 	console.log (Voter.zoomList);
 
-	sortArray(Voter.isSortListByMaxWait);
+	sortArray(Voter.isSortByType);
 }
 
 

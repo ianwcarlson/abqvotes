@@ -1,5 +1,5 @@
 #mapListContainer {
-	width: 106%;
+	/*width: 106%;*/
 	height: 642.222px;
 	position: relative;
 	/*padding-right: 35px;*/
@@ -102,8 +102,8 @@
 
 
 .tabs{
-	background: sandybrown;
-	width: 105%;
+	background: #FFE0B2;
+	width: 106%;
 	margin-top: -1px;
 	margin-left: -1px;
 }
@@ -193,7 +193,7 @@ button.sortButtons:focus {
 	color: white;
 	font-weight: bolder;
 	border-bottom: 0px !important;
-	border-radius: 4px 4px 0 0 !important;
+	border-radius: 0px 0px 0 0 !important;
 	text-align: center;
 	background-color : #A54A4A;
 }
