@@ -73,11 +73,14 @@ new L.Control.Zoom({position: 'topright'}).addTo(map);
 
 console.log('next set up tile layer:');
 
-Voter.tiles = L.tileLayer( 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-	attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
-	"Esri China (Hong Kong), Esri (Thailand), MapmyIndia, © OpenStreetMap contributors, and the GIS User Community ",
-	noWrap: 'true'
-}).addTo( map );
+L.tileLayer(
+	//'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+	'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+	{
+		attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
+		"Esri China (Hong Kong), Esri (Thailand), MapmyIndia, © OpenStreetMap contributors, and the GIS User Community ",
+		noWrap: 'true'
+	}).addTo( map );
 
 
 console.log('next set up globals:');
@@ -151,7 +154,7 @@ function setBaseLocation (lat, lng) {
 	var voterLatLong = [Voter.lat, Voter.lng];
 
 	var adjustedLatLong = [Voter.lat, Voter.latlngAdjustment + Voter.lng];
-	map.setView(adjustedLatLong, 12);
+	map.setView(adjustedLatLong, 13);
 
 	var currentLocationButton;
 	currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
@@ -236,7 +239,7 @@ function onLocationFound(e) {
 	 L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
 
-	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 13).openPopup(Voter.currentPopup);
 
 	 // fixme is this the right function to recalc distance etc.
 	 //checkForLocations(Voter.currentLat, Voter.currentLng);
@@ -382,7 +385,7 @@ function rebuildCurrentIcon(isToCurrent){
 function setToCurrentLocation() {
 	console.log ('setToCurrentLocation fires now');
 
-	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 13).openPopup(Voter.currentPopup);
 	checkForLocations(Voter.currentLat, Voter.currentLng);
 
 	// set up zoom events
@@ -393,7 +396,7 @@ function setToCurrentLocation() {
 function setToHomeAddress() {
 	console.log ('setToHomeAddress fires now');
 
-	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12).openPopup(Voter.addressPopup);
+	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 13).openPopup(Voter.addressPopup);
 
 	checkForLocations(Voter.lat, Voter.lng);
 
@@ -426,6 +429,7 @@ function checkForLocations(lat, long){
 
 			reCalcDistance(lat, long); // for all list
 			resetZoomList(); // re-curate zoom list from new All List to update distances.
+			rebuildAll();
 		}
 
 	} else {
@@ -729,20 +733,22 @@ function rebuildAll() {
 	console.log ('rebuildAll fires now');
 	// remove all layers and reset
 	tearDown();
-
 	document.getElementById("mapListLive").innerHTML = "";
-	var listLocation = "mapListLive";
-	buildIconsAndLists(listLocation);
+	buildIconsAndLists("mapListLive");
 }
 
 function tearDown(){
 	console.log ('tearDown fires now');
-
 	// remove layers
 	map.removeLayer(Voter.allIconsLayer);
 
 	// reset layers
 	Voter.allIconsLayer = L.layerGroup().addTo(map);
+}
+
+function rebuildList(){
+	document.getElementById("mapListLive").innerHTML = "";
+	build("mapListLive", "isZoomList");
 }
 
 
@@ -756,7 +762,7 @@ function tearDown(){
  */
 
 // sort list by waitTime or by distance
-function sortArray(isWhatType){
+function sortArray(isWhatType, isRebuildAll){
 	console.log("sortArray fires now");
 
 	var theArray = Voter.zoomList;
@@ -827,7 +833,10 @@ function sortArray(isWhatType){
 
 	//reset the sort boolean to new value
 	Voter.isSortByType = isWhatType;
-	rebuildAll();
+
+	if(isRebuildAll){
+		rebuildAll();
+	}
 }
 
 
@@ -1242,9 +1251,9 @@ function hideMobileMap(){
  */
 
 function resetZoomEvents() {
-	map.on("moveend", resetZoomList);
-	map.on("zoomend", resetZoomList);
-	map.on("rezize", resetZoomList);
+	//map.on("moveend", resetZoomList);
+	//map.on("zoomend", resetZoomList);
+	//map.on("rezize", resetZoomList);
 }
 
 function resetZoomList () {
@@ -1258,7 +1267,9 @@ function resetZoomList () {
 	console.log ('resetZoomList is done:');
 	console.log (Voter.zoomList);
 
-	sortArray(Voter.isSortByType);
+	sortArray(Voter.isSortByType, false);
+	rebuildList();
+
 }
 
 
