@@ -302,6 +302,22 @@ button.sortButtons:focus {
 	font-weight : bolder;
 }
 
+.logoHeader {
+	height: 30px;
+	border-radius: 13px;
+	border: 3px solid wheat;
+	padding: 3px;
+	margin-top: -1px;
+}
+
+.logoMobile {
+	height: 30px;
+	border-radius: 13px;
+	border: 3px solid wheat;
+	padding: 3px;
+	margin-top: -1px;
+	background-color: #400000;
+}
 
 .sortButtons {
 	background-color: sandybrown;
@@ -476,9 +492,9 @@ border-radius: 0px;
 
 
 .filterBar {
-	color: black;
+	color: white;
 	font-weight: bolder;
-	background-color: sandybrown;
+	background-color: #400000;
 	/*border: 0px;*/
 	/*text-align: left;*/
 	padding: 10px;
