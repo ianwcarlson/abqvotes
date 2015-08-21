@@ -85,7 +85,7 @@
 }
 
 .scrollable-list {
-	height: 513px;
+	height: 519px;
 	overflow: scroll;
 	/*padding: 10px;*/
 	/*margin-left: -1px;*/
@@ -100,9 +100,18 @@
 
 }
 
+.right-caret {
+	display        : inline-block;
+	width          : 0;
+	height         : 0;
+	vertical-align : middle;border-bottom  : 4px solid transparent;
+	border-top     : 4px solid transparent;
+	border-left    : 4px solid #000000;
+	opacity        : 0.3;
+}
 
 .tabs{
-	background: #FFE0B2;
+	background: #E4C9C9 ;
 	width: 106%;
 	margin-top: -1px;
 	margin-left: -1px;
