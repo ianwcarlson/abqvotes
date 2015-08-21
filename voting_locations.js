@@ -439,8 +439,11 @@ function checkForLocations(lat, long){
 		// build all array and zoomList array from scratch using all locations from DB
 		buildAllArrayWithDistance(lat, long);
 
+		sortArray('default', false);
+
 		// set up initial page
 		buildIconsAndLists("insertMapListHere");
+
 
 		// set combined template into live div and reset template
 		buildCombinedView();
@@ -768,7 +771,12 @@ function sortArray(isWhatType, isRebuildAll){
 	var theArray = Voter.zoomList;
 
 	// check type of sort
-	if(isWhatType === 'time') {
+	if(isWhatType === 'default') {
+		console.log("sortArray DEFAULT fires now");
+		theArray.sort(function(a, b) {
+			return a.Distance - b.Distance
+		})
+	} else if(isWhatType === 'time') {
 		console.log("sortArray TIME fires now");
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
@@ -807,6 +815,27 @@ function sortArray(isWhatType, isRebuildAll){
 			return a.Distance - b.Distance
 		})
 	} else if ((isWhatType === 'name')) {
+		console.log("sortArray NAME fires now");
+
+		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
+		document.getElementById('byNameLive').style.color = "white";
+		document.getElementById('nameCaretLive').className = "caret";
+
+		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
+		document.getElementById('byLowestLive').style.color = "#999999";
+		document.getElementById('lowestCaretLive').className = "right-caret";
+
+		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
+		document.getElementById('byNearestLive').style.color = "#999999";
+		document.getElementById('nearestCaretLive').className = "right-caret";
+
+
+		theArray.sort(function(a, b) {
+			if(a.MVCName < b.MVCName) return -1;
+			if(a.MVCName > b.MVCName) return 1;
+			return 0;
+		})
+	}else if ((isWhatType === 'name')) {
 		console.log("sortArray NAME fires now");
 
 		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
@@ -1251,9 +1280,9 @@ function hideMobileMap(){
  */
 
 function resetZoomEvents() {
-	//map.on("moveend", resetZoomList);
-	//map.on("zoomend", resetZoomList);
-	//map.on("rezize", resetZoomList);
+	map.on("moveend", resetZoomList);
+	map.on("zoomend", resetZoomList);
+	map.on("rezize", resetZoomList);
 }
 
 function resetZoomList () {
