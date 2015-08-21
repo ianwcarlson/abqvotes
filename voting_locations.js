@@ -68,11 +68,12 @@ window.Voter = window.Voter || {};
 console.log('next set up map:');
 
 // set up map
-map = L.map('map', {closePopupOnClick: true});
+map = L.map('map', {closePopupOnClick: true, zoomControl: false});
+new L.Control.Zoom({position: 'topright'}).addTo(map);
 
 console.log('next set up tile layer:');
 
-L.tileLayer( 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+Voter.tiles = L.tileLayer( 'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
 	attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
 	"Esri China (Hong Kong), Esri (Thailand), MapmyIndia, © OpenStreetMap contributors, and the GIS User Community ",
 	noWrap: 'true'
@@ -98,7 +99,7 @@ Voter.maxWait = 60;
 Voter.maxDistance = 3;
 
 // set global variable to adjust location to center of off-center map view when list is overlayed on left of map.
-Voter.latlngAdjustment = -.07;
+Voter.latlngAdjustment = 0;
 
 // set up sort booleans for re-sorting when new items added or removed from all location array
 Voter.isSortByType = 'distance';
@@ -1119,6 +1120,10 @@ function decideView(message) {
 		// then hide the list div regardless of view it contains to show map-only view.
 		document.getElementById("listGoesHere").style.display = "none";
 
+		// set current map div to 100% width and reload tiles
+		document.getElementById("mapGoesHere").style.width = "100%";
+		map.invalidateSize();
+
 		console.log('Map on works');
 
 	} else if(message === "map-off") {
@@ -1128,6 +1133,14 @@ function decideView(message) {
 
 		// Unhide listGoesHere div....
 		document.getElementById("listGoesHere").style.display = "inline";
+
+		// remove 100% width from inline and reload tiles
+		if (document.getElementById("mapGoesHere").style.removeProperty) {
+			document.getElementById("mapGoesHere").style.removeProperty('width');
+		} else {
+			document.getElementById("mapGoesHere").style.removeAttribute('width');
+		}
+		map.invalidateSize();
 
 		console.log('Map-off worked');
 	}
@@ -1165,7 +1178,6 @@ function buildCombinedView(){
 	//console.log(document.getElementById("buildListInMap").innerHTML);
 
 	document.getElementById("listGoesHere").					innerHTML = document.getElementById("buildListInMap").innerHTML;
-	document.getElementById("listGoesHere").					value = 'combined';
 
 	// reset template html and id's
 	document.getElementById('mapListLive').					innerHTML = "";
