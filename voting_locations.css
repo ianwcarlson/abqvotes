@@ -199,12 +199,12 @@ button.sortButtons:focus {
 	position: relative;
 	/* display: block; */
 	padding: 10px 15px;
-	color: white;
+	color: #999999;
 	font-weight: bolder;
 	border-bottom: 0px !important;
 	border-radius: 0px 0px 0 0 !important;
 	text-align: center;
-	background-color : #A54A4A;
+	background-color : #E4C9C9;
 }
 
 .aTab{
