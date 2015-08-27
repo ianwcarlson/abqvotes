@@ -34,17 +34,6 @@
 	/*overflow: hidden;*/
 }
 
-/*#listGoesHere {*/
-/*margin-left: -15px;*/
-/*}*/
-
-
-.combinedMap {
-	padding-bottom: 0px;
-	width: 100%;
-	margin-right: -15px;
-	left: 0;
-}
 
 #liveListRow {
 	z-index: 10000;
@@ -54,10 +43,6 @@
 	margin-left: -15px;
 	/*width: 105%;*/
 
-}
-
-.combinedMap,
-#liveListRow {
 	height: 0%;
 	position: absolute;
 	top: 0;
