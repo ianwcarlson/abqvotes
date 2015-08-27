@@ -75,7 +75,8 @@ console.log('next set up tile layer:');
 
 L.tileLayer(
 	//'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-	'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+	//'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+	'http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 	{
 		attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
 		"Esri China (Hong Kong), Esri (Thailand), MapmyIndia, © OpenStreetMap contributors, and the GIS User Community ",
@@ -256,6 +257,7 @@ function onLocationError(e) {
 
 	// notify user
 	alert(e.message);
+	Voter.maxDistance = 10;
 	// re-set view with Runner Address as base'
 	setToHomeAddress();
 }
@@ -424,13 +426,12 @@ function checkForLocations(lat, long){
 	} else if (Voter.all[0] != null) {
 		console.log ('not first time set up, within checkForLocations fires now');
 		// code to rebuild from pre-made Voter.all lists to previous list locations
-		if (Voter.all[0] != null) {
-			console.log('rebuilding ALL and ZOOM lists after location change');
+		console.log('rebuilding ALL and ZOOM lists after location change');
 
-			reCalcDistance(lat, long); // for all list
-			resetZoomList(); // re-curate zoom list from new All List to update distances.
-			rebuildAll();
-		}
+		reCalcDistance(lat, long); // for all list
+		resetZoomList(); // re-curate zoom list from new All List to update distances.
+		rebuildAll();
+
 
 	} else {
 		// set up for first time:
@@ -439,7 +440,7 @@ function checkForLocations(lat, long){
 		// build all array and zoomList array from scratch using all locations from DB
 		buildAllArrayWithDistance(lat, long);
 
-		sortArray('default', false);
+		sortArray('default');
 
 		// set up initial page
 		buildIconsAndLists("insertMapListHere");
@@ -750,6 +751,7 @@ function tearDown(){
 }
 
 function rebuildList(){
+	console.log('rebuildList fires now');
 	document.getElementById("mapListLive").innerHTML = "";
 	build("mapListLive", "isZoomList");
 }
@@ -765,12 +767,12 @@ function rebuildList(){
  */
 
 // sort list by waitTime or by distance
-function sortArray(isWhatType, isRebuildAll){
+function sortArray(isWhatType){
 	console.log("sortArray fires now");
 
 	var theArray = Voter.zoomList;
 
-	// check type of sort
+	//check type of sort
 	if(isWhatType === 'default') {
 		console.log("sortArray DEFAULT fires now");
 		theArray.sort(function(a, b) {
@@ -835,37 +837,12 @@ function sortArray(isWhatType, isRebuildAll){
 			if(a.MVCName > b.MVCName) return 1;
 			return 0;
 		})
-	}else if ((isWhatType === 'name')) {
-		console.log("sortArray NAME fires now");
-
-		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
-		document.getElementById('byNameLive').style.color = "white";
-		document.getElementById('nameCaretLive').className = "caret";
-
-		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
-		document.getElementById('byLowestLive').style.color = "#999999";
-		document.getElementById('lowestCaretLive').className = "right-caret";
-
-		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
-		document.getElementById('byNearestLive').style.color = "#999999";
-		document.getElementById('nearestCaretLive').className = "right-caret";
-
-
-		theArray.sort(function(a, b) {
-			if(a.MVCName < b.MVCName) return -1;
-			if(a.MVCName > b.MVCName) return 1;
-			return 0;
-		})
 	}
 	//console.log ('zoomList AFTER SORT: ');
 	//console.log (Voter.zoomList);
 
 	//reset the sort boolean to new value
 	Voter.isSortByType = isWhatType;
-
-	if(isRebuildAll){
-		rebuildAll();
-	}
 }
 
 
@@ -1296,7 +1273,7 @@ function resetZoomList () {
 	console.log ('resetZoomList is done:');
 	console.log (Voter.zoomList);
 
-	sortArray(Voter.isSortByType, false);
+	sortArray(Voter.isSortByType);
 	rebuildList();
 
 }
