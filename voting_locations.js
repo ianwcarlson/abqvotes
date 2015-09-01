@@ -131,47 +131,63 @@ if(Voter.datasource=="UNM")
 {
 	var url = "data/voting_locations.json";
 	//var url = "http://where2vote.unm.edu/locationinfo/";
-}
-else
-{
-	var url = "http://coagisweb.cabq.gov/arcgis/rest/services/public/Voting2015/MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json";
-}
-
-$.ajax({
-	url     : url,
-	dataType: 'json',
-	cache: true,
-	success : function(data) {
-		console.log(data);
+	$.ajax({
+		url     : url,
+		dataType: 'json',
+		cache: true,
+		success : function(data) {
 		var theThing = 1;
-		for(x in data) {
-
-			data[x].count = 7 + theThing;
-
-			if(Voter.datasource=="UNM")
-			{
+			console.log(data);
+			for(x in data) {
+				data[x].count = 7 + theThing;
 				var theId = "id" + data[x].UniqueID;
 				Voter.locations[theId] = data[x];
+				theThing++;
 			}
-			else
-			{
-				var theId = "id" + data[x].OBJECTID;
-				Voter.locations[theId] = data[x];
-				// repeat latitude and longitude data in array using variable names from UNM data, so all other functions work without extra logic for variable naming differences
-				Voter.locations[theId]["lat"] = Voter.locations[theId].x;
-				Voter.locations[theId]["lon"] = Voter.locations[theId].y;
-			}
-
-			theThing++;
-		}
-		var obj = jQuery.parseJSON
 		
 		console.log(Voter.locations);
 		setBaseLocation();
 		checkForLocations(Voter.lat, Voter.lng);
 		findCurrentLocation();
-	}
-});
+		}
+	});
+}
+else
+{
+	var url = "http://coagisweb.cabq.gov/arcgis/rest/services/public/Voting2015/MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json";
+
+	var result = '';
+	$.ajax({
+		type: 'GET', 
+		url     : url,
+		dataType: 'json',
+        async: false,
+		cache: true,
+		success : function(text) {
+			var theThing = 1;
+			//result= JSON.parse(text); 
+			data=text.features;
+			console.log(data);
+			for(x in data) {
+	
+				data[x].count = 7 + theThing;
+				var theId = "id" + data[x].attributes.OBJECTID;
+				Voter.locations[theId] = data[x].attributes;
+				// repeat latitude and longitude data in array using variable names from UNM data, so all other functions work without extra logic for variable naming differences
+				Voter.locations[theId]["lat"] = data[x].geometry.y;
+				Voter.locations[theId]["lon"] = data[x].geometry.x;
+				// add variables to array that are using in future functions
+				Voter.locations[theId]["count"] = 0;
+				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
+			}
+	
+		console.log(Voter.locations);
+		setBaseLocation();
+		checkForLocations(Voter.lat, Voter.lng);
+		findCurrentLocation();
+		}
+	});
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
@@ -1254,14 +1270,14 @@ function checkEarlyVoting(theId){
 		if(Voter.locations[theId].isEarlyVoting != 'y')
 			earlyCheck = false;
 		// check if date is before early voting start date
-		else if(Voter.earlyVotingDate < earlyStart)	
+		else if(new Date(Voter.earlyVotingDate) < earlyStart)	
 			earlyCheck = false;
 		// check if date is past early voting end date
-		else if(Voter.earlyVotingDate > earlyEnd)	
+		else if(new Date(Voter.earlyVotingDate) > earlyEnd)	
 			earlyCheck = false;
 		else 
 		{
-			var earlyDay = Voter.earlyVotingDate.getDay();
+			var earlyDay = new Date(Voter.earlyVotingDate).getDay();
 			// check if location is open on that day of the week
 			if(earlyDay == 1 && Voter.locations[theId].isEarlyVotingMonday != 'y')	
 				earlyCheck = false;
