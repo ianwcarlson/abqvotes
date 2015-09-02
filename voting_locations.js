@@ -169,7 +169,6 @@ else
 			data=text.features;
 			console.log(data);
 			for(x in data) {
-	
 				data[x].count = 7 + theThing;
 				var theId = "id" + data[x].attributes.OBJECTID;
 				Voter.locations[theId] = data[x].attributes;
@@ -180,7 +179,28 @@ else
 				Voter.locations[theId]["count"] = 0;
 				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
 			}
-	
+
+		if(Voter.isElectionDay==true)
+		{
+			var url2 = "http://where2vote.unm.edu/locationinfo/";
+			$.ajax({
+				url     : url2,
+				dataType: 'json',
+				cache: true,
+				success : function(data) {
+					for(x in data) {
+						for (i in Voter.locations) { 
+							if(data[x].MVCName==Voter.locations[i].name)
+							{
+								Voter.locations[i]["count"] = data[x].count;
+								Voter.locations[i]["lastupdate"] = data[x].lastupdate;
+								Voter.locations[i]["minutesold"] = data[x].minutesold;
+							}
+						}
+					}
+				}
+			});
+		}
 		console.log(Voter.locations);
 		setBaseLocation();
 		checkForLocations(Voter.lat, Voter.lng);
@@ -1530,6 +1550,13 @@ $(document).ready(
 			document.getElementById('earlyVoting').style.display = "none";
 			document.getElementById('earlyVotingMobile').style.display = "none";
 		}
+		
+		// if mobile display, show map as default view
+		var w = window.innerWidth
+		|| document.documentElement.clientWidth
+		|| document.body.clientWidth;
+		if(w < 768)
+			showMobileMap();
 
 	}
 );
