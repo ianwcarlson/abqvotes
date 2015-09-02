@@ -1217,8 +1217,16 @@ function editLocationDetails (theId, isList) {
 	}
 	else
 	{
-		// get google maps link to find directions
-		var addressLink = "https://www.google.com/maps/dir/Current+Location/" + Voter.locations[theId].address.replace(/ /g, '+');
+		// set URL prefix so maps open in the native app if on an iOS or Android device
+		var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+		var urlprefix = 'https';
+		if( userAgent.match( /iPad/i ) || userAgent.match( /iPhone/i ) || userAgent.match( /iPod/i ) )
+			urlprefix = 'comgooglemapsurl';
+		else if( userAgent.match( /Android/i ) )
+			urlprefix = 'maps';
+		
+  		// get google maps link to find directions
+		var addressLink = urlprefix + "://www.google.com/maps/dir/Current+Location/" + Voter.locations[theId].address.replace(/ /g, '+');
 	
 		// calculate number of hours since last updated wait estimate
 		//var hoursSince = (Voter.locations[theId].minutesold/60).toFixed(2).toString();
