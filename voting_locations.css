@@ -369,6 +369,14 @@ button.sortButtons:focus {
 	margin-left: 5px;
 }
 
+.dateFieldFilter {
+	width: 90px;
+	color: black;
+}
+
+.ui-datepicker {
+	z-index:110000 !important;
+}
 
 /*.dropdown-custom {*/
 /*z-index : 10000;*/
