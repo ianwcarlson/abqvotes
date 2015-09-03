@@ -75,7 +75,8 @@ console.log('next set up tile layer:');
 
 L.tileLayer(
 	//'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-	'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+	//'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+	'http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 	{
 		attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
 		"Esri China (Hong Kong), Esri (Thailand), MapmyIndia, © OpenStreetMap contributors, and the GIS User Community ",
@@ -107,34 +108,107 @@ Voter.latlngAdjustment = 0;
 // set up sort booleans for re-sorting when new items added or removed from all location array
 Voter.isSortByType = 'distance';
 
+// set datasource -- override on URL with "data=UNM | CABQ"
+Voter.datasource = "UNM";
+tmp = getQueryVariable("data");
+if(tmp=="UNM" || tmp=="CABQ")
+	Voter.datasource = tmp;
+
+// set election day indicator -- override on URL with "electionday=Y"
+Voter.isElectionDay = false;
+Voter.electionDate = new Date(2015,10-1,6);
+Voter.earlyVotingDate = new Date();
+
+var currdate = new Date();
+tmp = getQueryVariable("electionday");
+if(tmp=="y" || currdate.toDateString()==Voter.electionDate.toDateString())
+	Voter.isElectionDay = true;
+
+console.log(Voter);
 console.log('next set up data:');
 
 // pull in data from API, assign to global locations array
-var url = "data/voting_locations.json";
-//var url = "http://where2vote.unm.edu/locationinfo/";
-$.ajax({
-	url     : url,
-	dataType: 'json',
-	success : function(data) {
-		console.log(data);
+if(Voter.datasource=="UNM")
+{
+	var url = "data/voting_locations.json";
+	//var url = "http://where2vote.unm.edu/locationinfo/";
+	$.ajax({
+		url     : url,
+		dataType: 'json',
+		cache: true,
+		success : function(data) {
 		var theThing = 1;
-		for(x in data) {
+			console.log(data);
+			for(x in data) {
+				data[x].count = 7 + theThing;
+				var theId = "id" + data[x].UniqueID;
+				Voter.locations[theId] = data[x];
+				theThing++;
+			}
+		
+		console.log(Voter.locations);
+		setBaseLocation();
+		checkForLocations(Voter.lat, Voter.lng);
+		findCurrentLocation();
+		}
+	});
+}
+else
+{
+	var url = "http://coagisweb.cabq.gov/arcgis/rest/services/public/Voting2015/MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json";
 
-			data[x].count = 7 + theThing;
+	var result = '';
+	$.ajax({
+		type: 'GET', 
+		url     : url,
+		dataType: 'json',
+        async: false,
+		cache: true,
+		success : function(text) {
+			var theThing = 1;
+			//result= JSON.parse(text); 
+			data=text.features;
+			console.log(data);
+			for(x in data) {
+				data[x].count = 7 + theThing;
+				var theId = "id" + data[x].attributes.OBJECTID;
+				Voter.locations[theId] = data[x].attributes;
+				// repeat latitude and longitude data in array using variable names from UNM data, so all other functions work without extra logic for variable naming differences
+				Voter.locations[theId]["lat"] = data[x].geometry.y;
+				Voter.locations[theId]["lon"] = data[x].geometry.x;
+				// add variables to array that are using in future functions
+				Voter.locations[theId]["count"] = 0;
+				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
+			}
 
-			var theId = "id" + data[x].UniqueID;
-			Voter.locations[theId] = data[x];
-			theThing++;
+		if(Voter.isElectionDay==true)
+		{
+			var url2 = "http://where2vote.unm.edu/locationinfo/";
+			$.ajax({
+				url     : url2,
+				dataType: 'json',
+				cache: true,
+				success : function(data) {
+					for(x in data) {
+						for (i in Voter.locations) { 
+							if(data[x].MVCName==Voter.locations[i].name)
+							{
+								Voter.locations[i]["count"] = data[x].count;
+								Voter.locations[i]["lastupdate"] = data[x].lastupdate;
+								Voter.locations[i]["minutesold"] = data[x].minutesold;
+							}
+						}
+					}
+				}
+			});
 		}
 		console.log(Voter.locations);
 		setBaseLocation();
 		checkForLocations(Voter.lat, Voter.lng);
 		findCurrentLocation();
-	}
-});
-
-
-
+		}
+	});
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
@@ -160,7 +234,7 @@ function setBaseLocation (lat, lng) {
 	currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
 
 	// build variable for popup display
-	var locationDetails2 =	"<div style = 'text-align: center'><strong>You can edit your default <br/>address in settings.  " +
+	var locationDetails2 =	"<div style = 'text-align: center'><strong>Location not enabled <br/>on this device.  " +
 		"</strong>"+ currentLocationButton;
 
 	// build html to use in icon
@@ -256,6 +330,7 @@ function onLocationError(e) {
 
 	// notify user
 	alert(e.message);
+	Voter.maxDistance = 10;
 	// re-set view with Runner Address as base'
 	setToHomeAddress();
 }
@@ -307,7 +382,7 @@ function rebuildHomeIcon(isToCurrent){
 	"onClick='changeLocations(" + theBool + ")'>" + theInnerHtml + "</button></div>";
 
 	// build variable for popup display
-	var locationDetails2 =	"<div style = 'text-align: center'><strong>You can edit your default <br/>address in settings.  " +
+	var locationDetails2 =	"<div style = 'text-align: center'><strong>Location not enabled <br/>on this device.  " +
 		"</strong>"+ currentLocationButton;
 
 
@@ -424,13 +499,12 @@ function checkForLocations(lat, long){
 	} else if (Voter.all[0] != null) {
 		console.log ('not first time set up, within checkForLocations fires now');
 		// code to rebuild from pre-made Voter.all lists to previous list locations
-		if (Voter.all[0] != null) {
-			console.log('rebuilding ALL and ZOOM lists after location change');
+		console.log('rebuilding ALL and ZOOM lists after location change');
 
-			reCalcDistance(lat, long); // for all list
-			resetZoomList(); // re-curate zoom list from new All List to update distances.
-			rebuildAll();
-		}
+		reCalcDistance(lat, long); // for all list
+		resetZoomList(); // re-curate zoom list from new All List to update distances.
+		rebuildAll();
+
 
 	} else {
 		// set up for first time:
@@ -439,7 +513,7 @@ function checkForLocations(lat, long){
 		// build all array and zoomList array from scratch using all locations from DB
 		buildAllArrayWithDistance(lat, long);
 
-		sortArray('default', false);
+		sortArray('default');
 
 		// set up initial page
 		buildIconsAndLists("insertMapListHere");
@@ -540,7 +614,7 @@ function buildHeatMap(){
 	var theLocationId;
 	for (things=0; things< Voter.all.length; things++) {
 		theLocationId = "id" + Voter.all[things].UniqueID;
-		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId)) {
+		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId)) {
 			distances.push(Voter.all[things].Distance);
 			withinDistances.push(theLocationId);
 		}
@@ -614,7 +688,7 @@ function build(listLocation, whichArray){
 		// rebuild the layers and list for given array
 		for(count = 0; count < array.length; count++) {
 			theLocationId = "id" + array[count].UniqueID;
-			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId)) {
+			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId)) {
 				//rebuild zoom List
 				counter = count + counta;
 				buildListItem(	theLocationId,
@@ -750,6 +824,7 @@ function tearDown(){
 }
 
 function rebuildList(){
+	console.log('rebuildList fires now');
 	document.getElementById("mapListLive").innerHTML = "";
 	build("mapListLive", "isZoomList");
 }
@@ -765,12 +840,12 @@ function rebuildList(){
  */
 
 // sort list by waitTime or by distance
-function sortArray(isWhatType, isRebuildAll){
+function sortArray(isWhatType){
 	console.log("sortArray fires now");
 
 	var theArray = Voter.zoomList;
 
-	// check type of sort
+	//check type of sort
 	if(isWhatType === 'default') {
 		console.log("sortArray DEFAULT fires now");
 		theArray.sort(function(a, b) {
@@ -835,37 +910,12 @@ function sortArray(isWhatType, isRebuildAll){
 			if(a.MVCName > b.MVCName) return 1;
 			return 0;
 		})
-	}else if ((isWhatType === 'name')) {
-		console.log("sortArray NAME fires now");
-
-		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
-		document.getElementById('byNameLive').style.color = "white";
-		document.getElementById('nameCaretLive').className = "caret";
-
-		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
-		document.getElementById('byLowestLive').style.color = "#999999";
-		document.getElementById('lowestCaretLive').className = "right-caret";
-
-		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
-		document.getElementById('byNearestLive').style.color = "#999999";
-		document.getElementById('nearestCaretLive').className = "right-caret";
-
-
-		theArray.sort(function(a, b) {
-			if(a.MVCName < b.MVCName) return -1;
-			if(a.MVCName > b.MVCName) return 1;
-			return 0;
-		})
 	}
 	//console.log ('zoomList AFTER SORT: ');
 	//console.log (Voter.zoomList);
 
 	//reset the sort boolean to new value
 	Voter.isSortByType = isWhatType;
-
-	if(isRebuildAll){
-		rebuildAll();
-	}
 }
 
 
@@ -1048,6 +1098,59 @@ function unselectMaxDistance() {
 }
 
 
+// Early voting FILTER
+// change early voting date, apply if checkbox is checked
+function changeEarlyVotingDate(earlyDate) {
+	console.log ('changeEarlyVotingDate fires now');
+
+	// reset earlyVotingDate to value of input
+	Voter.earlyVotingDate = earlyDate;
+
+	// ensure both
+	document.getElementById("isEarlyVotingDatepicker").value = Voter.earlyVotingDate;
+	document.getElementById("isEarlyVotingMobileDatepicker").value = Voter.earlyVotingDate;
+
+
+	if(document.getElementById("isEarlyVoting").checked){
+		rebuildAll();
+	}
+
+}
+
+// toggle earlyVoting on
+function selectEarlyVoting (){
+	console.log ('selectEarlyVoting fires now');
+
+	// switch onclick function for max wait checkboxes
+	document.getElementById("isEarlyVoting").setAttribute( "onclick", "unselectEarlyVoting()" );
+	document.getElementById("isEarlyVotingMobile").setAttribute( "onclick", "unselectEarlyVoting()" );
+
+	// make sure both checkboxes are "checked"
+	document.getElementById("isEarlyVoting").checked = true;
+	document.getElementById("isEarlyVotingMobile").checked = true;
+
+	rebuildAll();
+
+}
+
+// toggle earlyVoting off
+function unselectEarlyVoting() {
+	console.log ('unselectEarlyVoting fires now');
+
+	// switch onclick function for max wait checkbox
+	document.getElementById("isEarlyVoting").setAttribute("onclick", "selectEarlyVoting()");
+	document.getElementById("isEarlyVotingMobile").setAttribute("onclick", "selectEarlyVoting()");
+
+	// make sure both checkboxes are not "checked"
+	document.getElementById("isEarlyVoting").checked = false;
+	document.getElementById("isEarlyVotingMobile").checked = false;
+
+	// rebuild all layers
+	rebuildAll();
+
+}
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1068,23 +1171,75 @@ function editLocationDetails (theId, isList) {
 		var listName = "";
 	}
 
-	// get google maps link to find directions
-	var addressLink = "https://www.google.com/maps/dir/Current+Location/" + Voter.locations[theId].Address.replace(/ /g, '+');
+	if(Voter.datasource=="UNM")
+	{
+		// get google maps link to find directions
+		var addressLink = "https://www.google.com/maps/dir/Current+Location/" + Voter.locations[theId].Address.replace(/ /g, '+');
+	
+		// calculate number of hours since last updated wait estimat
+		var hoursSince = (Voter.locations[theId].minutesold/60).toFixed(2).toString();
+	
+		// inject them into the appropriate html stubs
+		document.getElementById(listName + "addressLink").			setAttribute('href', addressLink);
+		document.getElementById(listName + "address").				innerHTML = Voter.locations[theId].Address;
+		document.getElementById(listName + "lastUpdate").			innerHTML = hoursSince;
+		document.getElementById(listName + "name").					innerHTML = Voter.locations[theId].MVCName;
+		document.getElementById(listName + "distance").				innerHTML = Voter.locations[theId].Distance;
+	
+		document.getElementById(listName + "voting-type").			innerHTML = Voter.locations[theId].Voting;
+		document.getElementById(listName + "electionDayTime").		innerHTML = Voter.locations[theId].ElectionDayTime;
+		document.getElementById(listName + "openDate").				innerHTML = Voter.locations[theId].OpenDate;
 
-	// calculate number of hours since last updated wait estimat
-	var hoursSince = (Voter.locations[theId].minutesold/60).toFixed(2).toString();
 
-	// inject them into the appropriate html stubs
-	document.getElementById(listName + "addressLink").			setAttribute('href', addressLink);
-	document.getElementById(listName + "address").				innerHTML = Voter.locations[theId].Address;
-	document.getElementById(listName + "lastUpdate").			innerHTML = hoursSince;
-	document.getElementById(listName + "name").					innerHTML = Voter.locations[theId].MVCName;
-	document.getElementById(listName + "distance").				innerHTML = Voter.locations[theId].Distance;
-
-	document.getElementById(listName + "voting-type").			innerHTML = Voter.locations[theId].Voting;
-	document.getElementById(listName + "electionDayTime").	innerHTML = Voter.locations[theId].ElectionDayTime;
-	document.getElementById(listName + "openDate").				innerHTML = Voter.locations[theId].OpenDate;
-
+	}
+	else
+	{
+		// set URL prefix so maps open in the native app if on an iOS or Android device
+		var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+		var urlprefix = 'https';
+		if( userAgent.match( /iPad/i ) || userAgent.match( /iPhone/i ) || userAgent.match( /iPod/i ) )
+			urlprefix = 'comgooglemapsurl';
+		else if( userAgent.match( /Android/i ) )
+			urlprefix = 'maps';
+		
+  		// get google maps link to find directions
+		var addressLink = urlprefix + "://www.google.com/maps/dir/Current+Location/" + Voter.locations[theId].address.replace(/ /g, '+');
+	
+		// calculate number of hours since last updated wait estimate
+		//var hoursSince = (Voter.locations[theId].minutesold/60).toFixed(2).toString();
+	
+		// inject them into the appropriate html stubs
+		document.getElementById(listName + "addressLink").			setAttribute('href', addressLink);
+		document.getElementById(listName + "address").				innerHTML = Voter.locations[theId].address;
+		//document.getElementById(listName + "lastUpdate").			innerHTML = hoursSince;
+		document.getElementById(listName + "name").					innerHTML = Voter.locations[theId].name;
+		document.getElementById(listName + "distance").				innerHTML = Voter.locations[theId].Distance;
+	
+		var votingType = "";
+		if(Voter.locations[theId].isElectionDay=="y")
+			votingType = "Election Day";
+		if(Voter.locations[theId].isEarlyVoting=="y")
+		{
+			votingType = votingType + ", Early Voting";
+			votingDays = "<br>Days: ";
+			if(Voter.locations[theId].isEarlyVotingMonday=="y")
+				votingDays = votingDays + "M ";
+			if(Voter.locations[theId].isEarlyVotingTuesday=="y")
+				votingDays = votingDays + "Tu ";
+			if(Voter.locations[theId].isEarlyVotingWednesnday=="y")
+				votingDays = votingDays + "W ";
+			if(Voter.locations[theId].isEarlyVotingThursday=="y")
+				votingDays = votingDays + "Th ";
+			if(Voter.locations[theId].isEarlyVotingFriday=="y")
+				votingDays = votingDays + "F";
+			document.getElementById(listName + "openDate").			innerHTML = Voter.locations[theId].EarlyVotingStartDateStr + " to " + Voter.locations[theId].EarlyVotingEndDateStr + votingDays;
+		}
+		if(Voter.locations[theId].isAbsenteeVoting=="y")
+			votingType = votingType + ", Absentee Dropoff";
+		document.getElementById(listName + "voting-type").			innerHTML = votingType;
+		
+		document.getElementById(listName + "electionDayTime").		innerHTML = Voter.locations[theId].electionDayStartTimeStr + " to " + Voter.locations[theId].electionDayEndTimeStr;
+	}
 }
 
 // check if meets max wait time criteria set by user
@@ -1101,6 +1256,51 @@ function checkMaxDistance(theId){
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
 	if (!document.getElementById('isMaxDistance').checked
 		|| Voter.locations[theId].Distance <= Voter.maxDistance) {
+		return true;
+	}
+}
+
+
+// check if meets early voting criteria set by user
+function checkEarlyVoting(theId){
+	var earlyCheck = true;
+	// check if early voting is open on the user specified date, based on day of week and start/end dates
+	if(Voter.locations[theId].isEarlyVoting != undefined)
+	{
+		// create date variables for early voting start and end
+		var earlyStart = new Date(Voter.locations[theId].earlyVotingStartDate);
+		var earlyEnd = new Date(Voter.locations[theId].earlyVotingEndDate);
+		
+		// check if early voting is allowed at this location
+		if(Voter.locations[theId].isEarlyVoting != 'y')
+			earlyCheck = false;
+		// check if date is before early voting start date
+		else if(new Date(Voter.earlyVotingDate) < earlyStart)	
+			earlyCheck = false;
+		// check if date is past early voting end date
+		else if(new Date(Voter.earlyVotingDate) > earlyEnd)	
+			earlyCheck = false;
+		else 
+		{
+			var earlyDay = new Date(Voter.earlyVotingDate).getDay();
+			// check if location is open on that day of the week
+			if(earlyDay == 1 && Voter.locations[theId].isEarlyVotingMonday != 'y')	
+				earlyCheck = false;
+			else if(earlyDay == 2 && Voter.locations[theId].isEarlyVotingTuesday != 'y')	
+				earlyCheck = false;
+			else if(earlyDay == 3 && Voter.locations[theId].isEarlyVotingWednesday != 'y')	
+				earlyCheck = false;
+			else if(earlyDay == 4 && Voter.locations[theId].isEarlyVotingThursday != 'y')	
+				earlyCheck = false;
+			else if(earlyDay == 5 && Voter.locations[theId].isEarlyVotingFriday != 'y')	
+				earlyCheck = false;
+			else if(earlyDay == 6 || earlyDay == 0)	
+				earlyCheck = false;
+		}
+	}
+	// check if early voting checkbox is checked "on" and if so, check if meets the criteria
+	if (!document.getElementById('isEarlyVoting').checked
+		|| earlyCheck==true) {
 		return true;
 	}
 }
@@ -1296,11 +1496,75 @@ function resetZoomList () {
 	console.log ('resetZoomList is done:');
 	console.log (Voter.zoomList);
 
-	sortArray(Voter.isSortByType, false);
+	sortArray(Voter.isSortByType);
 	rebuildList();
 
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////////
+/*
+ * set the current date in the date fields and enable date picker
+ *
+ *
+ */
+$(document).ready(
+  
+	// This function will get executed after the DOM is fully loaded 
+  	function ()
+	{
+		// early voting date fields
+		$("#isEarlyVotingDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+		$("#isEarlyVotingDatepicker").datepicker("setDate", Voter.earlyVotingDate);
+		$("#isEarlyVotingMobileDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+		$("#isEarlyVotingMobileDatepicker").datepicker("setDate", Voter.earlyVotingDate);
+		/* absentee dropoff date fields
+		$("#AbsenteeDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+		$("#AbsenteeDatepicker").datepicker("setDate", new Date);
+		$("#AbsenteeMobileDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+		$("#AbsenteeMobileDatepicker").datepicker("setDate", new Date); */
+
+		// hide certain filter elements, depending on whether it is election day
+		if (Voter.isElectionDay==false)
+		{
+			document.getElementById('maxWait').style.display = "none";
+			document.getElementById('mobileMaxWait').style.display = "none";
+			document.getElementById('mobileMaxWait2').style.display = "none";
+		} else {
+			document.getElementById('earlyVoting').style.display = "none";
+			document.getElementById('earlyVotingMobile').style.display = "none";
+		}
+		
+		// if mobile display, show map as default view
+		var w = window.innerWidth
+		|| document.documentElement.clientWidth
+		|| document.body.clientWidth;
+		if(w < 768)
+			showMobileMap();
+
+	}
+);
+
+
+
+///////////////////////////////////////////////////////////////////////////////////
+/*
+ *Miscellaneous function s
+ *
+ *
+ */
+// get values of URL parameters
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
 
 
 
