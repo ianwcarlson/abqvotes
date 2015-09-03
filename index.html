@@ -48,8 +48,16 @@
 
 
 
-				<div class="col-lg-2 col-md-2 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 17px;">
+				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px;">
 					<a href="http://www.codeforabq.org" style ="color: wheat">A <img class = "logoHeader" src="images/balloon_var4.png"> project.</a>
+				</div>
+
+				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" style ="z-index:10000; display: none">
+					<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">
+						<a type="button" class="btn btn-lg filterButton" href="http://www.codeforabq.org" style = "color: lightgrey; margin-left: -10px; padding: 6px 5px;">
+							<img class = "logoMobile" src="images/balloon_var4.png">
+						</a>
+					</div>
 				</div>
 
 				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "mapToggler" style = "z-index: 10000;">
@@ -58,16 +66,21 @@
 					</button>
 				</div>
 				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "listToggler" style = "z-index: 10000; display:none;">
-					<button type="button" class="btn btn-lg filterButton dropdown-toggle" onclick = "hideMobileMap()">
+					<button type="button" class="btn btn-lg filterButton" onclick = "hideMobileMap()">
 						<span class = "glyphicon glyphicon-th-list" ></span>
 					</button>
 				</div>
 
-
-				<div class = "col-lg-8 col-md-8 col-sm-6 col-xs-8" style = "padding: 0px; margin-right: -15px; background-color: #400000; color: white;" id = "appendViewHeading">
+				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "padding: 0px; margin-right: -15px; background-color: #400000; color: white;" id = "appendViewHeading">
 					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
 					<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">Vote Nearby</h2>
 				</div>
+
+				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px; padding-right: 0px; text-align: right">
+					<a href="http://www.codeforabq.org" style ="color: wheat">Report Line Count In Person</a>
+				</div>
+
+				<!--filter button hidden until needed later if at all-->
 				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: -10px;">
 					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  aria-haspopup="true" aria-expanded="false" data-canvas="body" >
 						<span class = "glyphicon glyphicon-filter"></span>
@@ -93,31 +106,44 @@
 							</li>-->
 
 							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
-								<label for="isEarlyVotingMobile" style="text-align: right">Show Early Voting Locations open on</label>
+								<label for="isEarlyVotingMobile" style="text-align: right">Show Early Voting Only</label>
 								<input id="isEarlyVotingMobile" onclick="selectEarlyVoting()" name="isEarlyVotingMobile" type="checkbox" value="isEarlyVotingMobile">
-								<input type="text" class="dateFieldFilter" id="isEarlyVotingMobileDatepicker" onchange="changeEarlyVotingDate(this.value)" />
+								<!--<input type="text" class="dateFieldFilter" id="isEarlyVotingMobileDatepicker" onchange="changeEarlyVotingDate(this.value)" />-->
 							</li>
 							<br/>
-
-							<li class = "filter-items" id="mobileMaxWait" style="display:block">
-								<label for="isMobileMaxWait" style="text-align: right">Max Wait Time:</label>
-								<input id="isMobileMaxWait" onclick="unselectMaxWait()" checked="checked" name="isMaxWait" type="checkbox" value="isMaxWait">
+							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
+								<label for="isEarlyVotingMobile" style="text-align: right">Show Absentee DropOffs</label>
+								<input id="isEarlyVotingMobile" onclick="selectEarlyVoting()" name="isEarlyVotingMobile" type="checkbox" value="isEarlyVotingMobile">
+								<!--<input type="text" class="dateFieldFilter" id="isEarlyVotingMobileDatepicker" onchange="changeEarlyVotingDate(this.value)" />-->
 							</li>
-							<li class = "filter-items" id="mobileMaxWait2" style="display:block">
+
+
+							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
+								<br/>
+								<a href="http://www.codeforabq.org" style ="color: wheat">More about <img class = "logoHeader" src="images/balloon_var4.png"> projects.</a>
+
+							</li>
+
+							<!--hidden as unnecessary-->
+							<li class = "filter-items" id="mobileMaxWait" style="display:none">
+								<label for="isMobileMaxWait" style="text-align: right">Max Wait Time:</label>
+								<input id="isMobileMaxWait" onclick="unselectMaxWait()" name="isMaxWait" type="checkbox" value="isMaxWait">
+							</li>
+							<li class = "filter-items" id="mobileMaxWait2" style="display:none">
 								<em>minutes:</em><input id="theMobileMaxWait" class="minFeeFilter" onchange="changeMaxWait(this.value)" name="mobile_max_wait" type="number" value="60">
 							</li>
-							<br/>
+							<!--<br/>-->
 
-							<li class = "filter-items">
+							<li class = "filter-items" style="display:none">
 								<label for="isMobileMaxDistance" style="text-align: right">Max Distance:</label>
-								<input id="isMobileMaxDistance" onclick="unselectMaxDistance()" checked="checked" name="isMobileMaxDistance" type="checkbox" value="isMobileMaxDistance">
+								<input id="isMobileMaxDistance" onclick="unselectMaxDistance()"  name="isMobileMaxDistance" type="checkbox" value="isMobileMaxDistance">
 							</li>
-							<li class = "filter-items">
+							<li class = "filter-items" style="display:none">
 								<em>miles:</em><input id="theMobileMaxDistance" class="minFeeFilter" onchange="changeMaxDistance(this.value)" name="mobile_max_distance" type="number" value="3">
 							</li>
 							<!--</ul>-->
 							<!--</div>-->
-							<hr id = "basicsHr" style = "display:none; margin-bottom: 10px;"/>
+							<!--<hr id = "basicsHr" style = "display:none; margin-bottom: 10px;"/>-->
 						</div>
 
 
@@ -212,7 +238,9 @@
 			<div class="listHalf"  id = "listRow" >
 				<!--<div class="col-lg-4 col-md-5 col-sm-6 col-xs-12  listHalf"  id = "listRow" >-->
 				<div class=" tabs" id = "zoomTabLink" >
-					<div class='btn-group btn-group-justified ' role='group'>
+
+					<!--filter button hidden until needed if at all-->
+					<div id = "filterButtonOverList" class='btn-group btn-group-justified ' role='group' style = "display:none">
 						<div class='btn-group tabLink activeSort' role='group' >
 							<h2 class="panel-title filter-panel-title " >
 								<!--<span class = "glyphicon glyphicon-filter"></span>-->
@@ -226,10 +254,36 @@
 								<!--&lt;!&ndash;<span class = "glyphicon glyphicon-filter" style = "margin-bottom: 10px"></span>&ndash;&gt;-->
 								<!--<span style = "margin-bottom: 10px">At Your Quickest Location</span>-->
 								<!--</span>-->
-								<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">
-									<a href="http://www.codeforabq.org" style = "color: lightgrey">A <img class = "logoMobile" src="images/balloon_var4.png"> project.</a>
-								</div>
+								<!--<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">-->
+									<!--<a href="http://www.codeforabq.org" style = "color: lightgrey">A <img class = "logoMobile" src="images/balloon_var4.png"> project.</a>-->
+								<!--</div>-->
 							</h2>
+						</div>
+					</div>
+
+
+					<div id = "absenteeButton" class='btn-group btn-group-justified hidden-xs' role='group'>
+						<div class='btn-group tabLink activeSort absentee-panel' role='group' >
+								<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title "
+									<a class = "buttonDetails "  data-toggle="collapse" data-parent="accordion" href="#collapseF">
+										<input type = "checkbox">
+										<span>ALL</span> <div class="right-caret" style = "opacity: 1.0"></div>
+									</a>
+								</div>
+
+								<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title "
+									<a class = "buttonDetails "  data-toggle="collapse" data-parent="accordion" href="#collapseF">
+										<input type = "checkbox">
+										<span>EARLY</span> <div class="right-caret" style = "opacity: 1.0"></div>
+									</a>
+								</div>
+
+								<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title "
+									<a class = "buttonDetails "  data-toggle="collapse" data-parent="accordion" href="#collapseF">
+										<input type = "checkbox">
+										<span>ABSENTEE</span> <div class="right-caret" style = "opacity: 1.0"></div>
+									</a>
+								</div>
 						</div>
 					</div>
 					<div class='btn-group btn-group-justified ' role='group'>
@@ -256,7 +310,7 @@
 
 
 		<!--NON-HIDDEN STARTS HERE-->
-		<div class="container-fluid center">
+		<div class="container-fluid center" style = "display:none">
 			<!--filter bar on large views-->
 			<!--<div class=" panel-default hidden-xs filterBar"  id="filter-collapsible">-->
 			<!--<div class="panel-heading filter-panel">-->
@@ -270,7 +324,8 @@
 			<!--</span>-->
 			<!--</h2>-->
 			<!--</div>-->
-			<section class="panel-collapse collapse filters filterBar" id='collapseF'>
+			<!--filter bar hidden unless needed later-->
+			<section class="panel-collapse collapse filters filterBar" id='collapseF' >
 				<div class="row">
 					<div class="col-lg-4 col-md-4 col-sm-4 hidden-xs " >
 						<div class="row">
@@ -292,7 +347,7 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 hidden-xs" id="maxWait" style="display:block" >
 						<div class="row" style ="margin-top: 13px;">
 							<div class="col-lg-12 col-md-12 col-sm-12 hidden-xs" >
-								<input id="isMaxWait" onclick="unselectMaxWait()" checked="checked" name="isMaxWait" type="checkbox" value="isMaxWait">
+								<input id="isMaxWait" onclick="unselectMaxWait()" name="isMaxWait" type="checkbox" value="isMaxWait">
 								<label for="isMaxWait" style="text-align: right">Max Wait Time:</label>
 							</div>
 							<div class="col-lg-12 col-md-12 col-sm-12 hidden-xs" style="margin-left: 20px;" >
@@ -303,7 +358,7 @@
 					<div class="col-lg-4 col-md-4 col-sm-4 hidden-xs" >
 						<div class="row" style ="margin-top: 13px;">
 							<div class="col-lg-12 col-md-12 col-sm-12 hidden-xs" >
-								<input id="isMaxDistance" onclick="unselectMaxDistance()" checked="checked" name="isMaxDistance" type="checkbox" value="isMaxDistance">
+								<input id="isMaxDistance" onclick="unselectMaxDistance()"  name="isMaxDistance" type="checkbox" value="isMaxDistance">
 								<label for="isMaxDistance" style="text-align: right">Max Distance:</label>
 							</div>
 							<div class="col-lg-12 col-md-12 col-sm-12 hidden-xs" style="margin-left: 20px;" >
@@ -323,7 +378,29 @@
 
 		<!--MAP AND INJECTED LIST DIV-->
 		<div id="mapListContainer" class ="row" style = "margin-left: 0px; margin-right: 0px;">
+
+			<div class="hidden-lg hidden-md hidden-sm col-xs-12 tabs" id = "absenteeButtonMobile">
+				<div class='btn-group btn-group-justified ' role='group'>
+					<div class='btn-group tabLink mobileOptions activeSort ' role='group'>
+						
+						<div class ="col-xs-12 optionButtons">
+							<h3 class="panel-title filter-panel-title " >
+								Report Line Count <div class="right-caret" style = "opacity: 1.0"></div>
+							</h3>
+
+						</div>
+						<div class ="col-xs-6 optionButtons" style = "display:none">
+							<h3 class="panel-title filter-panel-title " >
+								Absentee Ballots <div class="right-caret" style = "opacity: 1.0"></div>
+							</h3>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
 			<div class="col-lg-4 col-md-5 col-sm-6 col-xs-12" id = "listGoesHere"></div>
+
 			<div class="col-lg-8 col-md-7 col-sm-6 col-xs-12" id = "mapGoesHere" style="padding-right: 0px; padding-left: 0px;">
 				<div id='map' class='center'></div>
 			</div>

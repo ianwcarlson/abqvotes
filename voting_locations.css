@@ -95,6 +95,18 @@
 	opacity        : 0.3;
 }
 
+#absenteeButtonMobile {
+	padding: 0;
+	margin-bottom: -1px;
+}
+
+#absenteeButton {
+
+	border-top: 1px solid white;
+	border-bottom: 1px solid wheat;
+}
+
+
 .tabs{
 	background: #E4C9C9 ;
 	width: 100.6%;
@@ -152,7 +164,7 @@ button.sortButtons:focus {
 	/*text-align: right;*/
 	font-weight: bold;
 	color: azure;
-	font-size: medium;
+	/*font-size: medium;*/
 	background-color: #A54A4A;
 	padding: 8px 16px;
 	margin-left: -4px;
@@ -160,7 +172,36 @@ button.sortButtons:focus {
 
 }
 
+.optionButtons {
+	padding: 4px 4px 0px 4px;
 
+}
+
+.filter-panel-title {
+	font-weight: bolder;
+	font-size: 19px;
+	color: azure;
+	background-color: #A54A4A;
+	padding: 8px;
+	border-radius: 6px;
+}
+
+.mobileOptions {
+	padding-left: 3px !important;
+	background-color: #400000 !important;
+	padding-right: 3px!important;
+	padding-top: 5px!important;
+	padding-bottom: 7px!important;
+	background-color: #400000!important;
+}
+
+.absentee-panel {
+	background-color: #400000 !important;
+	padding-left: 30px !important;
+	padding-right: 15px !important;
+	/*padding : 10px !important;*/
+	/*border-top: 1px solid white !important;*/
+}
 
 @media (max-width: 768px) {
 	.nav-justified > li {
@@ -495,11 +536,6 @@ border-radius: 0px;
 
 
 
-.filter-panel-title {
-	font-weight : bolder;
-	font-size   : 19px;
-	color       : white !important;
-}
 
 .list-title{
 	/*position:absolute;*/
