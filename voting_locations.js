@@ -53,6 +53,31 @@ $('body').on('click', function (e) {
 
 
 
+
+// ajax post to submit line count report
+(function (){
+	$(document).on('submit', 'form[data-remote]', function(e) {
+		var form = $(this);
+		var method = form.find('input[name="_method"]').val() || 'POST';
+		var theId = form.find('input[id="liveReportButton"]').val();
+		var url = form.prop('action');
+		$.ajax({
+			type: method,
+			url: url,
+			data: form.serialize(),
+			success: function() {
+				showThankModal();
+			},
+			error: function(){
+				showThankModal();
+
+			}
+		});
+		e.preventDefault();
+		//$('#confirmModal').modal("hide");
+	});
+})();
+
 ///////////////////////////////////////////////////////////////////////////////////
 /*
  * Set up Map and necessary layers and variables
@@ -107,6 +132,11 @@ Voter.latlngAdjustment = 0;
 
 // set up sort booleans for re-sorting when new items added or removed from all location array
 Voter.isSortByType = 'distance';
+Voter.isFilteredBy = 'early';
+
+// set up current location boolean for use in reporting line
+Voter.isCurrent = false;
+
 
 // set datasource -- override on URL with "data=UNM | CABQ"
 Voter.datasource = "UNM";
@@ -272,6 +302,8 @@ function findCurrentLocation() {
 function onLocationFound(e) {
 	console.log ('onLocationFound fires now');
 
+
+
 	// build popup display
 	Voter.currentRadius = Math.round(e.accuracy / 2);
 	Voter.currentLocation = e.latlng;
@@ -279,6 +311,9 @@ function onLocationFound(e) {
 	Voter.currentLng = e.latlng.lng;
 
 	changeLocations(true);
+
+	// set current location boolean to true for use in reporting the line
+	Voter.isCurrent = true;
 	/*
 	 var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
 	 " meters of this point. </strong><br/>" +
@@ -616,7 +651,7 @@ function buildHeatMap(){
 	var theLocationId;
 	for (things=0; things< Voter.all.length; things++) {
 		theLocationId = "id" + Voter.all[things].UniqueID;
-		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId)) {
+		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId) && checkEarly(theLocationId) && checkAbsentee(theLocationId)) {
 			distances.push(Voter.all[things].Distance);
 			withinDistances.push(theLocationId);
 		}
@@ -687,10 +722,10 @@ function build(listLocation, whichArray){
 	} else if (whichArray === "isZoomList") {
 		array = Voter.zoomList;
 		counta = 1;
-		// rebuild the layers and list for given array
+		// rebuild list for given array
 		for(count = 0; count < array.length; count++) {
 			theLocationId = "id" + array[count].UniqueID;
-			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId)) {
+			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId) && checkEarly(theLocationId) && checkAbsentee(theLocationId)) {
 				//rebuild zoom List
 				counter = count + counta;
 				buildListItem(	theLocationId,
@@ -714,11 +749,12 @@ function buildIcon(theId) {
 	var iconId;
 	var theLayer;
 
-	var classType1 ="";
-	var classType2 ="";
-	var classType3 ="";
 
-	// fixme: activate when CABQ data flow works
+
+	/* fixme: may activate and build on this for hiding/showing icons if performance becomes an issue
+	 var classType1 ="";
+	 var classType2 ="";
+	 var classType3 ="";
 	if (Voter.locations[theId].isAbsenteeVoting === "y"){
 		classType1 = "absenteeLocation";
 	}
@@ -732,6 +768,9 @@ function buildIcon(theId) {
 	}
 
 	iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
+	*/
+
+	iconClass ='location-icon heatmap-' + Voter.heat[theId];
 	iconId = 'locationIcon-' + theId;
 	theLayer = Voter.allIconsLayer;
 
@@ -870,7 +909,12 @@ function sortArray(isWhatType){
 		console.log("sortArray DEFAULT fires now");
 		theArray.sort(function(a, b) {
 			return a.Distance - b.Distance
-		})
+		});
+
+		// grab nearest location into global for reporting of line length
+		Voter.nearest = Voter.zoomList[0];
+		console.log('nearest location is ' + Voter.nearest);
+
 	} else if(isWhatType === 'time') {
 		console.log("sortArray TIME fires now");
 
@@ -888,7 +932,9 @@ function sortArray(isWhatType){
 
 		theArray.sort(function(a, b) {
 			return a.count - b.count
-		})
+		});
+		console.log('nearest location is ' + Voter.nearest);
+
 	} else if ((isWhatType === 'distance')) {
 		console.log("sortArray DISTANCE fires now");
 
@@ -948,7 +994,9 @@ function setFilterRadios(type){
 	document.getElementById(type + "Box").checked = true;
 	document.getElementById(type + "BoxMobile").checked = true;
 
+	rebuildAll();
 
+	/* may activate and build on this if performance becomes an issue
 	if (type === "all"){
 		// show all icons by unhiding any that are hidden
 		showIconsByType(type);
@@ -963,7 +1011,7 @@ function setFilterRadios(type){
 		hideIconsByType("all");
 		hideIconsByType("early");
 
-	}
+	}*/
 
 }
 
@@ -1187,7 +1235,75 @@ function unselectEarlyVoting() {
 }
 
 
+// modal to submit wait time form.
+function confirmReport(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+	// edit report modal stub
+	document.getElementById('confirmedLocation').innerHTML = Voter.nearest.MVCName;
+	document.getElementById('modalReportButton').value = Voter.nearest.OBJECTID;
+	document.getElementById('modalReportButton').setAttribute('id', 'liveReportButton');
 
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('confirmReportModal').innerHTML;
+
+	// reset template
+	document.getElementById('liveReportButton').setAttribute('id', 'modalReportButton');
+}
+
+// modal to verify location
+function checkReportLocation(){
+
+	// first, check to see if we have their current location at all
+	if (Voter.isCurrent === false){
+		showReportError();
+	}
+
+	// second, check to see if they are within the required range of the location
+	else if (Voter.nearest["Distance"] < 1.0){
+		// edit report modal stub
+		document.getElementById('reportItems').innerHTML = Voter.nearest.MVCName;
+
+		// set into modal stub
+		document.getElementById('modalBody').innerHTML = document.getElementById('confirmLocationModal').innerHTML;
+	} else {
+		notNearEnoughModal();
+	}
+}
+
+// modal to display location error modal for reporting.
+function showReportError(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('reportModalError').innerHTML;
+}
+
+function notNearEnoughModal(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('notNearEnoughModal').innerHTML;
+}
+
+// modal to display location error modal for reporting.
+function showThankModal(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('thankModal').innerHTML;
+}
+
+// modal to display location error modal for reporting.
+function closeModal(){
+	$('#confirmModal').modal("hide");
+
+	// set into modal stub
+	//document.getElementById('modalBody').innerHTML = document.getElementById('reportModalError').innerHTML;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
@@ -1311,6 +1427,25 @@ function checkMaxDistance(theId){
 		return true;
 	}
 }
+
+// check if it's early voting
+function checkEarly(theId){
+	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
+	if (!document.getElementById('earlyBox').checked
+		|| Voter.locations[theId].isEarlyVoting == "y") {
+		return true;
+	}
+}
+
+// check if it's absentee voting
+function checkAbsentee(theId){
+	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
+	if (!document.getElementById('absenteeBox').checked
+		|| Voter.locations[theId].isAbsenteeVoting == "y") {
+		return true;
+	}
+}
+
 
 
 // check if meets early voting criteria set by user

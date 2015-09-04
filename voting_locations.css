@@ -160,6 +160,7 @@ button.sortButtons:focus {
 	margin-top: 5px;
 	/*text-decoration: underline;*/
 }
+
 .filterButton {
 	/*display: inline;*/
 	float: left;
@@ -176,14 +177,29 @@ button.sortButtons:focus {
 
 }
 
+.reportButton {
+	/*display: inline;*/
+	float: left;
+	/*margin-right: 15px;*/
+	margin-top: 15px;
+	/*text-align: right;*/
+	font-weight: bold;
+	color: black;
+	/*font-size: medium;*/
+	padding: 8px 16px;
+	margin-left: -4px;
+	font-size: 20px
+
+}
+
 .optionButtons {
 	padding: 4px 4px 0px 4px;
 
 }
 
 .filterButtonsGroup {
-	border-bottom: 8px solid black;
-	border-top: 8px solid black;
+	border-bottom: 2px solid black;
+	/*border-top: 4px solid black;*/
 }
 
 #reportLineAboveHeader {
@@ -207,6 +223,25 @@ button.sortButtons:focus {
 	/*border-left: 20px solid black;*/
 	/*padding: 0px !important;*/
 }
+
+
+.modalButtons {
+	margin: 18px;
+	width: 33%;
+	color: white;
+	font-size:20px;
+	font-weight: bolder;
+	background-color : #A54A4A;
+}
+
+.reportInputs {
+	font-size: 30px;
+	text-align: center;
+	width: 100%;
+	border: 1px solid black;
+	border-radius: 4px;
+}
+
 
 .checkboxes {
 	display: inline-block;
