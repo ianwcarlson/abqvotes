@@ -155,7 +155,11 @@ button.sortButtons:focus {
 }
 
 
-
+.filterDescription {
+	margin-bottom: 0;
+	margin-top: 5px;
+	/*text-decoration: underline;*/
+}
 .filterButton {
 	/*display: inline;*/
 	float: left;
@@ -175,6 +179,38 @@ button.sortButtons:focus {
 .optionButtons {
 	padding: 4px 4px 0px 4px;
 
+}
+
+.filterButtonsGroup {
+	border-bottom: 8px solid black;
+	border-top: 8px solid black;
+}
+
+#reportLineAboveHeader {
+	margin-bottom: -15px;
+	margin-top: 5px;
+	z-index: 10000;
+	padding:0;
+}
+
+.mobileCheckboxes {
+	width: 100%;
+	font-size: 16px;
+	text-align: right !important;
+
+}
+.checkboxButtons{
+	font-size: 16px !important;
+	border-right: 1px solid black !important;
+	border-left: 1px solid black !important;
+	/*border-radius: 6px !important;*/
+	/*border-left: 20px solid black;*/
+	/*padding: 0px !important;*/
+}
+
+.checkboxes {
+	display: inline-block;
+	margin-right: 10px;
 }
 
 .filter-panel-title {
@@ -388,7 +424,7 @@ button.sortButtons:focus {
 	z-index: 100000;
 	display: none;
 	float: left;
-	min-width: 18px;
+	min-width: 240px;
 	padding: 5px 5px;
 	margin: 2px 0 0;
 	list-style: none;

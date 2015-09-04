@@ -713,7 +713,25 @@ function buildIcon(theId) {
 	var iconClass;
 	var iconId;
 	var theLayer;
-	iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+
+	var classType1 ="";
+	var classType2 ="";
+	var classType3 ="";
+
+	// fixme: activate when CABQ data flow works
+	if (Voter.locations[theId].isAbsenteeVoting === "y"){
+		classType1 = "absenteeLocation";
+	}
+
+	if (Voter.locations[theId].isEarlyVoting === "y"){
+		classType2 = "earlyLocation";
+	}
+
+	if (Voter.locations[theId].isAbsenteeVoting !== "y" && Voter.locations[theId].isEarlyVoting !== "y"){
+		classType3 = "allLocations";
+	}
+
+	iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
 	iconId = 'locationIcon-' + theId;
 	theLayer = Voter.allIconsLayer;
 
@@ -921,55 +939,71 @@ function sortArray(isWhatType){
 }
 
 
-// TOGGLING ALL PREFERENCES
-// Show only Preferred -- Deprecated for now but can be refactored for a different filter
-function showPreferredOnly(){
-	console.log ('showPreferredOnly fires now');
+// TOGGLING ALL filters
 
-	// hide all location icons
-	var icons = document.getElementsByClassName("location-icon");
-	var index;
-	for (index = 0; index < icons.length; index++) {
-		icons[index].style.visibility = "hidden";
+function setFilterRadios(type){
+	console.log('setFilterRadios fires now');
+
+	// make sure both checkboxes are checked
+	document.getElementById(type + "Box").checked = true;
+	document.getElementById(type + "BoxMobile").checked = true;
+
+
+	if (type === "all"){
+		// show all icons by unhiding any that are hidden
+		showIconsByType(type);
+	}else if (type === "early"){
+		// show only early locations by hiding any with class "allLocations" and rebuilding list
+		showIconsByType(type);
+		hideIconsByType("all");
+
+	}else if (type === "absentee"){
+		// show only absentee locations by hiding any with class "allLocations" or class "absenteeLocations" and rebuilding List
+		showIconsByType(type);
+		hideIconsByType("all");
+		hideIconsByType("early");
+
 	}
 
-	// hide allBuffer layer
-	map.removeLayer(Voter.allBufferLayer);
+}
+
+
+// Show only early voting
+function showIconsByType(type) {
+	console.log('hideIconsByType fires now');
+
+	// hide all non-early location icons on map
+	var icons = document.getElementsByClassName(type + "Locations");
+	var index;
+
+	if(icons[0].style.visibility === "visible"){
+		for(index = 0; index < icons.length; index++) {
+			icons[index].style.visibility = "visible";
+		}
+	}
 
 	// close last opened popup
 	map.closePopup();
-
-	// re-set ShowPreferred Checkboxes
-	document.getElementById("preferredBox").setAttribute( "onClick", "showAll()" );
-	document.getElementById("mobilePreferredBox").setAttribute( "onClick", "showAll()" );
-
-	// make sure both checkboxes are checked
-	document.getElementById("preferredBox").checked = true;
-	document.getElementById("mobilePreferredBox").checked = true;
 }
 
+function hideIconsByType(type) {
+	console.log('hideIconsByType fires now');
 
-// Unhide all non-preferred locations
-function showAll(){
-	console.log ('showAll fires now');
-
-	var icons = document.getElementsByClassName("location-icon");
+	// hide all non-early location icons on map
+	var icons = document.getElementsByClassName(type + "Locations");
 	var index;
-	for (index = 0; index < icons.length; index++) {
-		icons[index].style.visibility = "visible";
+
+	if(icons[0].style.visibility === "visible"){
+		for(index = 0; index < icons.length; index++) {
+			icons[index].style.visibility = "hidden";
+		}
 	}
 
-	// Add allBuffers layer back
-	map.addLayer(Voter.allBufferLayer);
-
-	// re-set ShowPreferred Checkbox
-	document.getElementById("preferredBox").setAttribute( "onClick", "showPreferredOnly()" );
-	document.getElementById("mobilePreferredBox").setAttribute( "onClick", "showPreferredOnly()" );
-
-	// make sure both checkboxes are UNchecked
-	document.getElementById("preferredBox").checked = false;
-	document.getElementById("mobilePreferredBox").checked = false;
+	// close last opened popup
+	map.closePopup();
 }
+
+
 
 
 // Max Wait FILTER
@@ -1218,22 +1252,38 @@ function editLocationDetails (theId, isList) {
 		document.getElementById(listName + "distance").				innerHTML = Voter.locations[theId].Distance;
 	
 		var votingType = "";
+		var dayCount = 0;
 		if(Voter.locations[theId].isElectionDay=="y")
 			votingType = "Election Day";
 		if(Voter.locations[theId].isEarlyVoting=="y")
 		{
 			votingType = votingType + ", Early Voting";
 			votingDays = "<br>Days: ";
-			if(Voter.locations[theId].isEarlyVotingMonday=="y")
+			if(Voter.locations[theId].isEarlyVotingMonday=="y"){
 				votingDays = votingDays + "M ";
-			if(Voter.locations[theId].isEarlyVotingTuesday=="y")
+				dayCount++;
+			}
+				votingDays = votingDays + "M ";
+			if(Voter.locations[theId].isEarlyVotingTuesday=="y") {
 				votingDays = votingDays + "Tu ";
-			if(Voter.locations[theId].isEarlyVotingWednesnday=="y")
+				dayCount++;
+			}
+			if(Voter.locations[theId].isEarlyVotingWednesday=="y") {
 				votingDays = votingDays + "W ";
-			if(Voter.locations[theId].isEarlyVotingThursday=="y")
+				dayCount++;
+			}
+			if(Voter.locations[theId].isEarlyVotingThursday=="y"){
 				votingDays = votingDays + "Th ";
-			if(Voter.locations[theId].isEarlyVotingFriday=="y")
+				dayCount++;
+			}
+			if(Voter.locations[theId].isEarlyVotingFriday=="y"){
 				votingDays = votingDays + "F";
+				dayCount++;
+			}
+
+			if (dayCount === 5) {
+				votingDays = "M-F"
+			}
 			document.getElementById(listName + "openDate").			innerHTML = Voter.locations[theId].EarlyVotingStartDateStr + " to " + Voter.locations[theId].EarlyVotingEndDateStr + votingDays;
 		}
 		if(Voter.locations[theId].isAbsenteeVoting=="y")

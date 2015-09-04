@@ -45,10 +45,21 @@
 		<header class="navbar navbar-default" style = "margin-bottom: 0px; margin-top: -9px; border:none">
 			<div class="navbar-header" style="width: 100%; background-color: #400000" id = "header-button">
 
+				<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
+					<!--<div class='btn-group btn-group-justified ' role='group'>-->
+						<!--<div class='btn-group tabLink mobileOptions activeSort ' role='group'>-->
+							<!--<div class ="col-xs-12 optionButtons">-->
+								<!--<h4 class="panel-title filter-panel-title " >-->
+									<!--Report Line Count-->
+									<!--&lt;!&ndash;<div class="right-caret" style = "opacity: 1.0"></div>&ndash;&gt;-->
+								<!--</h4>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
 
 
-
-				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px;">
+				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogoLeft" style="z-index: 10000;margin-top: 18px;">
 					<a href="http://www.codeforabq.org" style ="color: wheat">A <img class = "logoHeader" src="images/balloon_var4.png"> project.</a>
 				</div>
 
@@ -71,17 +82,33 @@
 					</button>
 				</div>
 
-				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "padding: 0px; margin-right: -15px; background-color: #400000; color: white;" id = "appendViewHeading">
+				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
 					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
-					<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">Vote Nearby</h2>
+					<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg filterButton" style="font-size: 16px; padding-bottom: 13px; margin-left: -5px; width: 100%;" onclick = "reportLineCount()">
+						<span > Report Line Count</span>
+					</button>
+
+					<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
+						<!--<div class='btn-group btn-group-justified ' role='group'>-->
+							<!--<div class='btn-group tabLink mobileOptions activeSort ' role='group'>-->
+								<!--<div class ="col-xs-12 optionButtons">-->
+									<!--<h4 class="panel-title filter-panel-title " >-->
+										<!--Report Line Count-->
+										<!--&lt;!&ndash;<div class="right-caret" style = "opacity: 1.0"></div>&ndash;&gt;-->
+									<!--</h4>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+
+					<!--<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes</h2>-->
 				</div>
 
 				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px; padding-right: 0px; text-align: right">
 					<a href="http://www.codeforabq.org" style ="color: wheat">Report Line Count In Person</a>
 				</div>
 
-				<!--filter button hidden until needed later if at all-->
-				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: -10px;">
+				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
 					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  aria-haspopup="true" aria-expanded="false" data-canvas="body" >
 						<span class = "glyphicon glyphicon-filter"></span>
 					</button>
@@ -105,20 +132,43 @@
 								<input id="onlyOpenMobile" onclick="selectOnlyOpen()" name="onlyOpenMobile" type="checkbox" value="onlyOpenMobile">
 							</li>-->
 
-							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
-								<label for="isEarlyVotingMobile" style="text-align: right">Show Early Voting Only</label>
-								<input id="isEarlyVotingMobile" onclick="selectEarlyVoting()" name="isEarlyVotingMobile" type="checkbox" value="isEarlyVotingMobile">
+							<li class = "filter-items" id="allMobile" style="display:block">
+								<div id = "isAllMobile" onclick = "setFilterRadios('all'); rebuildList();" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
+									<span>Show All Locations</span>
+									<input id = "allBoxMobile" type = "radio" name = "mobileFilters" checked = "checked" class = " checkboxes">
+								</div>
+
+								<!--<label for="isAllMobile" style="text-align: right">Show All Locations</label>-->
+								<!--<input id="isAllMobile" onclick = "setFilterRadios('all'); rebuildList();" name="isAllMobile" type="checkbox" value="isEarlyVotingMobile">-->
 								<!--<input type="text" class="dateFieldFilter" id="isEarlyVotingMobileDatepicker" onchange="changeEarlyVotingDate(this.value)" />-->
 							</li>
-							<br/>
+
 							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
-								<label for="isEarlyVotingMobile" style="text-align: right">Show Absentee DropOffs</label>
-								<input id="isEarlyVotingMobile" onclick="selectEarlyVoting()" name="isEarlyVotingMobile" type="checkbox" value="isEarlyVotingMobile">
+								<div id = "isEarlyMobile" onclick = "setFilterRadios('early'); rebuildList();" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
+									<span>Show Early Voting</span>
+									<input id = "earlyBoxMobile" type = "radio" name = "mobileFilters" class = "checkboxes">
+								</div>
+
+
+								<!--<label for="isEarlyVotingMobile" style="text-align: right">Show Early Voting Only</label>-->
+								<!--<input id="isEarlyVotingMobile" onclick = "setFilterRadios('early'); rebuildList();" name="isEarlyVotingMobile" type="checkbox" value="isEarlyVotingMobile">-->
+								<!--<input type="text" class="dateFieldFilter" id="isEarlyVotingMobileDatepicker" onchange="changeEarlyVotingDate(this.value)" />-->
+							</li>
+
+							<li class = "filter-items" id="absenteeMobile" style="display:block">
+								<div id = "isAbsenteeMobile" onclick = "setFilterRadios('absentee'); rebuildList();" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
+									<span>Absentee Locations</span>
+									<input id = "absenteeBoxMobile" type = "radio" name = "mobileFilters" class = "checkboxes">
+								</div>
+
+
+								<!--<label for="isAbsenteeMobile" style="text-align: right">Show Absentee DropOffs</label>-->
+								<!--<input id="isAbsenteeMobile" onclick = "setFilterRadios('absentee'); rebuildList();" name="isAbsenteeMobile" type="checkbox" value="isEarlyVotingMobile">-->
 								<!--<input type="text" class="dateFieldFilter" id="isEarlyVotingMobileDatepicker" onchange="changeEarlyVotingDate(this.value)" />-->
 							</li>
 
 
-							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
+							<li class = "filter-items" id="logoMobile" style="display:block">
 								<br/>
 								<a href="http://www.codeforabq.org" style ="color: wheat">More about <img class = "logoHeader" src="images/balloon_var4.png"> projects.</a>
 
@@ -262,29 +312,32 @@
 					</div>
 
 
-					<div id = "absenteeButton" class='btn-group btn-group-justified hidden-xs' role='group'>
-						<div class='btn-group tabLink activeSort absentee-panel' role='group' >
-								<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title "
-									<a class = "buttonDetails "  data-toggle="collapse" data-parent="accordion" href="#collapseF">
-										<input type = "checkbox">
-										<span>ALL</span> <div class="right-caret" style = "opacity: 1.0"></div>
-									</a>
-								</div>
-
-								<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title "
-									<a class = "buttonDetails "  data-toggle="collapse" data-parent="accordion" href="#collapseF">
-										<input type = "checkbox">
-										<span>EARLY</span> <div class="right-caret" style = "opacity: 1.0"></div>
-									</a>
-								</div>
-
-								<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title "
-									<a class = "buttonDetails "  data-toggle="collapse" data-parent="accordion" href="#collapseF">
-										<input type = "checkbox">
-										<span>ABSENTEE</span> <div class="right-caret" style = "opacity: 1.0"></div>
-									</a>
-								</div>
+					<div class='btn-group btn-group-justified hidden-xs filterButtonsGroup' role='group' id = "filterButtons" >
+						<!--<div class='btn-group tabLink activeSort absentee-panel' role='group' >-->
+							<!--<div class = "row">-->
+								<!--<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title buttonDetails checkboxButtons ">-->
+									<!--<a class = "buttonDetails ">-->
+						<div id = "isAll" onclick = "setFilterRadios('all'); rebuildList();" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' >
+							<input id = "allBox" type = "radio" name = "nonMobileFilters" checked = "checked" class = " checkboxes">
+							<span>All</span>
 						</div>
+
+								<!--<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title buttonDetails checkboxButtons ">-->
+									<!--<a class = "buttonDetails ">-->
+						<div id = "isEarly" onclick = "setFilterRadios('early'); rebuildList();" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' >
+
+							<input id = "earlyBox" type = "radio" name = "nonMobileFilters" class = "checkboxes">
+							<span>Early</span>
+						</div>
+
+								<!--<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title buttonDetails checkboxButtons">-->
+									<!--<a class = "buttonDetails" >-->
+						<div id = "isAbsentee" onclick = "setFilterRadios('absentee'); rebuildList();" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' style = "border-right: 0px !important" >
+
+							<input id = "absenteeBox" type = "radio" name = "nonMobileFilters" class = "checkboxes">
+							<span>Absentee</span>
+						</div>
+
 					</div>
 					<div class='btn-group btn-group-justified ' role='group'>
 						<div id = "byNearest" onclick = "sortArray('distance'); rebuildList();" class = "btn btn-default tabLink activeSort" role='group' >
@@ -384,9 +437,12 @@
 					<div class='btn-group tabLink mobileOptions activeSort ' role='group'>
 						
 						<div class ="col-xs-12 optionButtons">
-							<h3 class="panel-title filter-panel-title " >
-								Report Line Count <div class="right-caret" style = "opacity: 1.0"></div>
-							</h3>
+							<!--<h3 class="panel-title filter-panel-title " >-->
+								<!--Report Line Count <div class="right-caret" style = "opacity: 1.0"></div>-->
+							<!--</h3>-->
+							<h5 class = "filterDescription">
+								<span id = "filterDescription"><em>Showing Early Voting Locations:</em></span>
+							</h5>
 
 						</div>
 						<div class ="col-xs-6 optionButtons" style = "display:none">
