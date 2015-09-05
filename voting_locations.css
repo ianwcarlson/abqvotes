@@ -157,7 +157,7 @@ button.sortButtons:focus {
 
 .filterDescription {
 	margin-bottom: 0;
-	margin-top: 5px;
+	margin-top: 0px;
 	/*text-decoration: underline;*/
 }
 
@@ -171,9 +171,11 @@ button.sortButtons:focus {
 	color: azure;
 	/*font-size: medium;*/
 	background-color: #A54A4A;
-	padding: 8px 16px;
+	padding: 5px 16px;
 	margin-left: -4px;
-	font-size: 20px
+	font-size: 24px;
+	width: 100%;
+	min-width: 54px;
 
 }
 
@@ -183,17 +185,21 @@ button.sortButtons:focus {
 	/*margin-right: 15px;*/
 	margin-top: 15px;
 	/*text-align: right;*/
-	font-weight: bold;
+	font-weight: bolder;
 	color: black;
 	/*font-size: medium;*/
-	padding: 8px 16px;
-	margin-left: -4px;
-	font-size: 20px
+	padding: 3px 8px;
+	margin-left: 0px;
+	font-size: 14px;
+	width: 100%;
+	min-width: 85px;
+	text-align: center;
+	font-family: "Lucida Console", Georgia, serif;
 
 }
 
 .optionButtons {
-	padding: 4px 4px 0px 4px;
+	/*padding: 4px 4px 0px 4px;*/
 
 }
 
@@ -345,6 +351,8 @@ button.sortButtons:focus {
 	border-width: 3px;
 	margin-left: -15px;
 	margin-top: -37px;
+	z-index:5000 !important;
+
 }
 
 .address-icon {
@@ -359,6 +367,7 @@ button.sortButtons:focus {
 	border-width: 3px;
 	margin-left: -20px;
 	margin-top: -37px;
+	z-index:5000 !important;
 }
 
 .your-location-pointer {

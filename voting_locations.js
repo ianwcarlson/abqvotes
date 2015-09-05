@@ -138,6 +138,10 @@ Voter.isFilteredBy = 'early';
 Voter.isCurrent = false;
 
 
+// boolean to determine whether or not list has already been built for radio button checking
+Voter.isFirstBuild = true;
+
+
 // set datasource -- override on URL with "data=UNM | CABQ"
 Voter.datasource = "CABQ";
 tmp = getQueryVariable("data");
@@ -268,15 +272,15 @@ function setBaseLocation (lat, lng) {
 	var adjustedLatLong = [Voter.lat, Voter.latlngAdjustment + Voter.lng];
 	map.setView(adjustedLatLong, 12);
 
-	var currentLocationButton;
-	currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
+	//var currentLocationButton;
+	//currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
 
 	// build variable for popup display
-	var locationDetails2 =	"<div style = 'text-align: center'><strong>Location not enabled <br/>on this device.  " +
-		"</strong>"+ currentLocationButton;
+	var locationDetails2 =	"<div style = 'text-align: center'><strong>We couldn't find you.  Try turning on locations services for your browser and refresh page.</strong>";
+		//+ currentLocationButton;
 
 	// build html to use in icon
-	var homeMarker = "Home" +
+	var homeMarker = "ABQ" +
 		"<div class='leaflet-popup-tip-container' style='margin-top: 4px; margin-left: 0px'>" +
 		"<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
 
@@ -296,7 +300,7 @@ function setBaseLocation (lat, lng) {
 
 	// add icon to map with popup
 	L.marker(voterLatLong, {icon: myAddressIcon, title: "Home Address"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.addressPopup).openPopup();
+		.bindPopup(Voter.addressPopup);
 }
 
 function findCurrentLocation() {
@@ -372,7 +376,7 @@ function onLocationError(e) {
 	console.log ('onLocationError fires now');
 
 	// notify user
-	alert(e.message);
+	alert(e.message + " Because of the this error, we were not able to get your current location. To use the sorting and links to directions in this app, we recommend making sure your locations services are on for your browser and refreshing the page.");
 	Voter.maxDistance = 10;
 	// re-set view with Runner Address as base'
 	setToHomeAddress();
@@ -397,7 +401,7 @@ function changeLocations(isToCurrent){
 
 
 	if (isToCurrent){
-		rebuildHomeIcon(true);
+		//rebuildHomeIcon(true);
 		rebuildCurrentIcon(true);
 		setToCurrentLocation();
 
@@ -451,7 +455,7 @@ function rebuildHomeIcon(isToCurrent){
 
 	// add icon to map with popup
 	L.marker(voterLatLong, {icon: myAddressIcon, title: "Home Address"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.addressPopup).openPopup();
+		.bindPopup(Voter.addressPopup);
 }
 
 
@@ -468,9 +472,10 @@ function rebuildCurrentIcon(isToCurrent){
 	}
 
 	var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
-		" meters of this point. </strong><br/>" +
-		"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + theBool + ")'>" +
-		theInnerHtml + "</button></div>";
+		" meters of this point. </strong><br/>";
+
+		// deprecated as not needed for voter locations use case
+		//"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + theBool + ")'>" + theInnerHtml + "</button></div>";
 
 	// build html to use in icon
 	var currentLocationMarker = "You!" +
@@ -494,7 +499,7 @@ function rebuildCurrentIcon(isToCurrent){
 
 	// add icon and range circle to map
 	L.marker(Voter.currentLocation, {icon: myLocationIcon, title: "Current Location"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.currentPopup).openPopup();
+		.bindPopup(Voter.currentPopup);
 
 	L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 }
@@ -504,7 +509,8 @@ function rebuildCurrentIcon(isToCurrent){
 function setToCurrentLocation() {
 	console.log ('setToCurrentLocation fires now');
 
-	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 12);
+		//openPopup(Voter.currentPopup);
 	checkForLocations(Voter.currentLat, Voter.currentLng);
 
 	// set up zoom events
@@ -515,7 +521,8 @@ function setToCurrentLocation() {
 function setToHomeAddress() {
 	console.log ('setToHomeAddress fires now');
 
-	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12).openPopup(Voter.addressPopup);
+	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12);
+		//.openPopup(Voter.addressPopup);
 
 	checkForLocations(Voter.lat, Voter.lng);
 
@@ -565,6 +572,8 @@ function checkForLocations(lat, long){
 
 		// set combined template into live div and reset template
 		buildCombinedView();
+
+		Voter.isFirstBuild = false;
 	}
 }
 
@@ -999,12 +1008,18 @@ function sortArray(isWhatType){
 // TOGGLING ALL filters
 
 function setFilterRadios(type){
-	console.log('setFilterRadios fires now');
+	console.log('setFilterRadios fires now with type:' + type);
 
 	// make sure both checkboxes are checked
-	document.getElementById(type + "Box").checked = true;
+	document.getElementById(type + "BoxLive").checked = true;
 	document.getElementById(type + "BoxMobile").checked = true;
 
+	// move map to nearby location to absentee locations
+	if (type === "absentee"){
+		map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12);
+	}
+
+	// rebuild all.
 	rebuildAll();
 
 	/* may activate and build on this if performance becomes an issue
@@ -1441,8 +1456,14 @@ function checkMaxDistance(theId){
 
 // check if it's early voting
 function checkEarly(theId){
+	var element;
+	if (Voter.isFirstBuild){
+		element = "earlyBox";
+	} else {
+		element = "earlyBoxLive"
+	}
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
-	if (!document.getElementById('earlyBox').checked
+	if (!document.getElementById(element).checked
 		|| Voter.locations[theId].isEarlyVoting == "y") {
 		return true;
 	}
@@ -1450,8 +1471,15 @@ function checkEarly(theId){
 
 // check if it's absentee voting
 function checkAbsentee(theId){
+	var element;
+	if (Voter.isFirstBuild){
+		element = "absenteeBox";
+	} else {
+		element = "absenteeBoxLive"
+	}
+
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
-	if (!document.getElementById('absenteeBox').checked
+	if (!document.getElementById(element).checked
 		|| Voter.locations[theId].isAbsenteeVoting == "y") {
 		return true;
 	}
@@ -1599,13 +1627,18 @@ function buildCombinedView(){
 	document.getElementById("byNearest").						setAttribute('id', 'byNearestLive');
 	document.getElementById("byName").							setAttribute('id', 'byNameLive');
 
-	document.getElementById("lowestCaret").						setAttribute('id', 'lowestCaretLive');
-	document.getElementById("nearestCaret").						setAttribute('id', 'nearestCaretLive');
-	document.getElementById("nameCaret").							setAttribute('id', 'nameCaretLive');
+	document.getElementById("lowestCaret").					setAttribute('id', 'lowestCaretLive');
+	document.getElementById("nearestCaret").					setAttribute('id', 'nearestCaretLive');
+	document.getElementById("nameCaret").						setAttribute('id', 'nameCaretLive');
 
 	// add new ids to scrollable list for hiding
 	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
 	document.getElementById("listRow").							setAttribute('id', 'liveListRow');
+
+	// set filter in list id's
+	document.getElementById("allBox").							setAttribute('id', 'allBoxLive');
+	document.getElementById("earlyBox").						setAttribute('id', 'earlyBoxLive');
+	document.getElementById("absenteeBox").					setAttribute('id', 'absenteeBoxLive');
 
 
 
@@ -1639,6 +1672,11 @@ function buildCombinedView(){
 	// reset scrollable list
 	document.getElementById("liveScrollableList").						setAttribute('id', 'scrollableList');
 	document.getElementById("liveListRow").							setAttribute('id', 'listRow');
+
+	// reset list filter id's
+	document.getElementById("allBoxLive").							setAttribute('id', 'allBox');
+	document.getElementById("earlyBoxLive").						setAttribute('id', 'earlyBox');
+	document.getElementById("absenteeBoxLive").					setAttribute('id', 'absenteeBox');
 
 }
 
