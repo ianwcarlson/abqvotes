@@ -53,6 +53,31 @@ $('body').on('click', function (e) {
 
 
 
+
+// ajax post to submit line count report
+(function (){
+	$(document).on('submit', 'form[data-remote]', function(e) {
+		var form = $(this);
+		var method = form.find('input[name="_method"]').val() || 'POST';
+		var theId = form.find('input[id="liveReportButton"]').val();
+		var url = form.prop('action');
+		$.ajax({
+			type: method,
+			url: url,
+			data: form.serialize(),
+			success: function() {
+				showThankModal();
+			},
+			error: function(){
+				showThankModal();
+
+			}
+		});
+		e.preventDefault();
+		//$('#confirmModal').modal("hide");
+	});
+})();
+
 ///////////////////////////////////////////////////////////////////////////////////
 /*
  * Set up Map and necessary layers and variables
@@ -75,8 +100,8 @@ console.log('next set up tile layer:');
 
 L.tileLayer(
 	//'http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-	//'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-	'http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+	'http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+	//'http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
 	{
 		attribution: "Esri, HERE, DeLorme, USGS, Intermap, increment P Corp., NRCAN, Esri Japan, METI, " +
 		"Esri China (Hong Kong), Esri (Thailand), MapmyIndia, © OpenStreetMap contributors, and the GIS User Community ",
@@ -107,12 +132,18 @@ Voter.latlngAdjustment = 0;
 
 // set up sort booleans for re-sorting when new items added or removed from all location array
 Voter.isSortByType = 'distance';
+Voter.isFilteredBy = 'early';
+
+// set up current location boolean for use in reporting line
+Voter.isCurrent = false;
+
 
 // set datasource -- override on URL with "data=UNM | CABQ"
-Voter.datasource = "UNM";
+Voter.datasource = "CABQ";
 tmp = getQueryVariable("data");
-if(tmp=="UNM" || tmp=="CABQ")
+if(tmp=="UNM" || tmp=="CABQ") {
 	Voter.datasource = tmp;
+}
 
 // set election day indicator -- override on URL with "electionday=Y"
 Voter.isElectionDay = false;
@@ -121,8 +152,9 @@ Voter.earlyVotingDate = new Date();
 
 var currdate = new Date();
 tmp = getQueryVariable("electionday");
-if(tmp=="y" || currdate.toDateString()==Voter.electionDate.toDateString())
+if(tmp=="y" || currdate.toDateString()==Voter.electionDate.toDateString()) {
 	Voter.isElectionDay = true;
+}
 
 console.log(Voter);
 console.log('next set up data:');
@@ -130,8 +162,8 @@ console.log('next set up data:');
 // pull in data from API, assign to global locations array
 if(Voter.datasource=="UNM")
 {
-	var url = "data/voting_locations.json";
-	//var url = "http://where2vote.unm.edu/locationinfo/";
+	//var url = "data/voting_locations.json";
+	var url = "http://where2vote.unm.edu/locationinfo/";
 	$.ajax({
 		url     : url,
 		dataType: 'json',
@@ -169,6 +201,8 @@ else
 			//result= JSON.parse(text); 
 			data=text.features;
 			console.log(data);
+			var theThing2 = 1;
+
 			for(x in data) {
 				data[x].count = 7 + theThing;
 				var theId = "id" + data[x].attributes.OBJECTID;
@@ -177,8 +211,11 @@ else
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["count"] = 0;
+				Voter.locations[theId]["count"] = 7 + theThing2;
 				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
+				Voter.locations[theId]["MVCName"] = data[x].attributes.name;
+				theThing2 ++;
+
 			}
 
 		if(Voter.isElectionDay==true)
@@ -193,7 +230,8 @@ else
 						for (i in Voter.locations) { 
 							if(data[x].MVCName==Voter.locations[i].name)
 							{
-								Voter.locations[i]["count"] = data[x].count;
+								if(data[x].count > 0)
+									Voter.locations[i]["count"] = data[x].count;
 								Voter.locations[i]["lastupdate"] = data[x].lastupdate;
 								Voter.locations[i]["minutesold"] = data[x].minutesold;
 							}
@@ -228,7 +266,7 @@ function setBaseLocation (lat, lng) {
 	var voterLatLong = [Voter.lat, Voter.lng];
 
 	var adjustedLatLong = [Voter.lat, Voter.latlngAdjustment + Voter.lng];
-	map.setView(adjustedLatLong, 13);
+	map.setView(adjustedLatLong, 12);
 
 	var currentLocationButton;
 	currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
@@ -270,6 +308,8 @@ function findCurrentLocation() {
 function onLocationFound(e) {
 	console.log ('onLocationFound fires now');
 
+
+
 	// build popup display
 	Voter.currentRadius = Math.round(e.accuracy / 2);
 	Voter.currentLocation = e.latlng;
@@ -277,6 +317,9 @@ function onLocationFound(e) {
 	Voter.currentLng = e.latlng.lng;
 
 	changeLocations(true);
+
+	// set current location boolean to true for use in reporting the line
+	Voter.isCurrent = true;
 	/*
 	 var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
 	 " meters of this point. </strong><br/>" +
@@ -313,7 +356,7 @@ function onLocationFound(e) {
 	 L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
 
-	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 13).openPopup(Voter.currentPopup);
+	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
 
 	 // fixme is this the right function to recalc distance etc.
 	 //checkForLocations(Voter.currentLat, Voter.currentLng);
@@ -363,6 +406,7 @@ function changeLocations(isToCurrent){
 		rebuildCurrentIcon(false);
 		setToHomeAddress();
 	}
+	ga('send', 'event', 'button', 'click', 'changeLocations');
 }
 
 function rebuildHomeIcon(isToCurrent){
@@ -460,7 +504,7 @@ function rebuildCurrentIcon(isToCurrent){
 function setToCurrentLocation() {
 	console.log ('setToCurrentLocation fires now');
 
-	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 13).openPopup(Voter.currentPopup);
+	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
 	checkForLocations(Voter.currentLat, Voter.currentLng);
 
 	// set up zoom events
@@ -471,7 +515,7 @@ function setToCurrentLocation() {
 function setToHomeAddress() {
 	console.log ('setToHomeAddress fires now');
 
-	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 13).openPopup(Voter.addressPopup);
+	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12).openPopup(Voter.addressPopup);
 
 	checkForLocations(Voter.lat, Voter.lng);
 
@@ -614,7 +658,7 @@ function buildHeatMap(){
 	var theLocationId;
 	for (things=0; things< Voter.all.length; things++) {
 		theLocationId = "id" + Voter.all[things].UniqueID;
-		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId)) {
+		if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId) && checkEarly(theLocationId) && checkAbsentee(theLocationId)) {
 			distances.push(Voter.all[things].Distance);
 			withinDistances.push(theLocationId);
 		}
@@ -685,10 +729,10 @@ function build(listLocation, whichArray){
 	} else if (whichArray === "isZoomList") {
 		array = Voter.zoomList;
 		counta = 1;
-		// rebuild the layers and list for given array
+		// rebuild list for given array
 		for(count = 0; count < array.length; count++) {
 			theLocationId = "id" + array[count].UniqueID;
-			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId)) {
+			if(checkMaxWait(theLocationId) && checkMaxDistance(theLocationId) && checkEarlyVoting(theLocationId) && checkEarly(theLocationId) && checkAbsentee(theLocationId)) {
 				//rebuild zoom List
 				counter = count + counta;
 				buildListItem(	theLocationId,
@@ -711,7 +755,29 @@ function buildIcon(theId) {
 	var iconClass;
 	var iconId;
 	var theLayer;
-	iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+
+
+
+	/* fixme: may activate and build on this for hiding/showing icons if performance becomes an issue
+	 var classType1 ="";
+	 var classType2 ="";
+	 var classType3 ="";
+	if (Voter.locations[theId].isAbsenteeVoting === "y"){
+		classType1 = "absenteeLocation";
+	}
+
+	if (Voter.locations[theId].isEarlyVoting === "y"){
+		classType2 = "earlyLocation";
+	}
+
+	if (Voter.locations[theId].isAbsenteeVoting !== "y" && Voter.locations[theId].isEarlyVoting !== "y"){
+		classType3 = "allLocations";
+	}
+
+	iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
+	*/
+
+	iconClass ='location-icon heatmap-' + Voter.heat[theId];
 	iconId = 'locationIcon-' + theId;
 	theLayer = Voter.allIconsLayer;
 
@@ -850,9 +916,15 @@ function sortArray(isWhatType){
 		console.log("sortArray DEFAULT fires now");
 		theArray.sort(function(a, b) {
 			return a.Distance - b.Distance
-		})
+		});
+
+		// grab nearest location into global for reporting of line length
+		Voter.nearest = Voter.zoomList[0];
+		console.log('nearest location is ' + Voter.nearest);
+
 	} else if(isWhatType === 'time') {
 		console.log("sortArray TIME fires now");
+		ga('send', 'event', 'button', 'click', 'sortByTime');
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byLowestLive').style.color = "white";
@@ -868,9 +940,12 @@ function sortArray(isWhatType){
 
 		theArray.sort(function(a, b) {
 			return a.count - b.count
-		})
+		});
+		console.log('nearest location is ' + Voter.nearest);
+
 	} else if ((isWhatType === 'distance')) {
 		console.log("sortArray DISTANCE fires now");
+		ga('send', 'event', 'button', 'click', 'sortByDistance');
 
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNearestLive').style.color = "white";
@@ -891,6 +966,8 @@ function sortArray(isWhatType){
 		})
 	} else if ((isWhatType === 'name')) {
 		console.log("sortArray NAME fires now");
+		ga('send', 'event', 'button', 'click', 'sortByName');
+
 
 		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNameLive').style.color = "white";
@@ -919,55 +996,73 @@ function sortArray(isWhatType){
 }
 
 
-// TOGGLING ALL PREFERENCES
-// Show only Preferred -- Deprecated for now but can be refactored for a different filter
-function showPreferredOnly(){
-	console.log ('showPreferredOnly fires now');
+// TOGGLING ALL filters
 
-	// hide all location icons
-	var icons = document.getElementsByClassName("location-icon");
+function setFilterRadios(type){
+	console.log('setFilterRadios fires now');
+
+	// make sure both checkboxes are checked
+	document.getElementById(type + "Box").checked = true;
+	document.getElementById(type + "BoxMobile").checked = true;
+
+	rebuildAll();
+
+	/* may activate and build on this if performance becomes an issue
+	if (type === "all"){
+		// show all icons by unhiding any that are hidden
+		showIconsByType(type);
+	}else if (type === "early"){
+		// show only early locations by hiding any with class "allLocations" and rebuilding list
+		showIconsByType(type);
+		hideIconsByType("all");
+
+	}else if (type === "absentee"){
+		// show only absentee locations by hiding any with class "allLocations" or class "absenteeLocations" and rebuilding List
+		showIconsByType(type);
+		hideIconsByType("all");
+		hideIconsByType("early");
+
+	}*/
+
+}
+
+
+// Show only early voting
+function showIconsByType(type) {
+	console.log('hideIconsByType fires now');
+
+	// hide all non-early location icons on map
+	var icons = document.getElementsByClassName(type + "Locations");
 	var index;
-	for (index = 0; index < icons.length; index++) {
-		icons[index].style.visibility = "hidden";
-	}
 
-	// hide allBuffer layer
-	map.removeLayer(Voter.allBufferLayer);
+	if(icons[0].style.visibility === "visible"){
+		for(index = 0; index < icons.length; index++) {
+			icons[index].style.visibility = "visible";
+		}
+	}
 
 	// close last opened popup
 	map.closePopup();
-
-	// re-set ShowPreferred Checkboxes
-	document.getElementById("preferredBox").setAttribute( "onClick", "showAll()" );
-	document.getElementById("mobilePreferredBox").setAttribute( "onClick", "showAll()" );
-
-	// make sure both checkboxes are checked
-	document.getElementById("preferredBox").checked = true;
-	document.getElementById("mobilePreferredBox").checked = true;
 }
 
+function hideIconsByType(type) {
+	console.log('hideIconsByType fires now');
 
-// Unhide all non-preferred locations
-function showAll(){
-	console.log ('showAll fires now');
-
-	var icons = document.getElementsByClassName("location-icon");
+	// hide all non-early location icons on map
+	var icons = document.getElementsByClassName(type + "Locations");
 	var index;
-	for (index = 0; index < icons.length; index++) {
-		icons[index].style.visibility = "visible";
+
+	if(icons[0].style.visibility === "visible"){
+		for(index = 0; index < icons.length; index++) {
+			icons[index].style.visibility = "hidden";
+		}
 	}
 
-	// Add allBuffers layer back
-	map.addLayer(Voter.allBufferLayer);
-
-	// re-set ShowPreferred Checkbox
-	document.getElementById("preferredBox").setAttribute( "onClick", "showPreferredOnly()" );
-	document.getElementById("mobilePreferredBox").setAttribute( "onClick", "showPreferredOnly()" );
-
-	// make sure both checkboxes are UNchecked
-	document.getElementById("preferredBox").checked = false;
-	document.getElementById("mobilePreferredBox").checked = false;
+	// close last opened popup
+	map.closePopup();
 }
+
+
 
 
 // Max Wait FILTER
@@ -1151,7 +1246,75 @@ function unselectEarlyVoting() {
 }
 
 
+// modal to submit wait time form.
+function confirmReport(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+	// edit report modal stub
+	document.getElementById('confirmedLocation').innerHTML = Voter.nearest.MVCName;
+	document.getElementById('modalReportButton').value = Voter.nearest.OBJECTID;
+	document.getElementById('modalReportButton').setAttribute('id', 'liveReportButton');
 
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('confirmReportModal').innerHTML;
+
+	// reset template
+	document.getElementById('liveReportButton').setAttribute('id', 'modalReportButton');
+}
+
+// modal to verify location
+function checkReportLocation(){
+
+	// first, check to see if we have their current location at all
+	if (Voter.isCurrent === false){
+		showReportError();
+	}
+
+	// second, check to see if they are within the required range of the location
+	else if (Voter.nearest["Distance"] < 1.0){
+		// edit report modal stub
+		document.getElementById('reportItems').innerHTML = Voter.nearest.MVCName;
+
+		// set into modal stub
+		document.getElementById('modalBody').innerHTML = document.getElementById('confirmLocationModal').innerHTML;
+	} else {
+		notNearEnoughModal();
+	}
+}
+
+// modal to display location error modal for reporting.
+function showReportError(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('reportModalError').innerHTML;
+}
+
+function notNearEnoughModal(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('notNearEnoughModal').innerHTML;
+}
+
+// modal to display location error modal for reporting.
+function showThankModal(){
+	// ensure it opens at top of modal.
+	$("#confirmModal").scrollTop(0);
+
+	// set into modal stub
+	document.getElementById('modalBody').innerHTML = document.getElementById('thankModal').innerHTML;
+}
+
+// modal to display location error modal for reporting.
+function closeModal(){
+	$('#confirmModal').modal("hide");
+
+	// set into modal stub
+	//document.getElementById('modalBody').innerHTML = document.getElementById('reportModalError').innerHTML;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
@@ -1216,22 +1379,38 @@ function editLocationDetails (theId, isList) {
 		document.getElementById(listName + "distance").				innerHTML = Voter.locations[theId].Distance;
 	
 		var votingType = "";
+		var dayCount = 0;
 		if(Voter.locations[theId].isElectionDay=="y")
 			votingType = "Election Day";
 		if(Voter.locations[theId].isEarlyVoting=="y")
 		{
 			votingType = votingType + ", Early Voting";
 			votingDays = "<br>Days: ";
-			if(Voter.locations[theId].isEarlyVotingMonday=="y")
+			if(Voter.locations[theId].isEarlyVotingMonday=="y"){
 				votingDays = votingDays + "M ";
-			if(Voter.locations[theId].isEarlyVotingTuesday=="y")
+				dayCount++;
+			}
+				votingDays = votingDays + "M ";
+			if(Voter.locations[theId].isEarlyVotingTuesday=="y") {
 				votingDays = votingDays + "Tu ";
-			if(Voter.locations[theId].isEarlyVotingWednesnday=="y")
+				dayCount++;
+			}
+			if(Voter.locations[theId].isEarlyVotingWednesday=="y") {
 				votingDays = votingDays + "W ";
-			if(Voter.locations[theId].isEarlyVotingThursday=="y")
+				dayCount++;
+			}
+			if(Voter.locations[theId].isEarlyVotingThursday=="y"){
 				votingDays = votingDays + "Th ";
-			if(Voter.locations[theId].isEarlyVotingFriday=="y")
+				dayCount++;
+			}
+			if(Voter.locations[theId].isEarlyVotingFriday=="y"){
 				votingDays = votingDays + "F";
+				dayCount++;
+			}
+
+			if (dayCount === 5) {
+				votingDays = "M-F"
+			}
 			document.getElementById(listName + "openDate").			innerHTML = Voter.locations[theId].EarlyVotingStartDateStr + " to " + Voter.locations[theId].EarlyVotingEndDateStr + votingDays;
 		}
 		if(Voter.locations[theId].isAbsenteeVoting=="y")
@@ -1259,6 +1438,25 @@ function checkMaxDistance(theId){
 		return true;
 	}
 }
+
+// check if it's early voting
+function checkEarly(theId){
+	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
+	if (!document.getElementById('earlyBox').checked
+		|| Voter.locations[theId].isEarlyVoting == "y") {
+		return true;
+	}
+}
+
+// check if it's absentee voting
+function checkAbsentee(theId){
+	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
+	if (!document.getElementById('absenteeBox').checked
+		|| Voter.locations[theId].isAbsenteeVoting == "y") {
+		return true;
+	}
+}
+
 
 
 // check if meets early voting criteria set by user
