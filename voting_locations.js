@@ -36,9 +36,9 @@ console.log('start script');
 
 
 // this enables dropdown to stay open while filling in filter options on mobile-view filter dropdown
-
+/*
 $('div.dropdown.mega-dropdown button').on('click', function (event) {
-	$(this).parent().toggleClass('open');
+	$(this).parent().toggleClass('close');
 });
 
 
@@ -51,7 +51,7 @@ $('body').on('click', function (e) {
 	}
 });
 
-
+*/
 
 
 // ajax post to submit line count report
@@ -1271,7 +1271,7 @@ function checkReportLocation(){
 	}
 
 	// second, check to see if they are within the required range of the location
-	else if (Voter.nearest["Distance"] < 1.0){
+	else if (Voter.nearest["Distance"] < 0.5){
 		// edit report modal stub
 		document.getElementById('reportItems').innerHTML = Voter.nearest.MVCName;
 

@@ -85,7 +85,7 @@
 
 				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
 					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
-					<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton" style="font-size: 16px; padding-bottom: 13px; margin-left: 0px; width: 100%;"  data-toggle="modal" data-target="#confirmModal" id="header-reportButton" onclick="checkReportLocation()">
+					<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton" style="font-size: 16px; padding-bottom: 13px; margin-left: 0px; width: 100%;"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">
 						<span > Report Line Count</span>
 					</button>
 
@@ -107,14 +107,14 @@
 
 				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px; padding-right: 0px; text-align: right">
 
-					<a  data-toggle="modal" data-target="#confirmModal" id="header-reportButton" onclick="checkReportLocation()" style ="color: wheat">Report Line Count In Person</a>
+					<a  data-toggle="modal" data-target="#confirmModal" id="right-reportButton" onclick="checkReportLocation()" style ="color: wheat">Report Line Count In Person</a>
 				</div>
 
-				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
-					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  aria-haspopup="true" aria-expanded="false" data-canvas="body" >
+				<div class = "btn-group dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
+					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-canvas="body" >
 						<span class = "glyphicon glyphicon-filter"></span>
 					</button>
-					<ul id = "filterDropdownArea" class="dropdown-menu mega-dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
+					<ul id = "filterDropdownArea" class="dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
 						<span style =" font-size: 20px;"><strong>FILTERS</strong></span>
 						<br/>
 						<hr/>
