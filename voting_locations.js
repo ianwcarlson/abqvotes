@@ -139,7 +139,7 @@ Voter.isCurrent = false;
 
 
 // set datasource -- override on URL with "data=UNM | CABQ"
-Voter.datasource = "UNM";
+Voter.datasource = "CABQ";
 tmp = getQueryVariable("data");
 if(tmp=="UNM" || tmp=="CABQ") {
 	Voter.datasource = tmp;
@@ -201,6 +201,8 @@ else
 			//result= JSON.parse(text); 
 			data=text.features;
 			console.log(data);
+			var theThing2 = 1;
+
 			for(x in data) {
 				data[x].count = 7 + theThing;
 				var theId = "id" + data[x].attributes.OBJECTID;
@@ -209,8 +211,11 @@ else
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["count"] = 0;
+				Voter.locations[theId]["count"] = 7 + theThing2;
 				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
+				Voter.locations[theId]["MVCName"] = data[x].attributes.name;
+				theThing2 ++;
+
 			}
 
 		if(Voter.isElectionDay==true)
@@ -225,7 +230,8 @@ else
 						for (i in Voter.locations) { 
 							if(data[x].MVCName==Voter.locations[i].name)
 							{
-								Voter.locations[i]["count"] = data[x].count;
+								if(data[x].count > 0)
+									Voter.locations[i]["count"] = data[x].count;
 								Voter.locations[i]["lastupdate"] = data[x].lastupdate;
 								Voter.locations[i]["minutesold"] = data[x].minutesold;
 							}
@@ -400,6 +406,7 @@ function changeLocations(isToCurrent){
 		rebuildCurrentIcon(false);
 		setToHomeAddress();
 	}
+	ga('send', 'event', 'button', 'click', 'changeLocations');
 }
 
 function rebuildHomeIcon(isToCurrent){
@@ -917,6 +924,7 @@ function sortArray(isWhatType){
 
 	} else if(isWhatType === 'time') {
 		console.log("sortArray TIME fires now");
+		ga('send', 'event', 'button', 'click', 'sortByTime');
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byLowestLive').style.color = "white";
@@ -937,6 +945,7 @@ function sortArray(isWhatType){
 
 	} else if ((isWhatType === 'distance')) {
 		console.log("sortArray DISTANCE fires now");
+		ga('send', 'event', 'button', 'click', 'sortByDistance');
 
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNearestLive').style.color = "white";
@@ -957,6 +966,8 @@ function sortArray(isWhatType){
 		})
 	} else if ((isWhatType === 'name')) {
 		console.log("sortArray NAME fires now");
+		ga('send', 'event', 'button', 'click', 'sortByName');
+
 
 		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
 		document.getElementById('byNameLive').style.color = "white";

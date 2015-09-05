@@ -38,6 +38,7 @@
 
 			ga('create', 'UA-66502403-1', 'auto');
 			ga('send', 'pageview');
+			ga('set', { 'appName': 'ABQvotes' });
 		</script>
 
 	</head>
@@ -364,7 +365,7 @@
 		<div id = "confirmLocationModal" style = "display: none;">
 			<div style = "text-align: center">
 
-				<h2>It looks like you are voting at </h2><h4 id="reportItems"></h4>
+				<h2>It looks like you are voting at the <span id="reportItems"></span>?</h2>
 				<br/>
 				<button class = "btn btn-lg modalButtons" onclick = "confirmReport()"> Yes! </button>
 				<button class = "btn btn-lg modalButtons" onclick = "showReportError()"> No... </button>
@@ -376,10 +377,11 @@
 		<div id = "reportModalError" style = "display: none;">
 			<div style = "text-align: center">
 
-				<h4 style = "text-align: right">
+				<h4>
 					Oops!  In order for you to update our system we need to verify you are at the voting location.
-					Unfortunately, your device's location services don't seem be working as expected.
-					Try turning them on within your browser's settings, then refresh the page.
+					Try refreshing the page and waiting for us to find you.
+					If that doesn't work, your device's location services may not be working as expected.
+					Try turning them on within your browser's settings, then refresh the page again.
 				</h4>
 				<br/>
 				<button class = "btn btn-md modalButtons" onclick="closeModal()"> Close </button>
@@ -391,7 +393,7 @@
 		<div id = "thankModal" style = "display: none;">
 			<div style = "text-align: right">
 				<h4 >
-					You just helped others <br/>vote more easily.<br/>All while standing in line.<br/>Go you!
+					You just helped others <br/>vote more easily.<br/>All while standing in line!
 				</h4>
 
 				<br/>
@@ -412,10 +414,10 @@
 		<div id = "notNearEnoughModal" style = "display: none;">
 			<div style = "text-align: center">
 
-				<h4 style = "text-align: right">
-					Oops!  In order for you to update our system we need to verify you are at the voting location.
-					While it looks like we were able to locate you, it seems you are still outside the necessary range.
-					Please try moving closer and refreshing the page.
+				<h4>
+					In order for you to update our system we need to verify you are at the voting location.
+					It looks like we were able to locate you, but you are still outside the necessary range.
+					Please move closer and refresh the page.
 				</h4>
 				<br/>
 				<button class = "btn btn-md modalButtons" onclick="closeModal()"> Close </button>
