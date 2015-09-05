@@ -323,9 +323,7 @@ button.sortButtons:focus {
 	/*color: white;*/
 	font-weight: 600;
 	border-radius: 15px;
-	border-style: solid;
-	border-color: black;
-	border-width: 1px;
+	border-style: 1px solid black;
 	margin-left: -25px;
 	margin-top: -36px;
 }

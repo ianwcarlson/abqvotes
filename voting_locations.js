@@ -143,7 +143,7 @@ Voter.isFirstBuild = true;
 
 
 // set datasource -- override on URL with "data=UNM | CABQ"
-Voter.datasource = "CABQ";
+Voter.datasource = "UNM";
 tmp = getQueryVariable("data");
 if(tmp=="UNM" || tmp=="CABQ") {
 	Voter.datasource = tmp;
@@ -174,6 +174,7 @@ if(Voter.datasource=="UNM")
 		cache: true,
 		success : function(data) {
 		var theThing = 1;
+			console.log("UNM DATA: " + data);
 			console.log(data);
 			for(x in data) {
 				data[x].count = 7 + theThing;
@@ -198,7 +199,7 @@ else
 		type: 'GET', 
 		url     : url,
 		dataType: 'json',
-        async: false,
+	  	async: false,
 		cache: true,
 		success : function(text) {
 			var theThing = 1;
@@ -207,43 +208,107 @@ else
 			console.log(data);
 			var theThing2 = 1;
 
+
+
+			// get UNM data on election day
+			if(Voter.isElectionDay==true)
+			{
+				var url2 = "http://where2vote.unm.edu/locationinfo/";
+				$.ajax({
+					url     : url2,
+					dataType: 'json',
+					async: false,
+					cache: true,
+					success : function(unmData) {
+						// assign id to each object
+						for (x in unmData) {
+							var theId = "id" + unmData[x].UniqueId;
+							Voter.unmData[theId] = unmData[x];
+						}
+					},
+					error: function(){
+						Voter.unmData = [];
+					}
+
+				});
+			} else {
+				Voter.unmData = [];
+			}
+
+			// get data from abqvotes db:
+			// fixme: switch this to the right url and take out the hard coded stuff once db is set up
+			var url2 = "http://where2vote.unm.edu/locationinfo/";
+			$.ajax({
+				url     : url2,
+				dataType: 'json',
+				async: false,
+				cache: true,
+				success : function(abqvData) {
+					// fixme: take out hardcoded db values
+					var theThing3 = 1;
+					for (x in abqvData){
+						// assign id to each object
+						var theId = "id" + abqvData[x].UniqueId;
+
+						Voter.abqVotes[theId]["lineCount"] = theThing3 + 20;
+						Voter.abqVotes[theId]["boothCount"] = theThing3 + 10;
+						Voter.abqVotes[theId]["boothUpdatedAt"] = new Date();
+						Voter.abqVotes[theId]["lineUpdatedAt"] = new Date();
+
+						Voter.abqVotes[theId]["lineCountSpecial"] = theThing3 + 40;
+						Voter.abqVotes[theId]["boothCountSpecial"] = theThing3 + 5;
+						Voter.abqVotes[theId]["boothUpdatedAtSpecial"] = new Date();
+						Voter.abqVotes[theId]["lineUpdatedAtSpecial"] = new Date();
+						theThing3++;
+					}
+				},
+				error: function(){
+					Voter.abqVotes = [];
+				}
+
+			});
+
+
+
 			for(x in data) {
-				data[x].count = 7 + theThing;
-				var theId = "id" + data[x].attributes.OBJECTID;
+				var objectId = data[x].attributes.OBJECTID;
+				var theId = "id" + objectId;
 				Voter.locations[theId] = data[x].attributes;
 				// repeat latitude and longitude data in array using variable names from UNM data, so all other functions work without extra logic for variable naming differences
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["count"] = 7 + theThing2;
-				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
+				Voter.locations[theId]["waitTime"] = assignWaitTime(theId);
+				Voter.locations[theId]["UniqueID"] = objectId;
 				Voter.locations[theId]["MVCName"] = data[x].attributes.name;
-				theThing2 ++;
 
+
+				// fixme: preserved code in case my nesting attempt above fails
+
+				//if(Voter.isElectionDay==true)
+				//{
+				//	var url2 = "http://where2vote.unm.edu/locationinfo/";
+				//	$.ajax({
+				//		url     : url2,
+				//		dataType: 'json',
+				//		cache: true,
+				//		success : function(data) {
+				//			for(x in data) {
+				//				for (i in Voter.locations) {
+				//					if(data[x].MVCName==Voter.locations[i].name)
+				//					{
+				//						if(data[x].count > 0) {
+				//							Voter.locations[i]["unmCount"] = data[x].count;
+				//						}
+				//						Voter.locations[i]["unmLastUpdate"] = data[x].lastupdate;
+				//						Voter.locations[i]["unmMinutesOld"] = data[x].minutesold;
+				//					}
+				//				}
+				//			}
+				//		}
+				//	});
+				//}
 			}
-
-		if(Voter.isElectionDay==true)
-		{
-			var url2 = "http://where2vote.unm.edu/locationinfo/";
-			$.ajax({
-				url     : url2,
-				dataType: 'json',
-				cache: true,
-				success : function(data) {
-					for(x in data) {
-						for (i in Voter.locations) { 
-							if(data[x].MVCName==Voter.locations[i].name)
-							{
-								if(data[x].count > 0)
-									Voter.locations[i]["count"] = data[x].count;
-								Voter.locations[i]["lastupdate"] = data[x].lastupdate;
-								Voter.locations[i]["minutesold"] = data[x].minutesold;
-							}
-						}
-					}
-				}
-			});
-		}
 		console.log(Voter.locations);
 		setBaseLocation();
 		checkForLocations(Voter.lat, Voter.lng);
@@ -251,6 +316,79 @@ else
 		}
 	});
 }
+
+
+
+// function to calc wait time in minutes depending on accuracy of source or set to default large number
+function assignWaitTime (theId){
+	/*
+	WHICH WINS
+	special input wins
+	unm input overwrites special user if it's unmBufferTime minutes or after the special user's input
+	normal user overwrites special user if it's normalUserBufferTime minutes or after either the special user's input or the unm input
+
+	WHEN EXPIRES
+	if oldest (not most recent) used line count is older than the estimated time by 1.5, then it goes to unknown
+	booth count we accept whatever the last input was period.
+	*/
+
+	// set calculation variables and defaults
+	var estimateMultiple = 1.5;
+	var avgPersonTime = 10;
+
+	// these represent how old an approved or special user's input has to be to be considered invalid relative to newer inputs
+	var unmBufferTime = 1;
+	var normalUserBufferTime = 1;
+	var validLineCount;
+	var validLastUpdate;
+	var validBoothCount = 10; // set default to guess of average amount across all locations
+	var validWaitTime;
+
+	// get line count
+	var unmDate = Voter.unmData[theId].lastupdate;
+	var specialDate = Voter.abqVotes[theId]["lineUpdatedAtSpecial"];
+	var normalDate = Voter.abqVotes[theId]["lineUpdatedAt"];
+
+	// variables should be in minutes, so if special is even older than the others by 1 minute it still wins
+	if ((unmDate - specialDate < unmBufferTime) && (normalDate -  specialDate < normalUserBufferTime)) {
+		validLineCount = Voter.abqVotes[theId]["lineCountSpecial"];
+		validLastUpdate = specialDate;
+
+	} else if (normalDate -  unmDate < normalUserBufferTime){
+		validLineCount = Voter.unmData[theId].count;
+		validLastUpdate = unmDate;
+
+	} else {
+		validLineCount = Voter.abqVotes[theId]["lineCount"];
+		validLastUpdate = normalDate;
+	}
+
+	// get booth count
+	var specialBoothDate = Voter.abqVotes[theId]["boothUpdatedAtSpecial"];
+	var normalBoothDate = Voter.abqVotes[theId]["boothUpdatedAt"];
+
+	if (normalBoothDate - specialBoothDate < normalUserBufferTime){
+		validBoothCount = Voter.abqVotes[theId]["boothCountSpecial"];
+	} else {
+		validBoothCount = Voter.abqVotes[theId]["boothCount"];
+	}
+
+
+	validWaitTime = (1+ validLineCount) * avgPersonTime/validBoothCount;
+	var currentTime = new Date();
+
+	// logic to see if still valid
+	if (currentDate - validLastUpdate < estimateMultiple * validWaitTime){
+			return validWaitTime;
+
+	}else {
+		// this number of default hours indicates an invalid or "unknown" wait time.  Set to a high number so that it goes to the bottom on any sort, will display as "00:??"
+		return 100000;
+	}
+}
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
@@ -761,11 +899,33 @@ function buildIcon(theId) {
 	// set variables
 	var theLocation = Voter.locations[theId];
 	var timeString;
+	var iconType;
 	var iconClass;
 	var iconId;
 	var theLayer;
 
+/* pseudo code : if it's early voting and not an early voting location it gets greyed out.  Otherwise, regardless of whether it's election day, just tell me if it's a known wait time, unknown, or closed.
 
+if early voting period and not early voting location (
+		greyed out icon
+) else if ((early voting && valid location) || not early voting period) (
+
+
+	if valid wait time(
+		wait time
+) else if not valid wait time(
+		00:?? in icon
+		field stored as 100000 so as to sort to bottom of list, but with ?? displayed
+		message in popup and on list that wait time has not been updated recently enough to be sure.
+) else (
+	* closed
+)
+*/
+	//if ( early voting period and not early voting location (
+	//	iconType = 'grey-icon';
+	//
+	//
+	//iconType ='location-icon';
 
 	/* fixme: may activate and build on this for hiding/showing icons if performance becomes an issue
 	 var classType1 ="";
@@ -786,7 +946,7 @@ function buildIcon(theId) {
 	iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
 	*/
 
-	iconClass ='location-icon heatmap-' + Voter.heat[theId];
+	iconClass = iconType + 'heatmap-' + Voter.heat[theId];
 	iconId = 'locationIcon-' + theId;
 	theLayer = Voter.allIconsLayer;
 
@@ -798,10 +958,10 @@ function buildIcon(theId) {
 
 
 	// build time string
-	if(theLocation.count >= 10){
-		timeString = "00:"+ theLocation.count;
+	if(theLocation.waitTime >= 10){
+		timeString = "00:"+ theLocation.waitTime;
 	} else{
-		timeString = "00:0"+ theLocation.count;
+		timeString = "00:0"+ theLocation.waitTime;
 	}
 
 	// build html to use in icon
@@ -845,10 +1005,10 @@ function buildListItem(theId, listLocation, counter){
 
 	// build time string
 	var timeString;
-	if(Voter.locations[theId].count >= 10){
-		timeString = "00:"+ Voter.locations[theId].count;
+	if(Voter.locations[theId].waitTime >= 10){
+		timeString = "00:"+ Voter.locations[theId].waitTime;
 	} else{
-		timeString = "00:0"+ Voter.locations[theId].count;
+		timeString = "00:0"+ Voter.locations[theId].waitTime;
 	}
 
 	// set href and waitTime in buildList template
@@ -948,7 +1108,7 @@ function sortArray(isWhatType){
 		document.getElementById('nameCaretLive').className = "right-caret";
 
 		theArray.sort(function(a, b) {
-			return a.count - b.count
+			return a.waitTime - b.waitTime
 		});
 		console.log('nearest location is ' + Voter.nearest);
 
@@ -1405,7 +1565,6 @@ function editLocationDetails (theId, isList) {
 				votingDays = votingDays + "M ";
 				dayCount++;
 			}
-				votingDays = votingDays + "M ";
 			if(Voter.locations[theId].isEarlyVotingTuesday=="y") {
 				votingDays = votingDays + "Tu ";
 				dayCount++;
@@ -1424,7 +1583,7 @@ function editLocationDetails (theId, isList) {
 			}
 
 			if (dayCount === 5) {
-				votingDays = "M-F"
+				votingDays = "M-F";
 			}
 			document.getElementById(listName + "openDate").			innerHTML = Voter.locations[theId].EarlyVotingStartDateStr + " to " + Voter.locations[theId].EarlyVotingEndDateStr + votingDays;
 		}
@@ -1440,7 +1599,7 @@ function editLocationDetails (theId, isList) {
 function checkMaxWait(theId){
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
 	if (!document.getElementById('isMaxWait').checked
-		|| Voter.locations[theId].count <= Voter.maxWait) {
+		|| Voter.locations[theId].waitTime <= Voter.maxWait) {
 		return true;
 	}
 }
