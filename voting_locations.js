@@ -138,7 +138,7 @@ Voter.isFilteredBy = 'early';
 Voter.isCurrent = false;
 
 // boolean to see which settings to default to
-Voter.isTodayEarlyVoting = true;
+//Voter.isTodayEarlyVoting = true;
 
 
 // boolean to determine whether or not list has already been built for radio button checking
@@ -282,7 +282,9 @@ else
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["waitTime"] = 100000; //assignWaitTime(theId);
+				Voter.locations[theId]["waitTime"] = 100000; //fixme: include this: assignWaitTime(theId);
+				Voter.locations[theId]["waitTimeString"] = getTimeString(theId);
+
 				Voter.locations[theId]["UniqueID"] = objectId;
 				Voter.locations[theId]["MVCName"] = data[x].attributes.name;
 
@@ -335,6 +337,52 @@ function assignWaitTime (theId){
 	if oldest (not most recent) used line count is older than the estimated time by 1.5, then it goes to unknown
 	booth count we accept whatever the last input was period.
 	*/
+	// logic to see if after hours
+	var currentTime = new Date(); // hours/minutes UTC
+	var currentDay = 	new Date();	// day of week local
+	var currentDate = new Date(); // actual date/year
+	var earlyVoteStart = Voter.locations[theId].earlyVotingStartDateStr;
+	var earlyVoteEnd = Voter.locations[theId].earlyVotingEndDateStr;
+	var electionDay = Voter.electionDay;
+	var opensAt = 		Voter.locations[theId].earlyVotingDayStartTimeUTC; // convert to hours/minutes UTC
+	var closesAt = 	Voter.locations[theId].earlyVotingEndTimeUTC; // convert to hours/minutes UTC
+
+	if (	currentTime < opensAt 							||
+			currentTime > closesAt 							||
+			currentDay === "Sat" 							||
+			currentDay === "Sun"								||
+			currentDate < earlyVoteStart					||
+			earlyVoteEnd < currentDate < electionDay	||
+			currentDate > electionDay						){
+
+				return 200000;
+	}
+
+	// take opportunity to set global boolean for whether current day is within early Voting Period
+	Voter.isTodayEarlyVoting = (earlyVoteStart <= currentDate <= earlyVoteEnd);
+	if (Voter.isTodayEarlyVoting){
+		// make sure both early checkboxes are checked
+		document.getElementById("earlyBoxLive").checked = true;
+		document.getElementById("earlyBoxMobile").checked = true;
+	}
+
+	if (earlyVoteEnd < currentDate <= electionDay){
+		// make sure both all checkboxes are checked
+		document.getElementById("allBoxLive").checked = true;
+		document.getElementById("allBoxMobile").checked = true;
+
+		// and hide mobile filter button and list filter button, reveal brigade logo in its place
+		document.getElementById("filterButtons").style.display = "none";
+		document.getElementById("headerFilterButton").style.display = "none";
+		document.getElementById("headerLogo").style.display = "inline";
+
+
+	}
+	//if (earlyVoteStart <= currentDate <= earlyVoteEnd){
+	//	Voter.isTodayEarlyVoting = true;
+	//} else {
+	//	Voter.isTodayEarlyVoting = false;
+	//}
 
 	// set calculation variables and defaults
 	var estimateMultiple = 1.5;
@@ -379,19 +427,38 @@ function assignWaitTime (theId){
 
 
 	validWaitTime = (1+ validLineCount) * avgPersonTime/validBoothCount;
-	var currentTime = new Date();
 
 	// logic to see if still valid
 	if (currentDate - validLastUpdate < estimateMultiple * validWaitTime){
-			return validWaitTime;
-
-	}else {
-		// this number of default hours indicates an invalid or "unknown" wait time.  Set to a high number so that it goes to the bottom on any sort, will display as "00:??"
-		return 100000;
+		return validWaitTime;
 	}
+
+	// this number of default hours indicates an invalid or "unknown" wait time.  Set to a high number so that it goes to the bottom on any sort, will display as "00:??"
+	return 100000;
+
 }
 
+function getTimeString(theId){
+	// build time string
+	if(theLocation.waitTime === 100000) {
+		// indicates open but unknown wait time
+		//timeString = "00:??";
+		timeString = "<span class = 'glyphicon glyphicon-time'></span>?";
+	} else if(theLocation.waitTime === 200000) {
+		// indicates closed
+		timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
+		//timeString = "<span class = 'glyphicon glyphicon-ban-circle'></span>";
+		//timeString = "<span class = 'glyphicon glyphicon-off'></span>";
+	} else if(theLocation.waitTime < 10) {
+		timeString = "00:0" + theLocation.waitTime;
+	} else {
+		var hours = Math.floor(theLocation.waitTime / 60);
+		var minutes = Math.round( ((theLocation.waitTime/60) - hours) *60)
+		timeString = hours + ":" + minutes;
+	}
 
+	return timeString;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -913,33 +980,6 @@ function buildIcon(theId) {
 	var anchor;
 	var popupAnchor;
 
-
-	/* pseudo code : if it's early voting and not an early voting location it gets greyed out.  Otherwise, regardless of whether it's election day, just tell me if it's a known wait time, unknown, or closed.
-
-	 if early voting period and not early voting location (
-	 greyed out icon
-	 ) else if ((early voting && valid location) || not early voting period) (
-
-
-	 if valid wait time(
-	 wait time
-	 ) else if not valid wait time(
-	 00:?? in icon
-	 field stored as 100000 so as to sort to bottom of list, but with ?? displayed
-	 message in popup and on list that wait time has not been updated recently enough to be sure.
-	 ) else (
-	 * closed
-	 )
-
-
-
-	 */
-	//if ( early voting period and not early voting location (
-	//	iconType = 'grey-icon';
-	//
-	//
-	//iconType ='location-icon';
-
 	/* fixme: may activate and build on this for hiding/showing icons if performance becomes an issue
 	 var classType1 ="";
 	 var classType2 ="";
@@ -988,15 +1028,8 @@ function buildIcon(theId) {
 	} else {
 		iconClass = 'location-icon heatmap-' + Voter.heat[theId];
 
-		// build time string
-		// fixme add logic for if it's closed over night, show an asterisk.
-		if(theLocation.waitTime === 100000) {
-			timeString = "00:??";
-		} else if(theLocation.waitTime >= 10) {
-			timeString = "00:" + theLocation.waitTime;
-		} else {
-			timeString = "00:0" + theLocation.waitTime;
-		}
+		timeString = Voter.locations[theId].waitTimeString;
+
 
 		// build html to use in icon
 		waitTimeMarker = 	timeString +
@@ -1005,7 +1038,7 @@ function buildIcon(theId) {
 		popupAnchor = [10, -35];
 		iconSize = [50, 25];
 
-		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize);
+		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor);
 	}
 }
 
@@ -1046,12 +1079,7 @@ function buildListItem(theId, listLocation, counter){
 	var href = "#" + cssId;
 
 	// build time string
-	var timeString;
-	if(Voter.locations[theId].waitTime >= 10){
-		timeString = "00:"+ Voter.locations[theId].waitTime;
-	} else{
-		timeString = "00:0"+ Voter.locations[theId].waitTime;
-	}
+	var timeString = Voter.locations[theId].waitTimeString;
 
 	// set href and waitTime in buildList template
 	document.getElementById("cssId").					setAttribute("id", cssId);
@@ -1842,7 +1870,6 @@ function buildCombinedView(){
 	document.getElementById("absenteeBox").					setAttribute('id', 'absenteeBoxLive');
 
 
-
 	// set list live by putting it into the list div and identifying it with new value string
 	//console.log("innerHTML being added");
 	//console.log(document.getElementById("buildListInMap").innerHTML);
@@ -1878,7 +1905,6 @@ function buildCombinedView(){
 	document.getElementById("allBoxLive").							setAttribute('id', 'allBox');
 	document.getElementById("earlyBoxLive").						setAttribute('id', 'earlyBox');
 	document.getElementById("absenteeBoxLive").					setAttribute('id', 'absenteeBox');
-
 }
 
 
