@@ -137,17 +137,21 @@ Voter.isFilteredBy = 'early';
 // set up current location boolean for use in reporting line
 Voter.isCurrent = false;
 
+// boolean to see which settings to default to
+Voter.isTodayEarlyVoting = true;
+
 
 // boolean to determine whether or not list has already been built for radio button checking
 Voter.isFirstBuild = true;
 
 
 // set datasource -- override on URL with "data=UNM | CABQ"
-Voter.datasource = "UNM";
+Voter.datasource = "CABQ";
 tmp = getQueryVariable("data");
 if(tmp=="UNM" || tmp=="CABQ") {
 	Voter.datasource = tmp;
 }
+
 
 // set election day indicator -- override on URL with "electionday=Y"
 Voter.isElectionDay = false;
@@ -278,7 +282,7 @@ else
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["waitTime"] = assignWaitTime(theId);
+				Voter.locations[theId]["waitTime"] = 100000; //assignWaitTime(theId);
 				Voter.locations[theId]["UniqueID"] = objectId;
 				Voter.locations[theId]["MVCName"] = data[x].attributes.name;
 
@@ -896,31 +900,40 @@ function build(listLocation, whichArray){
 function buildIcon(theId) {
 	//console.log ('buildIcon fires now');
 
-	// set variables
+	// set variables needed for icons
 	var theLocation = Voter.locations[theId];
 	var timeString;
 	var iconType;
 	var iconClass;
 	var iconId;
+	var iconSize;
 	var theLayer;
-
-/* pseudo code : if it's early voting and not an early voting location it gets greyed out.  Otherwise, regardless of whether it's election day, just tell me if it's a known wait time, unknown, or closed.
-
-if early voting period and not early voting location (
-		greyed out icon
-) else if ((early voting && valid location) || not early voting period) (
+	var waitTimeMarker;
+	var locationPoint;
+	var anchor;
+	var popupAnchor;
 
 
-	if valid wait time(
-		wait time
-) else if not valid wait time(
-		00:?? in icon
-		field stored as 100000 so as to sort to bottom of list, but with ?? displayed
-		message in popup and on list that wait time has not been updated recently enough to be sure.
-) else (
-	* closed
-)
-*/
+	/* pseudo code : if it's early voting and not an early voting location it gets greyed out.  Otherwise, regardless of whether it's election day, just tell me if it's a known wait time, unknown, or closed.
+
+	 if early voting period and not early voting location (
+	 greyed out icon
+	 ) else if ((early voting && valid location) || not early voting period) (
+
+
+	 if valid wait time(
+	 wait time
+	 ) else if not valid wait time(
+	 00:?? in icon
+	 field stored as 100000 so as to sort to bottom of list, but with ?? displayed
+	 message in popup and on list that wait time has not been updated recently enough to be sure.
+	 ) else (
+	 * closed
+	 )
+
+
+
+	 */
 	//if ( early voting period and not early voting location (
 	//	iconType = 'grey-icon';
 	//
@@ -931,50 +944,79 @@ if early voting period and not early voting location (
 	 var classType1 ="";
 	 var classType2 ="";
 	 var classType3 ="";
-	if (Voter.locations[theId].isAbsenteeVoting === "y"){
-		classType1 = "absenteeLocation";
-	}
+	 if (Voter.locations[theId].isAbsenteeVoting === "y"){
+	 classType1 = "absenteeLocation";
+	 }
 
-	if (Voter.locations[theId].isEarlyVoting === "y"){
-		classType2 = "earlyLocation";
-	}
+	 if (Voter.locations[theId].isEarlyVoting === "y"){
+	 classType2 = "earlyLocation";
+	 }
 
-	if (Voter.locations[theId].isAbsenteeVoting !== "y" && Voter.locations[theId].isEarlyVoting !== "y"){
-		classType3 = "allLocations";
-	}
+	 if (Voter.locations[theId].isAbsenteeVoting !== "y" && Voter.locations[theId].isEarlyVoting !== "y"){
+	 classType3 = "allLocations";
+	 }
 
-	iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
-	*/
+	 iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
+	 */
 
-	iconClass = iconType + 'heatmap-' + Voter.heat[theId];
+
+	// set generic variables
 	iconId = 'locationIcon-' + theId;
 	theLayer = Voter.allIconsLayer;
-
-	// build random point from latlong in DB
-	var locationPoint = turf.point([theLocation.lon, theLocation.lat]);
-
+	// build latlong point
+	locationPoint = turf.point([theLocation.lon, theLocation.lat]);
 	// build point at top of the circle to use for the delivery area marker and icon
-	var anchor = turf.destination(locationPoint, 0.2, 0, 'miles');
+	anchor = turf.destination(locationPoint, 0, 0, 'miles');
 
 
-	// build time string
-	if(theLocation.waitTime >= 10){
-		timeString = "00:"+ theLocation.waitTime;
-	} else{
-		timeString = "00:0"+ theLocation.waitTime;
+	// set icon Class and build icons depending on if it's early voting today and the location is eligible for early voting
+	if(Voter.isTodayEarlyVoting && Voter.locations[theId].isEarlyVoting === "n") {
+		iconClass = 'grey-icon';
+		//iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+
+		timeString = "";
+
+		// build html to use in icon
+		waitTimeMarker = 	timeString;
+								//"<div class='leaflet-popup-tip-container' style='margin-top: -0.6px'>" +
+								//"<div class='leaflet-popup-tip location-pointer'></div></div> ";
+		popupAnchor = [-5, -5];
+		iconSize = [12, 12];
+
+		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor);
+
+	} else {
+		iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+
+		// build time string
+		// fixme add logic for if it's closed over night, show an asterisk.
+		if(theLocation.waitTime === 100000) {
+			timeString = "00:??";
+		} else if(theLocation.waitTime >= 10) {
+			timeString = "00:" + theLocation.waitTime;
+		} else {
+			timeString = "00:0" + theLocation.waitTime;
+		}
+
+		// build html to use in icon
+		waitTimeMarker = 	timeString +
+								"<div class='leaflet-popup-tip-container' style='margin-top: -0.6px'>" +
+								"<div class='leaflet-popup-tip location-pointer'></div></div> ";
+		popupAnchor = [10, -35];
+		iconSize = [50, 25];
+
+		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize);
 	}
+}
 
-	// build html to use in icon
-	var waitTimeMarker = timeString +
-		"<div class='leaflet-popup-tip-container' style='margin-top: -0.6px'>" +
-		"<div class='leaflet-popup-tip location-pointer'></div></div> ";
+function buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor) {
 
 	// build custom icon
 	locationIcon = L.extendedDivIcon({
-		iconSize   	: [50, 25],
+		iconSize   	: iconSize,
 		className  	: iconClass,
 		iconAnchor 	: anchor,
-		popupAnchor	: [10, -35],
+		popupAnchor	: popupAnchor,
 		html       	: waitTimeMarker,
 		id				: iconId
 
