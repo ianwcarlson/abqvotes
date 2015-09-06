@@ -206,11 +206,9 @@ else
 	  	async: false,
 		cache: true,
 		success : function(text) {
-			var theThing = 1;
-			//result= JSON.parse(text); 
+			//result= JSON.parse(text);
 			data=text.features;
 			console.log(data);
-			var theThing2 = 1;
 
 
 
@@ -253,10 +251,10 @@ else
 					for (x in abqvData){
 						// assign id to each object
 						var theId = "id" + abqvData[x].UniqueId;
-
+						Voter.abqVotes[theId] = abqvData[x];
 						Voter.abqVotes[theId]["lineCount"] = theThing3 + 20;
 						Voter.abqVotes[theId]["boothCount"] = theThing3 + 10;
-						Voter.abqVotes[theId]["boothUpdatedAt"] = new Date();
+						Voter.abqVotes[theId]["b = oothUpdatedAt"] = new Date();
 						Voter.abqVotes[theId]["lineUpdatedAt"] = new Date();
 
 						Voter.abqVotes[theId]["lineCountSpecial"] = theThing3 + 40;
@@ -440,21 +438,26 @@ function assignWaitTime (theId){
 
 function getTimeString(theId){
 	// build time string
+	theLocation = Voter.locations[theId];
 	if(theLocation.waitTime === 100000) {
 		// indicates open but unknown wait time
 		//timeString = "00:??";
-		timeString = "<span class = 'glyphicon glyphicon-time'></span>?";
+		timeString = "<span class = 'glyphicon glyphicon-time' style = 'font-size: 15px;'></span> <span>?</span>";
 	} else if(theLocation.waitTime === 200000) {
 		// indicates closed
-		timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
-		//timeString = "<span class = 'glyphicon glyphicon-ban-circle'></span>";
+		//timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
+		timeString = "<span class = 'glyphicon glyphicon-ban-circle' style = 'font-size: 16px;'></span>";
 		//timeString = "<span class = 'glyphicon glyphicon-off'></span>";
 	} else if(theLocation.waitTime < 10) {
 		timeString = "00:0" + theLocation.waitTime;
 	} else {
 		var hours = Math.floor(theLocation.waitTime / 60);
-		var minutes = Math.round( ((theLocation.waitTime/60) - hours) *60)
-		timeString = hours + ":" + minutes;
+		var minutes = Math.round( ((theLocation.waitTime/60) - hours) *60);
+		if (minutes < 10) {
+			timeString = hours + ":0" + minutes;
+		} else {
+			timeString = hours + ":" + minutes;
+		}
 	}
 
 	return timeString;
@@ -479,7 +482,7 @@ function setBaseLocation (lat, lng) {
 	var voterLatLong = [Voter.lat, Voter.lng];
 
 	var adjustedLatLong = [Voter.lat, Voter.latlngAdjustment + Voter.lng];
-	map.setView(adjustedLatLong, 12);
+	map.setView(adjustedLatLong, 11);
 
 	//var currentLocationButton;
 	//currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
@@ -569,7 +572,7 @@ function onLocationFound(e) {
 	 L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
 
-	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 11).openPopup(Voter.currentPopup);
 
 	 // fixme is this the right function to recalc distance etc.
 	 //checkForLocations(Voter.currentLat, Voter.currentLng);
@@ -718,7 +721,7 @@ function rebuildCurrentIcon(isToCurrent){
 function setToCurrentLocation() {
 	console.log ('setToCurrentLocation fires now');
 
-	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 12);
+	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 11);
 		//openPopup(Voter.currentPopup);
 	checkForLocations(Voter.currentLat, Voter.currentLng);
 
@@ -730,7 +733,7 @@ function setToCurrentLocation() {
 function setToHomeAddress() {
 	console.log ('setToHomeAddress fires now');
 
-	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12);
+	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 11);
 		//.openPopup(Voter.addressPopup);
 
 	checkForLocations(Voter.lat, Voter.lng);

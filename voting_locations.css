@@ -326,6 +326,7 @@ button.sortButtons:focus {
 	border: 1px solid black;
 	margin-left: -25px;
 	margin-top: -36px;
+	font-size: 14px;
 }
 
 .grey-icon {
