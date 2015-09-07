@@ -183,7 +183,7 @@ button.sortButtons:focus {
 	/*display: inline;*/
 	float: left;
 	/*margin-right: 15px;*/
-	margin-top: 15px;
+	/*margin-top: 15px;*/
 	/*text-align: right;*/
 	font-weight: bolder;
 	color: black;
@@ -194,12 +194,15 @@ button.sortButtons:focus {
 	width: 100%;
 	min-width: 85px;
 	text-align: center;
-	font-family: "Lucida Console", Georgia, serif;
+	font-family: Georgia, serif;
+	/*font-family: "Lucida Console", Georgia, serif;*/
+	/*font-family: Impact, Charcoal, sans-serif;*/
 
 }
 
 .optionButtons {
 	/*padding: 4px 4px 0px 4px;*/
+	/*padding: 0;*/
 
 }
 

@@ -58,9 +58,9 @@
 						<!--</div>-->
 					<!--</div>-->
 				<!--</div>-->
-				<div class="hidden-lg hidden-md hidden-sm col-xs-3" style="z-index: 10000;margin-top: 6px;">
-					<h4 style="text-align: center; width: 100%; font-weight: bold; color: white; font-size: 20px; margin-bottom: 7px">ABQ<br/>Votes:</h4>
-				</div>
+				<!--<div class="hidden-lg hidden-md hidden-sm col-xs-3" style="z-index: 10000;margin-top: 6px;">-->
+					<!--<h4 style="text-align: center; width: 100%; font-weight: bold; color: white; font-size: 20px; margin-bottom: 7px">ABQ<br/>Votes:</h4>-->
+				<!--</div>-->
 
 
 				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogoLeft" style="z-index: 10000;margin-top: 18px;">
@@ -86,11 +86,11 @@
 					</button>
 				</div>
 
-				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-4" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
+				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
 					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
-					<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">
-						<span><em>How long is<br/>your line?</em></span>
-					</button>
+					<!--<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">-->
+						<!--<span><em>How long is<br/>your line?</em></span>-->
+					<!--</button>-->
 
 					<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
 						<!--<div class='btn-group btn-group-justified ' role='group'>-->
@@ -104,7 +104,7 @@
 							<!--</div>-->
 						<!--</div>-->
 					<!--</div>-->
-					<!--<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes</h2>-->
+					<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes!</h2>
 
 				</div>
 
@@ -123,7 +123,7 @@
 
 				<div id = headerFilterButton class = "btn-group dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
 					<button type="button" class="btn btn-lg filterButton dropdown-toggle" style = "font-size: 28px; padding-bottom: 0px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-canvas="body" >
-						<span class = "glyphicon glyphicon-filter"></span>
+						<span class = "glyphicon glyphicon-filter" ></span>
 					</button>
 					<ul id = "filterDropdownArea" class="dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
 						<span style =" font-size: 20px;"><strong>FILTERS</strong></span>
@@ -547,14 +547,19 @@
 		<!--MAP AND INJECTED LIST DIV-->
 		<div id="mapListContainer" class ="row" style = "margin-left: 0px; margin-right: 0px;">
 
-			<div class="col-xs-12 tabs" id = "absenteeButtonMobile" style = "display:none">
+			<div class="col-xs-12 tabs" id = "absenteeButtonMobile" >
 				<div class='btn-group btn-group-justified ' role='group'>
 					<div class='btn-group tabLink mobileOptions activeSort' role='group'>
 						
 						<div class ="col-xs-12 optionButtons">
-							<h3 class="panel-title filter-panel-title " >
-								How Long is Your Line? <div class="right-caret" style = "opacity: 1.0"></div>
-							</h3>
+							<!--<h3 class="panel-title filter-panel-title reportButton" >-->
+								<!--How Long is Your Line?-->
+								<!--&lt;!&ndash;Help us calculate wait time! <div class="right-caret" style = "opacity: 1.0"></div>&ndash;&gt;-->
+							<!--</h3>-->
+							<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">
+								<!--<span class = "glyphicon glyphicon-eye-open"></span> <span><em>How long is your line?</em></span>-->
+								<span class = "glyphicon glyphicon-time"></span> <span><em>How long is your line?</em></span>
+							</button>
 							<!--<h5 class = "filterDescription">-->
 								<!--<span id = "filterDescription">Showing early voting locations centered at the ABQ icon</span>-->
 							<!--</h5>-->

@@ -138,7 +138,7 @@ Voter.isFilteredBy = 'early';
 Voter.isCurrent = false;
 
 // boolean to see which settings to default to
-//Voter.isTodayEarlyVoting = true;
+Voter.isTodayEarlyVoting = true;
 
 
 // boolean to determine whether or not list has already been built for radio button checking
@@ -254,7 +254,7 @@ else
 						Voter.abqVotes[theId] = abqvData[x];
 						Voter.abqVotes[theId]["lineCount"] = theThing3 + 20;
 						Voter.abqVotes[theId]["boothCount"] = theThing3 + 10;
-						Voter.abqVotes[theId]["b = oothUpdatedAt"] = new Date();
+						Voter.abqVotes[theId]["boothUpdatedAt"] = new Date();
 						Voter.abqVotes[theId]["lineUpdatedAt"] = new Date();
 
 						Voter.abqVotes[theId]["lineCountSpecial"] = theThing3 + 40;
@@ -270,8 +270,7 @@ else
 
 			});
 
-
-
+			var hardcodedWaitTimes = [100, 6, 68, 241, 100000, 200000];
 			for(x in data) {
 				var objectId = data[x].attributes.OBJECTID;
 				var theId = "id" + objectId;
@@ -280,7 +279,7 @@ else
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["waitTime"] = 100000; //fixme: include this: assignWaitTime(theId);
+				Voter.locations[theId]["waitTime"] = hardcodedWaitTimes[Math.floor(Math.random()*hardcodedWaitTimes.length)]; //fixme: include this: assignWaitTime(theId);
 				Voter.locations[theId]["waitTimeString"] = getTimeString(theId);
 
 				Voter.locations[theId]["UniqueID"] = objectId;
@@ -448,6 +447,10 @@ function getTimeString(theId){
 		//timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
 		timeString = "<span class = 'glyphicon glyphicon-ban-circle' style = 'font-size: 16px;'></span>";
 		//timeString = "<span class = 'glyphicon glyphicon-off'></span>";
+	} else if(theLocation.waitTime > 240) {
+		// indicates open but unknown wait time
+		//timeString = "00:??";
+		timeString = "<span class = 'glyphicon glyphicon-time' style = 'font-size: 15px;'></span> <span>?</span>";
 	} else if(theLocation.waitTime < 10) {
 		timeString = "00:0" + theLocation.waitTime;
 	} else {
