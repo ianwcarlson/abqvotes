@@ -36,9 +36,9 @@ console.log('start script');
 
 
 // this enables dropdown to stay open while filling in filter options on mobile-view filter dropdown
-
+/*
 $('div.dropdown.mega-dropdown button').on('click', function (event) {
-	$(this).parent().toggleClass('open');
+	$(this).parent().toggleClass('close');
 });
 
 
@@ -51,7 +51,7 @@ $('body').on('click', function (e) {
 	}
 });
 
-
+*/
 
 
 // ajax post to submit line count report
@@ -137,6 +137,13 @@ Voter.isFilteredBy = 'early';
 // set up current location boolean for use in reporting line
 Voter.isCurrent = false;
 
+// boolean to see which settings to default to
+Voter.isTodayEarlyVoting = true;
+
+
+// boolean to determine whether or not list has already been built for radio button checking
+Voter.isFirstBuild = true;
+
 
 // set datasource -- override on URL with "data=UNM | CABQ"
 Voter.datasource = "CABQ";
@@ -144,6 +151,7 @@ tmp = getQueryVariable("data");
 if(tmp=="UNM" || tmp=="CABQ") {
 	Voter.datasource = tmp;
 }
+
 
 // set election day indicator -- override on URL with "electionday=Y"
 Voter.isElectionDay = false;
@@ -170,6 +178,7 @@ if(Voter.datasource=="UNM")
 		cache: true,
 		success : function(data) {
 		var theThing = 1;
+			console.log("UNM DATA: " + data);
 			console.log(data);
 			for(x in data) {
 				data[x].count = 7 + theThing;
@@ -194,52 +203,115 @@ else
 		type: 'GET', 
 		url     : url,
 		dataType: 'json',
-        async: false,
+	  	async: false,
 		cache: true,
 		success : function(text) {
-			var theThing = 1;
-			//result= JSON.parse(text); 
+			//result= JSON.parse(text);
 			data=text.features;
 			console.log(data);
-			var theThing2 = 1;
 
+
+
+			// get UNM data on election day
+			if(Voter.isElectionDay==true)
+			{
+				var url2 = "http://where2vote.unm.edu/locationinfo/";
+				$.ajax({
+					url     : url2,
+					dataType: 'json',
+					async: false,
+					cache: true,
+					success : function(unmData) {
+						// assign id to each object
+						for (x in unmData) {
+							var theId = "id" + unmData[x].UniqueId;
+							Voter.unmData[theId] = unmData[x];
+						}
+					},
+					error: function(){
+						Voter.unmData = [];
+					}
+
+				});
+			} else {
+				Voter.unmData = [];
+			}
+
+			// get data from abqvotes db:
+			// fixme: switch this to the right url and take out the hard coded stuff once db is set up
+			var url2 = "http://where2vote.unm.edu/locationinfo/";
+			$.ajax({
+				url     : url2,
+				dataType: 'json',
+				async: false,
+				cache: true,
+				success : function(abqvData) {
+					// fixme: take out hardcoded db values
+					var theThing3 = 1;
+					for (x in abqvData){
+						// assign id to each object
+						var theId = "id" + abqvData[x].UniqueId;
+						Voter.abqVotes[theId] = abqvData[x];
+						Voter.abqVotes[theId]["lineCount"] = theThing3 + 20;
+						Voter.abqVotes[theId]["boothCount"] = theThing3 + 10;
+						Voter.abqVotes[theId]["boothUpdatedAt"] = new Date();
+						Voter.abqVotes[theId]["lineUpdatedAt"] = new Date();
+
+						Voter.abqVotes[theId]["lineCountSpecial"] = theThing3 + 40;
+						Voter.abqVotes[theId]["boothCountSpecial"] = theThing3 + 5;
+						Voter.abqVotes[theId]["boothUpdatedAtSpecial"] = new Date();
+						Voter.abqVotes[theId]["lineUpdatedAtSpecial"] = new Date();
+						theThing3++;
+					}
+				},
+				error: function(){
+					Voter.abqVotes = [];
+				}
+
+			});
+
+			var hardcodedWaitTimes = [100, 6, 68, 241, 100000, 200000];
 			for(x in data) {
-				data[x].count = 7 + theThing;
-				var theId = "id" + data[x].attributes.OBJECTID;
+				var objectId = data[x].attributes.OBJECTID;
+				var theId = "id" + objectId;
 				Voter.locations[theId] = data[x].attributes;
 				// repeat latitude and longitude data in array using variable names from UNM data, so all other functions work without extra logic for variable naming differences
 				Voter.locations[theId]["lat"] = data[x].geometry.y;
 				Voter.locations[theId]["lon"] = data[x].geometry.x;
 				// add variables to array that are using in future functions
-				Voter.locations[theId]["count"] = 7 + theThing2;
-				Voter.locations[theId]["UniqueID"] = data[x].attributes.OBJECTID;
+				Voter.locations[theId]["waitTime"] = hardcodedWaitTimes[Math.floor(Math.random()*hardcodedWaitTimes.length)]; //fixme: include this: assignWaitTime(theId);
+				Voter.locations[theId]["waitTimeString"] = getTimeString(theId);
+
+				Voter.locations[theId]["UniqueID"] = objectId;
 				Voter.locations[theId]["MVCName"] = data[x].attributes.name;
-				theThing2 ++;
 
+
+				// fixme: preserved code in case my nesting attempt above fails
+
+				//if(Voter.isElectionDay==true)
+				//{
+				//	var url2 = "http://where2vote.unm.edu/locationinfo/";
+				//	$.ajax({
+				//		url     : url2,
+				//		dataType: 'json',
+				//		cache: true,
+				//		success : function(data) {
+				//			for(x in data) {
+				//				for (i in Voter.locations) {
+				//					if(data[x].MVCName==Voter.locations[i].name)
+				//					{
+				//						if(data[x].count > 0) {
+				//							Voter.locations[i]["unmCount"] = data[x].count;
+				//						}
+				//						Voter.locations[i]["unmLastUpdate"] = data[x].lastupdate;
+				//						Voter.locations[i]["unmMinutesOld"] = data[x].minutesold;
+				//					}
+				//				}
+				//			}
+				//		}
+				//	});
+				//}
 			}
-
-		if(Voter.isElectionDay==true)
-		{
-			var url2 = "http://where2vote.unm.edu/locationinfo/";
-			$.ajax({
-				url     : url2,
-				dataType: 'json',
-				cache: true,
-				success : function(data) {
-					for(x in data) {
-						for (i in Voter.locations) { 
-							if(data[x].MVCName==Voter.locations[i].name)
-							{
-								if(data[x].count > 0)
-									Voter.locations[i]["count"] = data[x].count;
-								Voter.locations[i]["lastupdate"] = data[x].lastupdate;
-								Voter.locations[i]["minutesold"] = data[x].minutesold;
-							}
-						}
-					}
-				}
-			});
-		}
 		console.log(Voter.locations);
 		setBaseLocation();
 		checkForLocations(Voter.lat, Voter.lng);
@@ -247,6 +319,153 @@ else
 		}
 	});
 }
+
+
+
+// function to calc wait time in minutes depending on accuracy of source or set to default large number
+function assignWaitTime (theId){
+	/*
+	WHICH WINS
+	special input wins
+	unm input overwrites special user if it's unmBufferTime minutes or after the special user's input
+	normal user overwrites special user if it's normalUserBufferTime minutes or after either the special user's input or the unm input
+
+	WHEN EXPIRES
+	if oldest (not most recent) used line count is older than the estimated time by 1.5, then it goes to unknown
+	booth count we accept whatever the last input was period.
+	*/
+	// logic to see if after hours
+	var currentTime = new Date(); // hours/minutes UTC
+	var currentDay = 	new Date();	// day of week local
+	var currentDate = new Date(); // actual date/year
+	var earlyVoteStart = Voter.locations[theId].earlyVotingStartDateStr;
+	var earlyVoteEnd = Voter.locations[theId].earlyVotingEndDateStr;
+	var electionDay = Voter.electionDay;
+	var opensAt = 		Voter.locations[theId].earlyVotingDayStartTimeUTC; // convert to hours/minutes UTC
+	var closesAt = 	Voter.locations[theId].earlyVotingEndTimeUTC; // convert to hours/minutes UTC
+
+	if (	currentTime < opensAt 							||
+			currentTime > closesAt 							||
+			currentDay === "Sat" 							||
+			currentDay === "Sun"								||
+			currentDate < earlyVoteStart					||
+			earlyVoteEnd < currentDate < electionDay	||
+			currentDate > electionDay						){
+
+				return 200000;
+	}
+
+	// take opportunity to set global boolean for whether current day is within early Voting Period
+	Voter.isTodayEarlyVoting = (earlyVoteStart <= currentDate <= earlyVoteEnd);
+	if (Voter.isTodayEarlyVoting){
+		// make sure both early checkboxes are checked
+		document.getElementById("earlyBoxLive").checked = true;
+		document.getElementById("earlyBoxMobile").checked = true;
+	}
+
+	if (earlyVoteEnd < currentDate <= electionDay){
+		// make sure both all checkboxes are checked
+		document.getElementById("allBoxLive").checked = true;
+		document.getElementById("allBoxMobile").checked = true;
+
+		// and hide mobile filter button and list filter button, reveal brigade logo in its place
+		document.getElementById("filterButtons").style.display = "none";
+		document.getElementById("headerFilterButton").style.display = "none";
+		document.getElementById("headerLogo").style.display = "inline";
+
+
+	}
+	//if (earlyVoteStart <= currentDate <= earlyVoteEnd){
+	//	Voter.isTodayEarlyVoting = true;
+	//} else {
+	//	Voter.isTodayEarlyVoting = false;
+	//}
+
+	// set calculation variables and defaults
+	var estimateMultiple = 1.5;
+	var avgPersonTime = 10;
+
+	// these represent how old an approved or special user's input has to be to be considered invalid relative to newer inputs
+	var unmBufferTime = 1;
+	var normalUserBufferTime = 1;
+	var validLineCount;
+	var validLastUpdate;
+	var validBoothCount = 10; // set default to guess of average amount across all locations
+	var validWaitTime;
+
+	// get line count
+	var unmDate = Voter.unmData[theId].lastupdate;
+	var specialDate = Voter.abqVotes[theId]["lineUpdatedAtSpecial"];
+	var normalDate = Voter.abqVotes[theId]["lineUpdatedAt"];
+
+	// variables should be in minutes, so if special is even older than the others by 1 minute it still wins
+	if ((unmDate - specialDate < unmBufferTime) && (normalDate -  specialDate < normalUserBufferTime)) {
+		validLineCount = Voter.abqVotes[theId]["lineCountSpecial"];
+		validLastUpdate = specialDate;
+
+	} else if (normalDate -  unmDate < normalUserBufferTime){
+		validLineCount = Voter.unmData[theId].count;
+		validLastUpdate = unmDate;
+
+	} else {
+		validLineCount = Voter.abqVotes[theId]["lineCount"];
+		validLastUpdate = normalDate;
+	}
+
+	// get booth count
+	var specialBoothDate = Voter.abqVotes[theId]["boothUpdatedAtSpecial"];
+	var normalBoothDate = Voter.abqVotes[theId]["boothUpdatedAt"];
+
+	if (normalBoothDate - specialBoothDate < normalUserBufferTime){
+		validBoothCount = Voter.abqVotes[theId]["boothCountSpecial"];
+	} else {
+		validBoothCount = Voter.abqVotes[theId]["boothCount"];
+	}
+
+
+	validWaitTime = (1+ validLineCount) * avgPersonTime/validBoothCount;
+
+	// logic to see if still valid
+	if (currentDate - validLastUpdate < estimateMultiple * validWaitTime){
+		return validWaitTime;
+	}
+
+	// this number of default hours indicates an invalid or "unknown" wait time.  Set to a high number so that it goes to the bottom on any sort, will display as "00:??"
+	return 100000;
+
+}
+
+function getTimeString(theId){
+	// build time string
+	theLocation = Voter.locations[theId];
+	if(theLocation.waitTime === 100000) {
+		// indicates open but unknown wait time
+		//timeString = "00:??";
+		timeString = "<span class = 'glyphicon glyphicon-time' style = 'font-size: 15px;'></span> <span>?</span>";
+	} else if(theLocation.waitTime === 200000) {
+		// indicates closed
+		//timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
+		timeString = "<span class = 'glyphicon glyphicon-ban-circle' style = 'font-size: 16px;'></span>";
+		//timeString = "<span class = 'glyphicon glyphicon-off'></span>";
+	} else if(theLocation.waitTime > 240) {
+		// indicates open but unknown wait time
+		//timeString = "00:??";
+		timeString = "<span class = 'glyphicon glyphicon-time' style = 'font-size: 15px;'></span> <span>?</span>";
+	} else if(theLocation.waitTime < 10) {
+		timeString = "00:0" + theLocation.waitTime;
+	} else {
+		var hours = Math.floor(theLocation.waitTime / 60);
+		var minutes = Math.round( ((theLocation.waitTime/60) - hours) *60);
+		if (minutes < 10) {
+			timeString = hours + ":0" + minutes;
+		} else {
+			timeString = hours + ":" + minutes;
+		}
+	}
+
+	return timeString;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
@@ -266,17 +485,17 @@ function setBaseLocation (lat, lng) {
 	var voterLatLong = [Voter.lat, Voter.lng];
 
 	var adjustedLatLong = [Voter.lat, Voter.latlngAdjustment + Voter.lng];
-	map.setView(adjustedLatLong, 12);
+	map.setView(adjustedLatLong, 11);
 
-	var currentLocationButton;
-	currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
+	//var currentLocationButton;
+	//currentLocationButton = "<br/><button class='btn btn-danger btn-xs' id = 'homePopupButton' onClick='tryAgain()'>Try Current Location Again</button></div>";
 
 	// build variable for popup display
-	var locationDetails2 =	"<div style = 'text-align: center'><strong>Location not enabled <br/>on this device.  " +
-		"</strong>"+ currentLocationButton;
+	var locationDetails2 =	"<div style = 'text-align: center'><strong>We couldn't find you.  Try turning on locations services for your browser and refresh page.</strong>";
+		//+ currentLocationButton;
 
 	// build html to use in icon
-	var homeMarker = "Home" +
+	var homeMarker = "ABQ" +
 		"<div class='leaflet-popup-tip-container' style='margin-top: 4px; margin-left: 0px'>" +
 		"<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
 
@@ -296,7 +515,7 @@ function setBaseLocation (lat, lng) {
 
 	// add icon to map with popup
 	L.marker(voterLatLong, {icon: myAddressIcon, title: "Home Address"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.addressPopup).openPopup();
+		.bindPopup(Voter.addressPopup);
 }
 
 function findCurrentLocation() {
@@ -356,7 +575,7 @@ function onLocationFound(e) {
 	 L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 
 
-	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	 map.setView([Voter.currentLat, Voter.currentLng + Voter.latlngAdjustment], 11).openPopup(Voter.currentPopup);
 
 	 // fixme is this the right function to recalc distance etc.
 	 //checkForLocations(Voter.currentLat, Voter.currentLng);
@@ -372,7 +591,7 @@ function onLocationError(e) {
 	console.log ('onLocationError fires now');
 
 	// notify user
-	alert(e.message);
+	alert(e.message + " Because of the this error, we were not able to get your current location. To use the sorting and links to directions in this app, we recommend making sure your locations services are on for your browser and refreshing the page.");
 	Voter.maxDistance = 10;
 	// re-set view with Runner Address as base'
 	setToHomeAddress();
@@ -397,7 +616,7 @@ function changeLocations(isToCurrent){
 
 
 	if (isToCurrent){
-		rebuildHomeIcon(true);
+		//rebuildHomeIcon(true);
 		rebuildCurrentIcon(true);
 		setToCurrentLocation();
 
@@ -451,7 +670,7 @@ function rebuildHomeIcon(isToCurrent){
 
 	// add icon to map with popup
 	L.marker(voterLatLong, {icon: myAddressIcon, title: "Home Address"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.addressPopup).openPopup();
+		.bindPopup(Voter.addressPopup);
 }
 
 
@@ -468,9 +687,10 @@ function rebuildCurrentIcon(isToCurrent){
 	}
 
 	var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
-		" meters of this point. </strong><br/>" +
-		"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + theBool + ")'>" +
-		theInnerHtml + "</button></div>";
+		" meters of this point. </strong><br/>";
+
+		// deprecated as not needed for voter locations use case
+		//"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + theBool + ")'>" + theInnerHtml + "</button></div>";
 
 	// build html to use in icon
 	var currentLocationMarker = "You!" +
@@ -494,7 +714,7 @@ function rebuildCurrentIcon(isToCurrent){
 
 	// add icon and range circle to map
 	L.marker(Voter.currentLocation, {icon: myLocationIcon, title: "Current Location"}).addTo(Voter.locationsLayer)
-		.bindPopup(Voter.currentPopup).openPopup();
+		.bindPopup(Voter.currentPopup);
 
 	L.circle(Voter.currentLocation, Voter.currentRadius).addTo(Voter.locationsLayer);
 }
@@ -504,7 +724,8 @@ function rebuildCurrentIcon(isToCurrent){
 function setToCurrentLocation() {
 	console.log ('setToCurrentLocation fires now');
 
-	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 12).openPopup(Voter.currentPopup);
+	map.setView([Voter.currentLat, Voter.currentLng  + Voter.latlngAdjustment], 11);
+		//openPopup(Voter.currentPopup);
 	checkForLocations(Voter.currentLat, Voter.currentLng);
 
 	// set up zoom events
@@ -515,7 +736,8 @@ function setToCurrentLocation() {
 function setToHomeAddress() {
 	console.log ('setToHomeAddress fires now');
 
-	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12).openPopup(Voter.addressPopup);
+	map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 11);
+		//.openPopup(Voter.addressPopup);
 
 	checkForLocations(Voter.lat, Voter.lng);
 
@@ -565,6 +787,8 @@ function checkForLocations(lat, long){
 
 		// set combined template into live div and reset template
 		buildCombinedView();
+
+		Voter.isFirstBuild = false;
 	}
 }
 
@@ -749,63 +973,89 @@ function build(listLocation, whichArray){
 function buildIcon(theId) {
 	//console.log ('buildIcon fires now');
 
-	// set variables
+	// set variables needed for icons
 	var theLocation = Voter.locations[theId];
 	var timeString;
+	var iconType;
 	var iconClass;
 	var iconId;
+	var iconSize;
 	var theLayer;
-
-
+	var waitTimeMarker;
+	var locationPoint;
+	var anchor;
+	var popupAnchor;
 
 	/* fixme: may activate and build on this for hiding/showing icons if performance becomes an issue
 	 var classType1 ="";
 	 var classType2 ="";
 	 var classType3 ="";
-	if (Voter.locations[theId].isAbsenteeVoting === "y"){
-		classType1 = "absenteeLocation";
-	}
+	 if (Voter.locations[theId].isAbsenteeVoting === "y"){
+	 classType1 = "absenteeLocation";
+	 }
 
-	if (Voter.locations[theId].isEarlyVoting === "y"){
-		classType2 = "earlyLocation";
-	}
+	 if (Voter.locations[theId].isEarlyVoting === "y"){
+	 classType2 = "earlyLocation";
+	 }
 
-	if (Voter.locations[theId].isAbsenteeVoting !== "y" && Voter.locations[theId].isEarlyVoting !== "y"){
-		classType3 = "allLocations";
-	}
+	 if (Voter.locations[theId].isAbsenteeVoting !== "y" && Voter.locations[theId].isEarlyVoting !== "y"){
+	 classType3 = "allLocations";
+	 }
 
-	iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
-	*/
+	 iconClass = classType1 + classType2 + classType3 + 'location-icon heatmap-' + Voter.heat[theId];
+	 */
 
-	iconClass ='location-icon heatmap-' + Voter.heat[theId];
+
+	// set generic variables
 	iconId = 'locationIcon-' + theId;
 	theLayer = Voter.allIconsLayer;
-
-	// build random point from latlong in DB
-	var locationPoint = turf.point([theLocation.lon, theLocation.lat]);
-
+	// build latlong point
+	locationPoint = turf.point([theLocation.lon, theLocation.lat]);
 	// build point at top of the circle to use for the delivery area marker and icon
-	var anchor = turf.destination(locationPoint, 0.2, 0, 'miles');
+	anchor = turf.destination(locationPoint, 0, 0, 'miles');
 
 
-	// build time string
-	if(theLocation.count >= 10){
-		timeString = "00:"+ theLocation.count;
-	} else{
-		timeString = "00:0"+ theLocation.count;
+	// set icon Class and build icons depending on if it's early voting today and the location is eligible for early voting
+	if(Voter.isTodayEarlyVoting && Voter.locations[theId].isEarlyVoting === "n") {
+		iconClass = 'grey-icon';
+		//iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+
+		timeString = "";
+
+		// build html to use in icon
+		waitTimeMarker = 	timeString;
+								//"<div class='leaflet-popup-tip-container' style='margin-top: -0.6px'>" +
+								//"<div class='leaflet-popup-tip location-pointer'></div></div> ";
+		popupAnchor = [-5, -5];
+		iconSize = [12, 12];
+
+		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor);
+
+	} else {
+		iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+
+		timeString = Voter.locations[theId].waitTimeString;
+
+
+		// build html to use in icon
+		waitTimeMarker = 	timeString +
+								"<div class='leaflet-popup-tip-container' style='margin-top: -0.6px'>" +
+								"<div class='leaflet-popup-tip location-pointer'></div></div> ";
+		popupAnchor = [10, -35];
+		iconSize = [50, 25];
+
+		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor);
 	}
+}
 
-	// build html to use in icon
-	var waitTimeMarker = timeString +
-		"<div class='leaflet-popup-tip-container' style='margin-top: -0.6px'>" +
-		"<div class='leaflet-popup-tip location-pointer'></div></div> ";
+function buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor) {
 
 	// build custom icon
 	locationIcon = L.extendedDivIcon({
-		iconSize   	: [50, 25],
+		iconSize   	: iconSize,
 		className  	: iconClass,
 		iconAnchor 	: anchor,
-		popupAnchor	: [10, -35],
+		popupAnchor	: popupAnchor,
 		html       	: waitTimeMarker,
 		id				: iconId
 
@@ -835,12 +1085,7 @@ function buildListItem(theId, listLocation, counter){
 	var href = "#" + cssId;
 
 	// build time string
-	var timeString;
-	if(Voter.locations[theId].count >= 10){
-		timeString = "00:"+ Voter.locations[theId].count;
-	} else{
-		timeString = "00:0"+ Voter.locations[theId].count;
-	}
+	var timeString = Voter.locations[theId].waitTimeString;
 
 	// set href and waitTime in buildList template
 	document.getElementById("cssId").					setAttribute("id", cssId);
@@ -939,7 +1184,7 @@ function sortArray(isWhatType){
 		document.getElementById('nameCaretLive').className = "right-caret";
 
 		theArray.sort(function(a, b) {
-			return a.count - b.count
+			return a.waitTime - b.waitTime
 		});
 		console.log('nearest location is ' + Voter.nearest);
 
@@ -999,12 +1244,18 @@ function sortArray(isWhatType){
 // TOGGLING ALL filters
 
 function setFilterRadios(type){
-	console.log('setFilterRadios fires now');
+	console.log('setFilterRadios fires now with type:' + type);
 
 	// make sure both checkboxes are checked
-	document.getElementById(type + "Box").checked = true;
+	document.getElementById(type + "BoxLive").checked = true;
 	document.getElementById(type + "BoxMobile").checked = true;
 
+	// move map to nearby location to absentee locations
+	if (type === "absentee"){
+		map.setView([Voter.lat, Voter.lng + Voter.latlngAdjustment], 12);
+	}
+
+	// rebuild all.
 	rebuildAll();
 
 	/* may activate and build on this if performance becomes an issue
@@ -1271,7 +1522,7 @@ function checkReportLocation(){
 	}
 
 	// second, check to see if they are within the required range of the location
-	else if (Voter.nearest["Distance"] < 1.0){
+	else if (Voter.nearest["Distance"] < 0.5){
 		// edit report modal stub
 		document.getElementById('reportItems').innerHTML = Voter.nearest.MVCName;
 
@@ -1390,7 +1641,6 @@ function editLocationDetails (theId, isList) {
 				votingDays = votingDays + "M ";
 				dayCount++;
 			}
-				votingDays = votingDays + "M ";
 			if(Voter.locations[theId].isEarlyVotingTuesday=="y") {
 				votingDays = votingDays + "Tu ";
 				dayCount++;
@@ -1409,7 +1659,7 @@ function editLocationDetails (theId, isList) {
 			}
 
 			if (dayCount === 5) {
-				votingDays = "M-F"
+				votingDays = "M-F";
 			}
 			document.getElementById(listName + "openDate").			innerHTML = Voter.locations[theId].EarlyVotingStartDateStr + " to " + Voter.locations[theId].EarlyVotingEndDateStr + votingDays;
 		}
@@ -1425,7 +1675,7 @@ function editLocationDetails (theId, isList) {
 function checkMaxWait(theId){
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
 	if (!document.getElementById('isMaxWait').checked
-		|| Voter.locations[theId].count <= Voter.maxWait) {
+		|| Voter.locations[theId].waitTime <= Voter.maxWait) {
 		return true;
 	}
 }
@@ -1441,8 +1691,14 @@ function checkMaxDistance(theId){
 
 // check if it's early voting
 function checkEarly(theId){
+	var element;
+	if (Voter.isFirstBuild){
+		element = "earlyBox";
+	} else {
+		element = "earlyBoxLive"
+	}
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
-	if (!document.getElementById('earlyBox').checked
+	if (!document.getElementById(element).checked
 		|| Voter.locations[theId].isEarlyVoting == "y") {
 		return true;
 	}
@@ -1450,8 +1706,15 @@ function checkEarly(theId){
 
 // check if it's absentee voting
 function checkAbsentee(theId){
+	var element;
+	if (Voter.isFirstBuild){
+		element = "absenteeBox";
+	} else {
+		element = "absenteeBoxLive"
+	}
+
 	// check if max wait checkbox is checked "on" and if so, check if meets the criteria
-	if (!document.getElementById('absenteeBox').checked
+	if (!document.getElementById(element).checked
 		|| Voter.locations[theId].isAbsenteeVoting == "y") {
 		return true;
 	}
@@ -1599,14 +1862,18 @@ function buildCombinedView(){
 	document.getElementById("byNearest").						setAttribute('id', 'byNearestLive');
 	document.getElementById("byName").							setAttribute('id', 'byNameLive');
 
-	document.getElementById("lowestCaret").						setAttribute('id', 'lowestCaretLive');
-	document.getElementById("nearestCaret").						setAttribute('id', 'nearestCaretLive');
-	document.getElementById("nameCaret").							setAttribute('id', 'nameCaretLive');
+	document.getElementById("lowestCaret").					setAttribute('id', 'lowestCaretLive');
+	document.getElementById("nearestCaret").					setAttribute('id', 'nearestCaretLive');
+	document.getElementById("nameCaret").						setAttribute('id', 'nameCaretLive');
 
 	// add new ids to scrollable list for hiding
 	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
 	document.getElementById("listRow").							setAttribute('id', 'liveListRow');
 
+	// set filter in list id's
+	document.getElementById("allBox").							setAttribute('id', 'allBoxLive');
+	document.getElementById("earlyBox").						setAttribute('id', 'earlyBoxLive');
+	document.getElementById("absenteeBox").					setAttribute('id', 'absenteeBoxLive');
 
 
 	// set list live by putting it into the list div and identifying it with new value string
@@ -1640,6 +1907,10 @@ function buildCombinedView(){
 	document.getElementById("liveScrollableList").						setAttribute('id', 'scrollableList');
 	document.getElementById("liveListRow").							setAttribute('id', 'listRow');
 
+	// reset list filter id's
+	document.getElementById("allBoxLive").							setAttribute('id', 'allBox');
+	document.getElementById("earlyBoxLive").						setAttribute('id', 'earlyBox');
+	document.getElementById("absenteeBoxLive").					setAttribute('id', 'absenteeBox');
 }
 
 

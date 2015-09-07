@@ -58,36 +58,39 @@
 						<!--</div>-->
 					<!--</div>-->
 				<!--</div>-->
+				<!--<div class="hidden-lg hidden-md hidden-sm col-xs-3" style="z-index: 10000;margin-top: 6px;">-->
+					<!--<h4 style="text-align: center; width: 100%; font-weight: bold; color: white; font-size: 20px; margin-bottom: 7px">ABQ<br/>Votes:</h4>-->
+				<!--</div>-->
 
 
 				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogoLeft" style="z-index: 10000;margin-top: 18px;">
 					<a href="http://www.codeforabq.org" style ="color: wheat">A <img class = "logoHeader" src="images/balloon_var4.png"> project.</a>
 				</div>
 
-				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" style ="z-index:10000; display: none">
-					<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">
-						<a type="button" class="btn btn-lg filterButton" href="http://www.codeforabq.org" style = "color: lightgrey; margin-left: -10px; padding: 6px 5px;">
-							<img class = "logoMobile" src="images/balloon_var4.png">
-						</a>
-					</div>
-				</div>
+				<!--<div class = "hidden-lg hidden-md hidden-sm col-xs-2" style ="z-index:10000; display: none">-->
+					<!--<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">-->
+						<!--<a type="button" class="btn btn-lg filterButton" href="http://www.codeforabq.org" style = "color: lightgrey; margin-left: -10px; padding: 6px 5px;">-->
+							<!--<img class = "logoMobile" src="images/balloon_var4.png">-->
+						<!--</a>-->
+					<!--</div>-->
+				<!--</div>-->
 
 				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "mapToggler" style = "z-index: 10000;">
-					<button type="button" class="btn btn-lg filterButton" onclick = "showMobileMap()">
+					<button type="button" class="btn btn-lg filterButton" style = "font-size: 28px; padding-bottom: 0px; padding-left: 15px;" onclick = "showMobileMap()">
 						<span class = "glyphicon glyphicon-map-marker" ></span>
 					</button>
 				</div>
 				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "listToggler" style = "z-index: 10000; display:none;">
-					<button type="button" class="btn btn-lg filterButton" onclick = "hideMobileMap()">
-						<span class = "glyphicon glyphicon-th-list" ></span>
+					<button type="button" class="btn btn-lg filterButton" style = "padding-bottom: 4px;" onclick = "hideMobileMap()">
+						<span class = "glyphicon glyphicon-th-list" style = "margin-top: 1px;" ></span>
 					</button>
 				</div>
 
 				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
 					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
-					<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton" style="font-size: 16px; padding-bottom: 13px; margin-left: 0px; width: 100%;"  data-toggle="modal" data-target="#confirmModal" id="header-reportButton" onclick="checkReportLocation()">
-						<span > Report Line Count</span>
-					</button>
+					<!--<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">-->
+						<!--<span><em>How long is<br/>your line?</em></span>-->
+					<!--</button>-->
 
 					<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
 						<!--<div class='btn-group btn-group-justified ' role='group'>-->
@@ -101,20 +104,28 @@
 							<!--</div>-->
 						<!--</div>-->
 					<!--</div>-->
+					<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes!</h2>
 
-					<!--<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes</h2>-->
 				</div>
 
 				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px; padding-right: 0px; text-align: right">
 
-					<a  data-toggle="modal" data-target="#confirmModal" id="header-reportButton" onclick="checkReportLocation()" style ="color: wheat">Report Line Count In Person</a>
+					<a  data-toggle="modal" data-target="#confirmModal" id="right-reportButton" onclick="checkReportLocation()" style ="color: wheat">How Long is Your Line?</a>
 				</div>
 
-				<div class = "btn-group dropdown mega-dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
-					<button type="button" class="btn btn-lg filterButton dropdown-toggle"  aria-haspopup="true" aria-expanded="false" data-canvas="body" >
-						<span class = "glyphicon glyphicon-filter"></span>
+				<div id = "headerLogo" class = "hidden-lg hidden-md hidden-sm col-xs-2" style ="z-index:10000; display: none">
+					<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">
+						<a type="button" class="btn btn-lg filterButton" href="http://www.codeforabq.org" style = "color: lightgrey; margin-left: -10px; padding: 6px 5px;">
+							<img class = "logoMobile" src="images/balloon_var4.png">
+						</a>
+					</div>
+				</div>
+
+				<div id = headerFilterButton class = "btn-group dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
+					<button type="button" class="btn btn-lg filterButton dropdown-toggle" style = "font-size: 28px; padding-bottom: 0px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-canvas="body" >
+						<span class = "glyphicon glyphicon-filter" ></span>
 					</button>
-					<ul id = "filterDropdownArea" class="dropdown-menu mega-dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
+					<ul id = "filterDropdownArea" class="dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
 						<span style =" font-size: 20px;"><strong>FILTERS</strong></span>
 						<br/>
 						<hr/>
@@ -137,7 +148,7 @@
 							<li class = "filter-items" id="allMobile" style="display:block">
 								<div id = "isAllMobile" onclick = "setFilterRadios('all'); rebuildList();" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
 									<span>Show All Locations</span>
-									<input id = "allBoxMobile" type = "radio" name = "mobileFilters" checked = "checked" class = " checkboxes">
+									<input id = "allBoxMobile" type = "radio" name = "mobileFilters"  class = " checkboxes">
 								</div>
 
 								<!--<label for="isAllMobile" style="text-align: right">Show All Locations</label>-->
@@ -146,9 +157,9 @@
 							</li>
 
 							<li class = "filter-items" id="earlyVotingMobile" style="display:block">
-								<div id = "isEarlyMobile" onclick = "setFilterRadios('early'); rebuildList();" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
+								<div id = "isEarlyMobile" onclick = "setFilterRadios('early');" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
 									<span>Show Early Voting</span>
-									<input id = "earlyBoxMobile" type = "radio" name = "mobileFilters" class = "checkboxes">
+									<input id = "earlyBoxMobile" type = "radio" name = "mobileFilters" checked = "checked" class = "checkboxes">
 								</div>
 
 
@@ -158,7 +169,7 @@
 							</li>
 
 							<li class = "filter-items" id="absenteeMobile" style="display:block">
-								<div id = "isAbsenteeMobile" onclick = "setFilterRadios('absentee'); rebuildList();" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
+								<div id = "isAbsenteeMobile" onclick = "setFilterRadios('absentee');" class = "btn btn-default tabLink activeSort mobileCheckboxes" role='group' >
 									<span>Absentee Locations</span>
 									<input id = "absenteeBoxMobile" type = "radio" name = "mobileFilters" class = "checkboxes">
 								</div>
@@ -319,22 +330,22 @@
 							<!--<div class = "row">-->
 								<!--<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title buttonDetails checkboxButtons ">-->
 									<!--<a class = "buttonDetails ">-->
-						<div id = "isAll" onclick = "setFilterRadios('all'); rebuildList();" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' >
+						<div id = "isAll" onclick = "setFilterRadios('all');" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' >
 							<input id = "allBox" type = "radio" name = "nonMobileFilters" checked = "checked" class = " checkboxes">
 							<span>All</span>
 						</div>
 
 								<!--<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title buttonDetails checkboxButtons ">-->
 									<!--<a class = "buttonDetails ">-->
-						<div id = "isEarly" onclick = "setFilterRadios('early'); rebuildList();" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' >
+						<div id = "isEarly" onclick = "setFilterRadios('early');" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' >
 
-							<input id = "earlyBox" type = "radio" name = "nonMobileFilters" class = "checkboxes">
+							<input id = "earlyBox" type = "radio" name = "nonMobileFilters" checked = "checked" class = "checkboxes">
 							<span>Early</span>
 						</div>
 
 								<!--<div class = "col-lg-4 col-md-4 col-sm-4 col-xs-8 panel-title filter-panel-title buttonDetails checkboxButtons">-->
 									<!--<a class = "buttonDetails" >-->
-						<div id = "isAbsentee" onclick = "setFilterRadios('absentee'); rebuildList();" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' style = "border-right: 0px !important" >
+						<div id = "isAbsentee" onclick = "setFilterRadios('absentee');" class = "btn btn-default tabLink activeSort checkboxButtons" role='group' style = "border-right: 0px !important" >
 
 							<input id = "absenteeBox" type = "radio" name = "nonMobileFilters" class = "checkboxes">
 							<span>Absentee</span>
@@ -450,7 +461,7 @@
 				<div class="modal-content" >
 					<div class="modal-header" style = "background-color: #f0ad4e;">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h1 class="modal-title" id="myModalLabel" style = "text-align: center">Report the Line:</h1>
+						<h1 class="modal-title" id="myModalLabel" style = "text-align: center">How Long is Your Line?</h1>
 					</div>
 					<div class="modal-body" id = "modalBody" style = "background-color: #FEF7ED">
 
@@ -536,24 +547,29 @@
 		<!--MAP AND INJECTED LIST DIV-->
 		<div id="mapListContainer" class ="row" style = "margin-left: 0px; margin-right: 0px;">
 
-			<div class="col-xs-12 tabs" id = "absenteeButtonMobile">
+			<div class="col-xs-12 tabs" id = "absenteeButtonMobile" >
 				<div class='btn-group btn-group-justified ' role='group'>
-					<div class='btn-group tabLink mobileOptions activeSort ' role='group'>
+					<div class='btn-group tabLink mobileOptions activeSort' role='group'>
 						
 						<div class ="col-xs-12 optionButtons">
-							<!--<h3 class="panel-title filter-panel-title " >-->
-								<!--Report Line Count <div class="right-caret" style = "opacity: 1.0"></div>-->
+							<!--<h3 class="panel-title filter-panel-title reportButton" >-->
+								<!--How Long is Your Line?-->
+								<!--&lt;!&ndash;Help us calculate wait time! <div class="right-caret" style = "opacity: 1.0"></div>&ndash;&gt;-->
 							<!--</h3>-->
-							<h5 class = "filterDescription">
-								<span id = "filterDescription">Showing early voting locations centered at Clerk's Office</span>
-							</h5>
+							<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">
+								<!--<span class = "glyphicon glyphicon-eye-open"></span> <span><em>How long is your line?</em></span>-->
+								<span class = "glyphicon glyphicon-time"></span> <span><em>How long is your line?</em></span>
+							</button>
+							<!--<h5 class = "filterDescription">-->
+								<!--<span id = "filterDescription">Showing early voting locations centered at the ABQ icon</span>-->
+							<!--</h5>-->
 
 						</div>
-						<div class ="col-xs-6 optionButtons" style = "display:none">
-							<h3 class="panel-title filter-panel-title " >
-								Absentee Ballots <div class="right-caret" style = "opacity: 1.0"></div>
-							</h3>
-						</div>
+						<!--<div class ="col-xs-6 optionButtons" style = "display:none">-->
+							<!--<h3 class="panel-title filter-panel-title " >-->
+								<!--Absentee Ballots <div class="right-caret" style = "opacity: 1.0"></div>-->
+							<!--</h3>-->
+						<!--</div>-->
 
 					</div>
 				</div>
