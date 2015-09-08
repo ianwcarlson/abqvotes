@@ -44,7 +44,7 @@
 	</head>
 	<body>
 		<header class="navbar navbar-default" style = "margin-bottom: 0px; margin-top: -9px; border:none">
-			<div class="navbar-header" style="width: 100%; background-color: #400000" id = "header-button">
+			<div class="navbar-header" style="width: 100%; background-color: #400000; padding-bottom: 10px;" id = "header-button">
 
 				<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
 					<!--<div class='btn-group btn-group-justified ' role='group'>-->
@@ -66,6 +66,40 @@
 				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogoLeft" style="z-index: 10000;margin-top: 18px;">
 					<a href="http://www.codeforabq.org" style ="color: wheat">A <img class = "logoHeader" src="images/balloon_var4.png"> project.</a>
 				</div>
+				<div class = "col-lg-8 col-md-6 col-sm-6 hidden-xs" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
+					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
+					<!--<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">-->
+					<!--<span><em>How long is<br/>your line?</em></span>-->
+					<!--</button>-->
+
+					<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
+					<!--<div class='btn-group btn-group-justified ' role='group'>-->
+					<!--<div class='btn-group tabLink mobileOptions activeSort ' role='group'>-->
+					<!--<div class ="col-xs-12 optionButtons">-->
+					<!--<h4 class="panel-title filter-panel-title " >-->
+					<!--Report Line Count-->
+					<!--&lt;!&ndash;<div class="right-caret" style = "opacity: 1.0"></div>&ndash;&gt;-->
+					<!--</h4>-->
+					<!--</div>-->
+					<!--</div>-->
+					<!--</div>-->
+					<!--</div>-->
+					<!--<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes!</h2>-->
+
+				</div>
+
+				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px; padding-right: 0px; text-align: right">
+
+					<a  data-toggle="modal" data-target="#confirmModal" id="right-reportButton" onclick="checkReportLocation()" style ="color: wheat; font-size:20px">
+						<span class = 'glyphicon glyphicon-time' style = 'vertical-align: -2px;'></span><span style = 'padding-left: 1px;'>?</span>
+					</a>
+				</div>
+
+
+
+
+
+
 
 				<!--<div class = "hidden-lg hidden-md hidden-sm col-xs-2" style ="z-index:10000; display: none">-->
 					<!--<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">-->
@@ -75,45 +109,28 @@
 					<!--</div>-->
 				<!--</div>-->
 
-				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "mapToggler" style = "z-index: 10000;">
-					<button type="button" class="btn btn-lg filterButton" style = "font-size: 28px; padding-bottom: 0px; padding-left: 15px;" onclick = "showMobileMap()">
+				<div class = "hidden-lg hidden-md hidden-sm col-xs-4" id = "mapToggler" style = "z-index: 10000;">
+					<button type="button" class="btn btn-lg filterButton" style = "    font-size: 36px; padding-top: 9px; padding-bottom: 0px; padding-left: 15px;" onclick = "showMobileMap()">
 						<span class = "glyphicon glyphicon-map-marker" ></span>
 					</button>
 				</div>
-				<div class = "hidden-lg hidden-md hidden-sm col-xs-2" id = "listToggler" style = "z-index: 10000; display:none;">
-					<button type="button" class="btn btn-lg filterButton" style = "padding-bottom: 4px;" onclick = "hideMobileMap()">
-						<span class = "glyphicon glyphicon-th-list" style = "margin-top: 1px;" ></span>
+				<div class = "hidden-lg hidden-md hidden-sm col-xs-4" id = "listToggler" style = "z-index: 10000; display:none;">
+					<button type="button" class="btn btn-lg filterButton" style = "padding: 4px 4px 1px;" onclick = "hideMobileMap()">
+						<span class = "glyphicon glyphicon-th-list" style = "margin-top: 5px;" ></span>
 					</button>
 				</div>
 
-				<div class = "col-lg-8 col-md-6 col-sm-6 col-xs-8" style = "margin-right: -15px; background-color: #400000; color: white; text-align: center" id = "appendViewHeading">
-					<h3 class="hidden-xs" style="text-align: center; width: 100%; font-weight: bold">Find An ABQ Voting Location</h3>
-					<!--<button type="button" class="hidden-lg hidden-md hidden-sm btn btn-lg btn-warning reportButton"  data-toggle="modal" data-target="#confirmModal" id="center-reportButton" onclick="checkReportLocation()">-->
-						<!--<span><em>How long is<br/>your line?</em></span>-->
-					<!--</button>-->
-
-					<!--<div class="hidden-lg hidden-md hidden-sm" id = "reportLineAboveHeader">-->
-						<!--<div class='btn-group btn-group-justified ' role='group'>-->
-							<!--<div class='btn-group tabLink mobileOptions activeSort ' role='group'>-->
-								<!--<div class ="col-xs-12 optionButtons">-->
-									<!--<h4 class="panel-title filter-panel-title " >-->
-										<!--Report Line Count-->
-										<!--&lt;!&ndash;<div class="right-caret" style = "opacity: 1.0"></div>&ndash;&gt;-->
-									<!--</h4>-->
-								<!--</div>-->
-							<!--</div>-->
-						<!--</div>-->
-					<!--</div>-->
-					<h2 class="hidden-lg hidden-md hidden-sm" style="text-align: center; width: 100%; font-weight: bold">ABQ Votes!</h2>
-
+				<div class = "hidden-lg hidden-md hidden-sm col-xs-4" id = "reportHeaderButton" style = "z-index: 10000;">
+					<button type="button" class="btn btn-lg filterButton" data-toggle="modal" data-target="#confirmModal" style = "padding-bottom: 0px; padding-right: 0; padding-left: 0; background-color: #f0ad4e; color: black" onclick = "checkReportLocation()">
+						<span class = 'glyphicon glyphicon-time' style = 'font-size: 39px; vertical-align: -4px;'></span><span style = 'font-size: 39px; padding-left: 1px;'>?</span>
+					</button>
 				</div>
 
-				<div class="col-lg-2 col-md-3 col-sm-3 hidden-xs" id="brigadeLogo" style="z-index: 10000;margin-top: 18px; padding-right: 0px; text-align: right">
 
-					<a  data-toggle="modal" data-target="#confirmModal" id="right-reportButton" onclick="checkReportLocation()" style ="color: wheat">How Long is Your Line?</a>
-				</div>
 
-				<div id = "headerLogo" class = "hidden-lg hidden-md hidden-sm col-xs-2" style ="z-index:10000; display: none">
+
+
+				<div id = "headerLogo" class = "hidden-lg hidden-md hidden-sm col-xs-4" style ="z-index:10000; display: none">
 					<div class = "buttonDetails hidden-lg hidden-md hidden-sm"   id="brigadeLogoMobile" style="    z-index: 10000;font-size: 15px; padding: 0; margin-top: 1px; margin-bottom: -1px;">
 						<a type="button" class="btn btn-lg filterButton" href="http://www.codeforabq.org" style = "color: lightgrey; margin-left: -10px; padding: 6px 5px;">
 							<img class = "logoMobile" src="images/balloon_var4.png">
@@ -121,8 +138,8 @@
 					</div>
 				</div>
 
-				<div id = headerFilterButton class = "btn-group dropdown hidden-lg hidden-md hidden-sm col-xs-1" style ="margin-left: 0px;">
-					<button type="button" class="btn btn-lg filterButton dropdown-toggle" style = "font-size: 28px; padding-bottom: 0px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-canvas="body" >
+				<div id = headerFilterButton class = "btn-group dropdown hidden-lg hidden-md hidden-sm col-xs-4" style ="margin-left: 0px;">
+					<button type="button" class="btn btn-lg filterButton dropdown-toggle" style = "font-size: 37px; padding-top: 7px; padding-bottom: 0px; " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-canvas="body" >
 						<span class = "glyphicon glyphicon-filter" ></span>
 					</button>
 					<ul id = "filterDropdownArea" class="dropdown-menu dropdown-filter" style = "list-style-type: none; text-align: center; padding: 5px 10px">
@@ -373,10 +390,22 @@
 				</div>
 			</div>
 		</div>
+		<div id = "stillWaitingModalReport" style = "display: none;">
+			<div style = "text-align: center">
+				<h1>One second.  Still looking for your location...</h1>
+				<br/>
+			</div>
+		</div>
+		<div id = "stillWaitingModalSplash" style = "display: none; ">
+			<div style = "text-align: center; color: white; padding: 5px; margin-top: -5px;">
+				<h1>One second.  Still looking for your location...</h1>
+				<br/>
+			</div>
+		</div>
 		<div id = "confirmLocationModal" style = "display: none;">
 			<div style = "text-align: center">
-
-				<h2>It looks like you are voting at the <span id="reportItems"></span>?</h2>
+				<h4>This will help us estimate the wait time at your location.
+						Are you voting at <br/><span id="reportItems"></span>?</h4>
 				<br/>
 				<button class = "btn btn-lg modalButtons" onclick = "confirmReport()"> Yes! </button>
 				<button class = "btn btn-lg modalButtons" onclick = "showReportError()"> No... </button>
@@ -390,8 +419,8 @@
 
 				<h4>
 					Oops!  In order for you to update our system we need to verify you are at the voting location.
-					Try refreshing the page and waiting for us to find you.
-					If that doesn't work, your device's location services may not be working as expected.
+					Try refreshing the page, and
+					if that doesn't work, your device's location services may not be working as expected.
 					Try turning them on within your browser's settings, then refresh the page again.
 				</h4>
 				<br/>
@@ -427,8 +456,8 @@
 
 				<h4>
 					In order for you to update our system we need to verify you are at the voting location.
-					It looks like we were able to locate you, but you are still outside the necessary range.
-					Please move closer and refresh the page.
+					We were able to locate you, but you don't seem to be close enough.
+					Please refresh the page once you are at the location.
 				</h4>
 				<br/>
 				<button class = "btn btn-md modalButtons" onclick="closeModal()"> Close </button>
@@ -439,12 +468,31 @@
 
 		<div id = "confirmReportModal" style = "display: none;">
 			<div style = "text-align: center">
-				<h5>This will help us estimate the wait time at <span id="confirmedLocation"></span>.  If you can only answer one of the two questions, that's OK!  Just leave the other blank. </h5>
+				<h3>At <span id="confirmedLocation"></span>:</h3>
 
 				<form style = "text-align: right" method="POST" action="http://abqvotes.org/report" accept-charset="UTF-8" data-remote="data-remote" id="modalForm"><input name="_token" type="hidden" value="Ltw1hAl5MaFtxuanx4xsRpvC9G1wN0neQoGMtcHE">
-					<h2 style = "text-align: left">How many people in line with you?</h2><input class = "reportInputs" type = "number" >
+					<h2 style = "text-align: left">How many people in line with you?</h2>
+					<input id ="lineCount" class = "reportInputs" type = "number" >
+					<div class = "row" style = "margin-top: 10px;">
+						<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10" style ="text-align: right;">
+							<label for="unknownLine" class = "unknownBox" >Unknown?</label>
+						</div>
+
+						<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style ="text-align: left;">
+							<input id = "unknownLine" class = "reportInputs" type = "checkbox" style = "vertical-align: -10px;" >
+						</div>
+					</div>
 					<br/>
-					<h2 style = "text-align: left">How many voting booths are working?</h2><input class = "reportInputs" type = "number" >
+					<h2 style = "text-align: left">How many voting booths are working?</h2>
+					<input id ="boothCount" class = "reportInputs" type = "number" >
+					<div class = "row" style = "margin-top: 10px;">
+						<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10" style ="text-align: right;">
+							<label for="unknownBooth" class = "unknownBox" >Unknown?</label>
+						</div>
+						<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style ="text-align: left; ">
+							<input id = "unknownBooth" class = "reportInputs" type = "checkbox" style = "vertical-align: -10px;" >
+						</div>
+					</div>
 					<br/>
 					<br/>
 					<!--<h5 style = "text-align: left"><em>*If you can only answer one of the two questions, that's OK!  Just leave the other blank.  </em></h5>-->
@@ -467,6 +515,74 @@
 
 					</div>
 
+				</div>
+			</div>
+		</div>
+
+
+		<div class="modal fade bs-example-modal-lg"  style = "z-index: 100000" id="splashModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" style = "z-index: 1000000; width: 95%">
+				<div class="modal-content" >
+					<div class="modal-header" style = "background-color: #400000; padding-bottom: 0; border: 0">
+						<button style = "backgroung-color: wheat" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h1 class="modal-title splashModalTitle" id="splashModalLabel1" style = "text-align: center">ABQ Votes!</h1>
+						<h4 class="modal-title splashModalSubTitle" id="splashModalLabel2" style = "text-align: center">
+							Find your closest municipal Albuquerque voting location.
+							<!--with the shortest wait time. <br/>-->
+							<!--Then help us calc wait time by letting us know your location's line length.-->
+						</h4>
+					</div>
+					<div class="modal-body" id = "splashModalBody" style = "background-color: #400000; padding-top:0">
+						<div class = "row">
+							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000;margin-top: 18px; text-align: center">
+								<button type="button" class="btn btn-lg btn-warning splashButtons" id="splash-findButton" onclick="closeSplash()">
+									<div class = "row" style = "text-align: center">
+										<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="z-index: 10000; text-align: right">
+											<span class = "glyphicon glyphicon-eye-open"></span>
+											<!--<span class = "glyphicon glyphicon-time" style = "vertical-align: -3px;"></span>-->
+										</div>
+										<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10" style="z-index: 10000; text-align: left">
+											<span>Find a poll near you.</span>
+										</div>
+									</div>
+								</button>
+							</div>
+							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000;margin-top: 18px; text-align: center; padding-bottom: 20px; border-bottom: 1px solid wheat">
+								<button type="button" class="btn btn-lg btn-warning splashButtons"  data-toggle="modal" data-target="#confirmModal" id="splash-reportButton" onclick="checkReportLocation()">
+									<div class = "row" style = "text-align: center">
+										<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="z-index: 10000; text-align: right">
+											<!--<span class = "glyphicon glyphicon-eye-open"></span>-->
+											<span class = "glyphicon glyphicon-time" style = "vertical-align: -3px;"></span>
+										</div>
+										<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10" style="z-index: 10000; text-align: left">
+											<span>How long is your line?</span>
+										</div>
+									</div>
+								</button>
+							</div>
+							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="z-index: 10000;margin-top: 18px; text-align: center; ">
+								<a href="http://www.codeforabq.org" style ="color: wheat">A <img class = "logoHeader" src="images/balloon_var4.png"> project.</a>
+							</div>
+							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="z-index: 10000;margin-top: 18px; text-align: center">
+								<a href="mailto:code4abq@gmail.com" style ="color: wheat">Report an issue to Code4ABQ.</a>
+							</div>
+							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="z-index: 10000;margin-top: 18px; text-align: center">
+								<a onclick = "showLightReading()" href = "#lightReading" style ="color: wheat">Some light reading.</a>
+							</div>
+
+
+							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style = "display:none" id = "lightReading"; >
+								<br/>
+								<br/>
+								<h4><a href="http://www.cabq.gov/voting-elections" target = "_blank" style = "color: wheat; text-decoration: underline">General CABQ Elections Info</a></h4>
+								<br/>
+								<h4><a href="http://www.codeforabq.org" target = "_blank" style = "color: wheat; text-decoration: underline">Learn more about <img class = "logoHeader" src="images/balloon_var4.png" style = "background-color: #400000"> projects.</a></h4>
+								<br/>
+								<h4><a href="http://www.cabq.gov/abq-data" target = "_blank" style = "color: wheat; text-decoration: underline">ABQVotes relies on CABQ Open Data. Learn More. </a></h4>
+								<br/>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -547,7 +663,7 @@
 		<!--MAP AND INJECTED LIST DIV-->
 		<div id="mapListContainer" class ="row" style = "margin-left: 0px; margin-right: 0px;">
 
-			<div class="col-xs-12 tabs" id = "absenteeButtonMobile" >
+			<div class="col-xs-12 tabs" id = "absenteeButtonMobile" style = "display:none" >
 				<div class='btn-group btn-group-justified ' role='group'>
 					<div class='btn-group tabLink mobileOptions activeSort' role='group'>
 						

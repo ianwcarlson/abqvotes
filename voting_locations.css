@@ -161,6 +161,10 @@ button.sortButtons:focus {
 	/*text-decoration: underline;*/
 }
 
+.unknownBox {
+	font-size: 25px;
+}
+
 .filterButton {
 	/*display: inline;*/
 	float: left;
@@ -168,12 +172,12 @@ button.sortButtons:focus {
 	margin-top: 15px;
 	/*text-align: right;*/
 	font-weight: bold;
-	color: azure;
+	color: wheat;
 	/*font-size: medium;*/
 	background-color: #A54A4A;
 	padding: 5px 16px;
-	margin-left: -4px;
-	font-size: 24px;
+	/*margin-left: -4px;*/
+	font-size: 35px;
 	width: 100%;
 	min-width: 54px;
 
@@ -185,7 +189,7 @@ button.sortButtons:focus {
 	/*margin-right: 15px;*/
 	/*margin-top: 15px;*/
 	/*text-align: right;*/
-	font-weight: bolder;
+	/*font-weight: bolder;*/
 	color: black;
 	/*font-size: medium;*/
 	padding: 3px 8px;
@@ -194,8 +198,34 @@ button.sortButtons:focus {
 	width: 100%;
 	min-width: 85px;
 	text-align: center;
-	font-family: Georgia, serif;
-	/*font-family: "Lucida Console", Georgia, serif;*/
+	/*font-family: Georgia, serif;*/
+	font-family: "Lucida Console", Georgia, serif;
+	/*font-family: Impact, Charcoal, sans-serif;*/
+
+}
+
+
+.splashButtons {
+	/*display: inline;*/
+	float: left;
+	/*margin-right: 15px;*/
+	/*margin-top: 15px;*/
+	/*text-align: right;*/
+	/*font-weight: bolder;*/
+	color: wheat;
+	background-color: #A54A4A;
+	/*background-color: #400000;*/
+	border : 2px solid wheat;
+	/*font-size: medium;*/
+	/*padding: 3px 8px;*/
+	margin-left: 0px;
+	font-size: 35px;
+	width: 100%;
+	white-space: normal;
+	/*min-width: 85px;*/
+	text-align: center;
+	/*font-family: Georgia, serif;*/
+	font-family: "Lucida Console", Georgia, serif;
 	/*font-family: Impact, Charcoal, sans-serif;*/
 
 }
@@ -233,6 +263,21 @@ button.sortButtons:focus {
 	/*padding: 0px !important;*/
 }
 
+.splashModalTitle{
+	text-align: center;
+	color: wheat;
+	font-size: 50px;
+	font-weight: 900;
+
+}
+
+
+.splashModalSubTitle{
+	font-family: "Lucida Console", Georgia, serif;
+	text-align: center;
+	color: wheat;
+	font-weight: 300;
+}
 
 .modalButtons {
 	margin: 18px;

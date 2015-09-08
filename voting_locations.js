@@ -126,6 +126,7 @@ Voter.zoomList = [];
 Voter.heat = [];
 Voter.maxWait = 60;
 Voter.maxDistance = 3;
+Voter.requiredRange = 5; //min range in miles from a location to allow line reporting
 
 // set global variable to adjust location to center of off-center map view when list is overlayed on left of map.
 Voter.latlngAdjustment = 0;
@@ -134,8 +135,11 @@ Voter.latlngAdjustment = 0;
 Voter.isSortByType = 'distance';
 Voter.isFilteredBy = 'early';
 
-// set up current location boolean for use in reporting line
+// set up current location boolean for use in reporting line and boolean for whether or not user is waiting to see report modal.
 Voter.isCurrent = false;
+Voter.isWaiting = false;
+Voter.isWaitingSplash = false;
+Voter.isSearchDone = false;
 
 // boolean to see which settings to default to
 Voter.isTodayEarlyVoting = true;
@@ -441,7 +445,8 @@ function getTimeString(theId){
 	if(theLocation.waitTime === 100000) {
 		// indicates open but unknown wait time
 		//timeString = "00:??";
-		timeString = "<span class = 'glyphicon glyphicon-time' style = 'font-size: 15px;'></span> <span>?</span>";
+		timeString = 	"<span class = 'glyphicon glyphicon-time' style = 'font-size: 14px;'></span>" +
+							"<span style = 'font-size: 15px;'>?</span>";
 	} else if(theLocation.waitTime === 200000) {
 		// indicates closed
 		//timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
@@ -539,6 +544,20 @@ function onLocationFound(e) {
 
 	// set current location boolean to true for use in reporting the line
 	Voter.isCurrent = true;
+	Voter.isSearchDone = true;
+
+	if (Voter.isWaiting){
+		checkReportLocation();
+	}
+
+	if (Voter.isWaitingSplash){
+		$('#splashModal').modal("hide");
+	}
+
+
+
+
+
 	/*
 	 var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
 	 " meters of this point. </strong><br/>" +
@@ -589,9 +608,17 @@ function onLocationFound(e) {
 
 function onLocationError(e) {
 	console.log ('onLocationError fires now');
+	Voter.isSearchDone = true;
+	if (Voter.isWaiting){
+		checkReportLocation();
+	}
 
-	// notify user
-	alert(e.message + " Because of the this error, we were not able to get your current location. To use the sorting and links to directions in this app, we recommend making sure your locations services are on for your browser and refreshing the page.");
+	if (Voter.isWaitingSplash){
+		$('#splashModal').modal("hide");
+		// notify user
+		alert(e.message + " Because of the this error, we were not able to get your current location. To use the sorting and links to directions in this app, we recommend making sure your locations services are on for your browser and refreshing the page.");
+	}
+
 	Voter.maxDistance = 10;
 	// re-set view with Runner Address as base'
 	setToHomeAddress();
@@ -789,6 +816,11 @@ function checkForLocations(lat, long){
 		buildCombinedView();
 
 		Voter.isFirstBuild = false;
+
+
+		// show splash modal
+		$('#splashModal').modal('show');
+
 	}
 }
 
@@ -1172,7 +1204,7 @@ function sortArray(isWhatType){
 		ga('send', 'event', 'button', 'click', 'sortByTime');
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#A54A4A";
-		document.getElementById('byLowestLive').style.color = "white";
+		document.getElementById('byLowestLive').style.color = "wheat";
 		document.getElementById('lowestCaretLive').className = "caret";
 
 		document.getElementById('byNearestLive').style.backgroundColor = "#E4C9C9 ";
@@ -1193,7 +1225,7 @@ function sortArray(isWhatType){
 		ga('send', 'event', 'button', 'click', 'sortByDistance');
 
 		document.getElementById('byNearestLive').style.backgroundColor = "#A54A4A";
-		document.getElementById('byNearestLive').style.color = "white";
+		document.getElementById('byNearestLive').style.color = "wheat";
 		document.getElementById('nearestCaretLive').className = "caret";
 
 
@@ -1215,7 +1247,7 @@ function sortArray(isWhatType){
 
 
 		document.getElementById('byNameLive').style.backgroundColor = "#A54A4A";
-		document.getElementById('byNameLive').style.color = "white";
+		document.getElementById('byNameLive').style.color = "wheat";
 		document.getElementById('nameCaretLive').className = "caret";
 
 		document.getElementById('byLowestLive').style.backgroundColor = "#E4C9C9 ";
@@ -1515,21 +1547,29 @@ function confirmReport(){
 
 // modal to verify location
 function checkReportLocation(){
+	$('#splashModal').modal("hide");
 
-	// first, check to see if we have their current location at all
-	if (Voter.isCurrent === false){
-		showReportError();
-	}
+	if (Voter.isSearchDone === false){
+		document.getElementById('modalBody').innerHTML = document.getElementById('stillWaitingModalReport').innerHTML;
+		Voter.isWaiting = true;
 
-	// second, check to see if they are within the required range of the location
-	else if (Voter.nearest["Distance"] < 0.5){
-		// edit report modal stub
-		document.getElementById('reportItems').innerHTML = Voter.nearest.MVCName;
-
-		// set into modal stub
-		document.getElementById('modalBody').innerHTML = document.getElementById('confirmLocationModal').innerHTML;
 	} else {
-		notNearEnoughModal();
+
+		// first, check to see if we have their current location at all
+		if(Voter.isCurrent === false) {
+			showReportError();
+		}
+
+		// second, check to see if they are within the required range of the location
+		else if(Voter.nearest["Distance"] < Voter.requiredRange) {
+			// edit report modal stub
+			document.getElementById('reportItems').innerHTML = Voter.nearest.MVCName;
+
+			// set into modal stub
+			document.getElementById('modalBody').innerHTML = document.getElementById('confirmLocationModal').innerHTML;
+		} else {
+			notNearEnoughModal();
+		}
 	}
 }
 
@@ -1550,7 +1590,7 @@ function notNearEnoughModal(){
 	document.getElementById('modalBody').innerHTML = document.getElementById('notNearEnoughModal').innerHTML;
 }
 
-// modal to display location error modal for reporting.
+// modal to display report thank you, links, and confirmation
 function showThankModal(){
 	// ensure it opens at top of modal.
 	$("#confirmModal").scrollTop(0);
@@ -1559,13 +1599,43 @@ function showThankModal(){
 	document.getElementById('modalBody').innerHTML = document.getElementById('thankModal').innerHTML;
 }
 
-// modal to display location error modal for reporting.
+// modal to close report modal
 function closeModal(){
 	$('#confirmModal').modal("hide");
 
 	// set into modal stub
 	//document.getElementById('modalBody').innerHTML = document.getElementById('reportModalError').innerHTML;
 }
+
+// function to close splash to find location
+function closeSplash(){
+	if (Voter.isSearchDone === false){
+		Voter.isWaitingSplash = true;
+		document.getElementById('splashModalBody').innerHTML = document.getElementById('stillWaitingModalSplash').innerHTML;
+	} else {
+		$('#splashModal').modal("hide");
+		$("body").scrollTop(0);
+	}
+}
+
+function showLightReading(){
+	console.log('showLightReading fired');
+	document.getElementById('lightReading').style.display = "block";
+}
+// modal to close splash and show report modal
+//function closeSplashOpenReport(){
+//	if (Voter.isSearchDone){
+//		document.getElementById('modalBody').innerHTML = document.getElementById('thankModal').innerHTML;
+//
+//	} else {
+//		Voter.isWaiting = true;
+//		//alert ("One second - still looking for your location...");
+//	}
+//	$('#splashModal').modal("hide");
+//	checkReportLocation();
+//
+//
+//}
 
 ///////////////////////////////////////////////////////////////////////////////////
 /*
