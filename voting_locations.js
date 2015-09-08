@@ -678,7 +678,7 @@ function rebuildHomeIcon(isToCurrent){
 
 
 	// build html to use in icon
-	var homeMarker = "Home" +
+	var homeMarker = "ABQ" +
 		"<div class='leaflet-popup-tip-container' style='margin-top: 4px; margin-left: 0px'>" +
 		"<div class='leaflet-popup-tip your-location-pointer'></div></div> ";
 
@@ -707,7 +707,7 @@ function rebuildCurrentIcon(isToCurrent){
 
 	if(isToCurrent){
 		var theBool = false;
-		var theInnerHtml = "Use default address instead.";
+		var theInnerHtml = "Switch your location to downtown ABQ.";
 
 	} else {
 		var theBool = true;
@@ -715,10 +715,7 @@ function rebuildCurrentIcon(isToCurrent){
 	}
 
 	var locationDetails ="<div style = 'text-align: center'><strong>We think you are within <br/> " + Voter.currentRadius +
-		" meters of this point. </strong><br/>";
-
-		// deprecated as not needed for voter locations use case
-		//"<button class='btn btn-danger btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + theBool + ")'>" + theInnerHtml + "</button></div>";
+		" meters of this point. </strong><br/><button class='btn btn-warning btn-xs' id = 'currentPopupButton' onClick='changeLocations(" + theBool + ")'>" + theInnerHtml + "</button></div>";
 
 	// build html to use in icon
 	var currentLocationMarker = "You!" +
