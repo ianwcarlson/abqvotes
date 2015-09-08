@@ -217,9 +217,9 @@ button.sortButtons:focus {
 	/*background-color: #400000;*/
 	border : 2px solid wheat;
 	/*font-size: medium;*/
-	/*padding: 3px 8px;*/
+	padding: 3px 8px;
 	margin-left: 0px;
-	font-size: 35px;
+	font-size: 30px;
 	width: 100%;
 	white-space: normal;
 	/*min-width: 85px;*/
@@ -832,5 +832,10 @@ border-radius: 0px;
 .heatmap-20{
 	background: #000000 ;
 	color: #FFFFFF;
+}
+
+.grey-icon-active{
+	background: lightgrey ;
+	color: black;
 }
 

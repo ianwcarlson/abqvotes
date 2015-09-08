@@ -523,25 +523,25 @@
 		<div class="modal fade bs-example-modal-lg"  style = "z-index: 100000" id="splashModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-lg" style = "z-index: 1000000; width: 95%">
 				<div class="modal-content" >
-					<div class="modal-header" style = "background-color: #400000; padding-bottom: 0; border: 0">
-						<button style = "backgroung-color: wheat" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h1 class="modal-title splashModalTitle" id="splashModalLabel1" style = "text-align: center">ABQ Votes!</h1>
-						<h4 class="modal-title splashModalSubTitle" id="splashModalLabel2" style = "text-align: center">
-							Find your closest municipal Albuquerque voting location.
-							<!--with the shortest wait time. <br/>-->
-							<!--Then help us calc wait time by letting us know your location's line length.-->
-						</h4>
+					<div class="modal-header" style = "background-color: #400000; padding-bottom: 0; padding-top: 5px; border: 0">
+						<!--<button style = "background-color: wheat" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+						<h2 class="modal-title splashModalTitle" id="splashModalLabel1" style = "text-align: center; margin: -8px 0">ABQ Votes!</h2>
+						<!--<h4 class="modal-title splashModalSubTitle" id="splashModalLabel2" style = "text-align: center">-->
+							<!--Find your closest municipal Albuquerque voting location.-->
+							<!--&lt;!&ndash;with the shortest wait time. <br/>&ndash;&gt;-->
+							<!--&lt;!&ndash;Then help us calc wait time by letting us know your location's line length.&ndash;&gt;-->
+						<!--</h4>-->
 					</div>
 					<div class="modal-body" id = "splashModalBody" style = "background-color: #400000; padding-top:0">
 						<div class = "row">
 							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000;margin-top: 18px; text-align: center">
 								<button type="button" class="btn btn-lg btn-warning splashButtons" id="splash-findButton" onclick="closeSplash()">
 									<div class = "row" style = "text-align: center">
-										<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="z-index: 10000; text-align: right">
-											<span class = "glyphicon glyphicon-eye-open"></span>
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000; text-align: center">
+											<span class = "glyphicon glyphicon-eye-open" style = "vertical-align: -3px; font-size:50px"></span>
 											<!--<span class = "glyphicon glyphicon-time" style = "vertical-align: -3px;"></span>-->
 										</div>
-										<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10" style="z-index: 10000; text-align: left">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000; text-align: center">
 											<span>Find a poll near you.</span>
 										</div>
 									</div>
@@ -550,11 +550,11 @@
 							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000;margin-top: 18px; text-align: center; padding-bottom: 20px; border-bottom: 1px solid wheat">
 								<button type="button" class="btn btn-lg btn-warning splashButtons"  data-toggle="modal" data-target="#confirmModal" id="splash-reportButton" onclick="checkReportLocation()">
 									<div class = "row" style = "text-align: center">
-										<div class="col-lg-1 col-md-1 col-sm-2 col-xs-2" style="z-index: 10000; text-align: right">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000; text-align: center; padding-top: 5px">
 											<!--<span class = "glyphicon glyphicon-eye-open"></span>-->
-											<span class = "glyphicon glyphicon-time" style = "vertical-align: -3px;"></span>
+											<span class = "glyphicon glyphicon-time" style = "vertical-align: -3px; font-size:50px"></span>
 										</div>
-										<div class="col-lg-11 col-md-11 col-sm-10 col-xs-10" style="z-index: 10000; text-align: left">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="z-index: 10000; text-align: center">
 											<span>How long is your line?</span>
 										</div>
 									</div>

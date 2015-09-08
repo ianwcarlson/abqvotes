@@ -1065,8 +1065,12 @@ function buildIcon(theId) {
 		buildIconType(theId, iconId, theLayer, anchor, iconClass, waitTimeMarker, iconSize, popupAnchor);
 
 	} else {
-		iconClass = 'location-icon heatmap-' + Voter.heat[theId];
 
+		if (theLocation.waitTime === 200000) {
+			iconClass = 'location-icon grey-icon-active';
+		} else {
+			iconClass = 'location-icon heatmap-' + Voter.heat[theId];
+		}
 		timeString = Voter.locations[theId].waitTimeString;
 
 
