@@ -445,17 +445,17 @@ function getTimeString(theId){
 	if(theLocation.waitTime === 100000) {
 		// indicates open but unknown wait time
 		//timeString = "00:??";
-		timeString = 	"<span class = 'glyphicon glyphicon-time' style = 'font-size: 14px;'></span>" +
+		timeString = 	"<span class = 'glyphicon glyphicon-time' style = 'font-size: 14px;     margin-left: 2px;'></span>" +
 							"<span style = 'font-size: 15px;'>?</span>";
 	} else if(theLocation.waitTime === 200000) {
 		// indicates closed
 		//timeString = "<span class = 'glyphicon glyphicon-minus-sign'></span>";
-		timeString = "<span class = 'glyphicon glyphicon-ban-circle' style = 'font-size: 16px;'></span>";
+		timeString = "<span class = 'glyphicon glyphicon-ban-circle' style = 'font-size: 16px;     margin-left: 2px;'></span>";
 		//timeString = "<span class = 'glyphicon glyphicon-off'></span>";
 	} else if(theLocation.waitTime > 240) {
 		// indicates open but unknown wait time
 		//timeString = "00:??";
-		timeString = 	"<span class = 'glyphicon glyphicon-time' style = 'font-size: 14px;'></span>" +
+		timeString = 	"<span class = 'glyphicon glyphicon-time' style = 'font-size: 14px;     margin-left: 2px;'></span>" +
 							"<span style = 'font-size: 15px;'>?</span>";
 	} else if(theLocation.waitTime < 10) {
 		timeString = "00:0" + theLocation.waitTime;
@@ -1920,6 +1920,7 @@ function decideView(message) {
 	}
 }
 
+Voter.listCount = 0;
 
 function buildCombinedView(){
 	console.log ('buildCombinedView fires now');
@@ -1942,7 +1943,6 @@ function buildCombinedView(){
 	document.getElementById("nameCaret").						setAttribute('id', 'nameCaretLive');
 
 	// add new ids to scrollable list for hiding
-	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
 	document.getElementById("listRow").							setAttribute('id', 'liveListRow');
 
 	// set filter in list id's
@@ -1950,11 +1950,20 @@ function buildCombinedView(){
 	document.getElementById("earlyBox").						setAttribute('id', 'earlyBoxLive');
 	document.getElementById("absenteeBox").					setAttribute('id', 'absenteeBoxLive');
 
+	// assign class to scrollabeList wrapper, then change id -> used to be able to make it vertically responsive
+	document.getElementById("scrollableList").				className = "listWrapperLive";
+	document.getElementById("scrollableList").				setAttribute('id', 'liveScrollableList');
+	document.getElementById("scrollableList2").				setAttribute('id', 'liveScrollableList2');
+	document.getElementById("subtractFromList1").				setAttribute('id', 'subtractFromList1Live');
+	//document.getElementById("subtractFromList2").				setAttribute('id', 'subtractFromList2Live');
+
 
 	// set list live by putting it into the list div and identifying it with new value string
 	//console.log("innerHTML being added");
 	//console.log(document.getElementById("buildListInMap").innerHTML);
-
+	Voter.listCount ++;
+	console.log('LIST COUNT INFO');
+	console.log(Voter.listCount);
 	document.getElementById("listGoesHere").					innerHTML = document.getElementById("buildListInMap").innerHTML;
 
 	// reset template html and id's
@@ -1977,15 +1986,21 @@ function buildCombinedView(){
 	document.getElementById("nameCaretLive").							setAttribute('id', 'nameCaret');
 
 
-
 	// reset scrollable list
-	document.getElementById("liveScrollableList").						setAttribute('id', 'scrollableList');
+	document.getElementById("liveScrollableList").			setAttribute('id', 'scrollableList');
+	document.getElementById("liveScrollableList2").			setAttribute('id', 'scrollableList2');
+	document.getElementById("subtractFromList1Live").				setAttribute('id', 'subtractFromList1');
+	//document.getElementById("subtractFromList2Live").				setAttribute('id', 'subtractFromList2');
+
 	document.getElementById("liveListRow").							setAttribute('id', 'listRow');
 
 	// reset list filter id's
 	document.getElementById("allBoxLive").							setAttribute('id', 'allBox');
 	document.getElementById("earlyBoxLive").						setAttribute('id', 'earlyBox');
 	document.getElementById("absenteeBoxLive").					setAttribute('id', 'absenteeBox');
+
+	// UNassign class to template scrollabeList wrapper template so it can be reused
+	document.getElementById("scrollableList").className = "";
 }
 
 
@@ -1995,22 +2010,26 @@ function showMobileMap(){
 
 	console.log('mobileMap fired');
 	console.log(document.getElementById('scrollableList'));
-	document.getElementById('liveScrollableList').style.display = "none";
-	document.getElementById('liveListRow').style.height = "0%";
-	document.getElementById('liveZoomLink').style.display = "none";
+	document.getElementById('liveScrollableList2').style.display = "none";
+	//document.getElementById('liveListRow').style.height = "0%";
+	//document.getElementById('liveZoomLink').style.display = "none";
 	document.getElementById('mapToggler').style.display = "none";
 	document.getElementById('listToggler').style.display = "inline";
+	document.getElementById('listDiv').style.height = "0";
+
 }
 
 
 function hideMobileMap(){
 	console.log ('hideMobileMap fires now');
 
-	document.getElementById('liveScrollableList').style.display = "block";
-	document.getElementById('liveListRow').style.display = "block";
-	document.getElementById('liveZoomLink').style.display = "block";
+	document.getElementById('liveScrollableList2').style.display = "block";
+	//document.getElementById('liveListRow').style.display = "block";
+	//document.getElementById('liveZoomLink').style.display = "block";
 	document.getElementById('mapToggler').style.display = "inline";
 	document.getElementById('listToggler').style.display = "none";
+	document.getElementById('listDiv').style.height = "100%";
+
 }
 
 
@@ -2050,45 +2069,45 @@ function resetZoomList () {
 ///////////////////////////////////////////////////////////////////////////////////
 /*
  * set the current date in the date fields and enable date picker
- *
+ *		**commented out for now since datepicker is deprecated**
  *
  */
-$(document).ready(
-  
-	// This function will get executed after the DOM is fully loaded 
-  	function ()
-	{
-		// early voting date fields
-		$("#isEarlyVotingDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
-		$("#isEarlyVotingDatepicker").datepicker("setDate", Voter.earlyVotingDate);
-		$("#isEarlyVotingMobileDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
-		$("#isEarlyVotingMobileDatepicker").datepicker("setDate", Voter.earlyVotingDate);
-		/* absentee dropoff date fields
-		$("#AbsenteeDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
-		$("#AbsenteeDatepicker").datepicker("setDate", new Date);
-		$("#AbsenteeMobileDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
-		$("#AbsenteeMobileDatepicker").datepicker("setDate", new Date); */
-
-		// hide certain filter elements, depending on whether it is election day
-		if (Voter.isElectionDay==false)
-		{
-			document.getElementById('maxWait').style.display = "none";
-			document.getElementById('mobileMaxWait').style.display = "none";
-			document.getElementById('mobileMaxWait2').style.display = "none";
-		} else {
-			document.getElementById('earlyVoting').style.display = "none";
-			document.getElementById('earlyVotingMobile').style.display = "none";
-		}
-		
-		// if mobile display, show map as default view
-		var w = window.innerWidth
-		|| document.documentElement.clientWidth
-		|| document.body.clientWidth;
-		if(w < 768)
-			showMobileMap();
-
-	}
-);
+//$(document).load(
+//
+//	// This function will get executed after the DOM is fully loaded
+//  	function ()
+//	{
+//		// early voting date fields
+//		$("#isEarlyVotingDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+//		$("#isEarlyVotingDatepicker").datepicker("setDate", Voter.earlyVotingDate);
+//		$("#isEarlyVotingMobileDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+//		$("#isEarlyVotingMobileDatepicker").datepicker("setDate", Voter.earlyVotingDate);
+//		/* absentee dropoff date fields
+//		$("#AbsenteeDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+//		$("#AbsenteeDatepicker").datepicker("setDate", new Date);
+//		$("#AbsenteeMobileDatepicker").datepicker({minDate: -1, maxDate: Voter.electionDate});
+//		$("#AbsenteeMobileDatepicker").datepicker("setDate", new Date); */
+//
+//		// hide certain filter elements, depending on whether it is election day
+//		if (Voter.isElectionDay==false)
+//		{
+//			document.getElementById('maxWait').style.display = "none";
+//			document.getElementById('mobileMaxWait').style.display = "none";
+//			document.getElementById('mobileMaxWait2').style.display = "none";
+//		} else {
+//			document.getElementById('earlyVoting').style.display = "none";
+//			document.getElementById('earlyVotingMobile').style.display = "none";
+//		}
+//
+//		// if mobile display, show map as default view
+//		var w = window.innerWidth
+//		|| document.documentElement.clientWidth
+//		|| document.body.clientWidth;
+//		if(w < 768)
+//			showMobileMap();
+//
+//	}
+//);
 
 
 
@@ -2177,3 +2196,51 @@ function showFilterBar() {
 	document.getElementById('collapsingFilter').setAttribute("onclick", "hideFilterBar()");
 }
 
+
+
+
+
+// function to get height of list div and scrollable list
+$(window).resize(function(){
+	// first get current listDiv height and display
+	var listDiv = $('#listDiv');
+	var listDivHeight = listDiv.outerHeight();
+	var listDivDisplay = listDiv.css('display');
+
+
+
+	// then make sure list div is set to 100% height
+	listDiv.css({"height":"100%"});
+
+	// then calc scrollable list height
+	var tabsHeight = $('#subtractFromList1Live').outerHeight();
+	//var filterButtonHeight = $('#subtractFromList2Live').outerHeight();
+	var wrapperHeight =  $('.listWrapperLive').outerHeight();
+	var height = wrapperHeight-tabsHeight;
+	console.log(wrapperHeight  + "-" + tabsHeight + "=" + height );
+
+	$('.scrollable-height').css({"height":height+"px"});
+
+	// reset ListDiv height and display
+	listDiv.css({"height": listDivHeight});
+	listDiv.css({"display": listDivDisplay});
+
+});
+
+//// function to get height of list div to
+$(window).ready(function(){
+	var tabsHeight = $('#subtractFromList1Live').outerHeight();
+	//var filterButtonHeight = $('#subtractFromList2Live').outerHeight();
+	var wrapperHeight =  $('.listWrapperLive').outerHeight();
+	Voter.listHeight = wrapperHeight-tabsHeight;
+	console.log(wrapperHeight + "-" + tabsHeight + "=" + Voter.listHeight );
+	$('.scrollable-height').css({"height": Voter.listHeight+"px"});
+
+
+	// if mobile display, show map as default view
+	var w = window.innerWidth
+		|| document.documentElement.clientWidth
+		|| document.body.clientWidth;
+	if(w < 768)
+		showMobileMap();
+});

@@ -1,6 +1,7 @@
 #mapListContainer {
 	/*width: 106%;*/
-	height: 642.222px;
+	height: 100%;
+	/*height: 642.222px;*/
 	position: relative;
 	/*padding-right: 35px;*/
 	padding-left: 0px;
@@ -14,9 +15,11 @@
 }
 
 
+
 #map {
 	width: 100%;
-	height: 602.222px;
+	height: 100%;
+	/*height: 602.222px;*/
 	padding-bottom: 0px;
 	/*border: 5px solid black;*/
 	/*border-top-width: 0px;*/
@@ -24,12 +27,38 @@
 
 }
 
+.listWrapperLive {
+	height: 100%;
+}
 
 .center{
 	margin-left: auto;
 	margin-right: 0px;
 	padding-right: 0px;
 	padding-left: 0px;
+	/*position: absolute;*/
+	/*overflow: hidden;*/
+}
+
+.center-container {
+	margin-left   : auto;
+	margin-right  : 0px;
+	padding-right : 0px;
+	padding-left  : 0px;
+	/*margin-top    : -20px;*/
+	height        : 100%;
+
+}
+
+
+.master-container{
+	/*margin-left: auto;*/
+	/*margin-right: 0px;*/
+	padding-right: 0px;
+	padding-left: 0px;
+	height: 92vh;
+	/*height: 90vh;*/
+	/*margin-top: -20px;*/
 	/*position: absolute;*/
 	/*overflow: hidden;*/
 }
@@ -43,7 +72,7 @@
 	margin-left: -15px;
 	/*width: 105%;*/
 
-	height: 0%;
+	height: 100%;
 	position: absolute;
 	top: 0;
 	left: 0;
