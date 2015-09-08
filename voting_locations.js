@@ -455,7 +455,8 @@ function getTimeString(theId){
 	} else if(theLocation.waitTime > 240) {
 		// indicates open but unknown wait time
 		//timeString = "00:??";
-		timeString = "<span class = 'glyphicon glyphicon-time' style = 'font-size: 15px;'></span> <span>?</span>";
+		timeString = 	"<span class = 'glyphicon glyphicon-time' style = 'font-size: 14px;'></span>" +
+							"<span style = 'font-size: 15px;'>?</span>";
 	} else if(theLocation.waitTime < 10) {
 		timeString = "00:0" + theLocation.waitTime;
 	} else {

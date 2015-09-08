@@ -162,7 +162,7 @@ button.sortButtons:focus {
 }
 
 .unknownBox {
-	font-size: 25px;
+	font-size: 20px;
 }
 
 .filterButton {
@@ -523,16 +523,16 @@ button.sortButtons:focus {
 .dropdown-menu {
 	position: absolute;
 	top: 60%;
-	/* left: -100%; */
+ 	left: -50%;
 	right: 25%;
 	z-index: 100000;
 	display: none;
 	float: left;
-	min-width: 240px;
+	width: 240px;
 	padding: 5px 5px;
-	margin: 2px 0 0;
+	margin: 2px 0 -0 -90px;
 	list-style: none;
-	font-size: 14px;
+	font-size: 16px;
 	text-align: right;
 	background-color: black;
 	border: 1px solid #cccccc;
