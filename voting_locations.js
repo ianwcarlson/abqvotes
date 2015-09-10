@@ -339,46 +339,9 @@ function assignWaitTime (theId){
 	booth count we accept whatever the last input was period.
 	*/
 	// logic to see if after hours
-	var currentTime = new Date(); // hours/minutes UTC
-	var currentDay = 	new Date();	// day of week local
-	var currentDate = new Date(); // actual date/year
-	var earlyVoteStart = Voter.locations[theId].earlyVotingStartDateStr;
-	var earlyVoteEnd = Voter.locations[theId].earlyVotingEndDateStr;
-	var electionDay = Voter.electionDay;
-	var opensAt = 		Voter.locations[theId].earlyVotingDayStartTimeUTC; // convert to hours/minutes UTC
-	var closesAt = 	Voter.locations[theId].earlyVotingEndTimeUTC; // convert to hours/minutes UTC
-
-	if (	currentTime < opensAt 							||
-			currentTime > closesAt 							||
-			currentDay === "Sat" 							||
-			currentDay === "Sun"								||
-			currentDate < earlyVoteStart					||
-			earlyVoteEnd < currentDate < electionDay	||
-			currentDate > electionDay						){
-
-				return 200000;
-	}
-
-	// take opportunity to set global boolean for whether current day is within early Voting Period
-	Voter.isTodayEarlyVoting = (earlyVoteStart <= currentDate <= earlyVoteEnd);
-	if (Voter.isTodayEarlyVoting){
-		// make sure both early checkboxes are checked
-		document.getElementById("earlyBoxLive").checked = true;
-		document.getElementById("earlyBoxMobile").checked = true;
-	}
-
-	if (earlyVoteEnd < currentDate <= electionDay){
-		// make sure both all checkboxes are checked
-		document.getElementById("allBoxLive").checked = true;
-		document.getElementById("allBoxMobile").checked = true;
-
-		// and hide mobile filter button and list filter button, reveal brigade logo in its place
-		document.getElementById("filterButtons").style.display = "none";
-		document.getElementById("headerFilterButton").style.display = "none";
-		document.getElementById("headerLogo").style.display = "inline";
 
 
-	}
+
 	//if (earlyVoteStart <= currentDate <= earlyVoteEnd){
 	//	Voter.isTodayEarlyVoting = true;
 	//} else {
@@ -427,16 +390,57 @@ function assignWaitTime (theId){
 	}
 
 
-	validWaitTime = (1+ validLineCount) * avgPersonTime/validBoothCount;
+	return (1+ validLineCount) * avgPersonTime/validBoothCount;
+}
 
-	// logic to see if still valid
-	if (currentDate - validLastUpdate < estimateMultiple * validWaitTime){
-		return validWaitTime;
+function isValidVotingTime(){
+	var timeValid = true;
+	var currentTime = new Date(); // hours/minutes UTC
+	var currentDay = 	new Date();	// day of week local
+	var currentDate = new Date(); // actual date/year
+	var earlyVoteStart = Voter.locations[theId].earlyVotingStartDateStr;
+	var earlyVoteEnd = Voter.locations[theId].earlyVotingEndDateStr;
+	var electionDay = Voter.electionDay;
+	var opensAt = 		Voter.locations[theId].earlyVotingDayStartTimeUTC; // convert to hours/minutes UTC
+	var closesAt = 	Voter.locations[theId].earlyVotingEndTimeUTC; // convert to hours/minutes UTC
+
+	if (currentTime < opensAt || currentTime > closesAt || currentDay === "Sat" ||
+		currentDay === "Sun" || currentDate < earlyVoteStart || 
+		((earlyVoteEnd < currentDate) && (currentDate < electionDay)) ||
+		currentDate > electionDay){
+			timeValid = false;	
+	}	
+
+		// logic to see if still valid
+	// if ((currentDate - validLastUpdate) < (estimateMultiple * validWaitTime)){
+	// 	return validWaitTime;
+	// }
+
+		// this number of default hours indicates an invalid or "unknown" wait time.  Set to a high number so that it goes to the bottom on any sort, will display as "00:??"
+	return timeValid;
+}
+
+function getVotingIconStatus(earlyVotingStart, currentDate, earlyVotingEnd){
+	// take opportunity to set global boolean for whether current day is within early Voting Period
+	Voter.isTodayEarlyVoting = ((earlyVoteStart <= currentDate) && (currentDate <= earlyVoteEnd));
+	if (Voter.isTodayEarlyVoting){
+		// make sure both early checkboxes are checked
+		document.getElementById("earlyBoxLive").checked = true;
+		document.getElementById("earlyBoxMobile").checked = true;
 	}
 
-	// this number of default hours indicates an invalid or "unknown" wait time.  Set to a high number so that it goes to the bottom on any sort, will display as "00:??"
-	return 100000;
+	if ((earlyVoteEnd < currentDate) && (currentDate <= electionDay)){
+		// make sure both all checkboxes are checked
+		document.getElementById("allBoxLive").checked = true;
+		document.getElementById("allBoxMobile").checked = true;
 
+		// and hide mobile filter button and list filter button, reveal brigade logo in its place
+		document.getElementById("filterButtons").style.display = "none";
+		document.getElementById("headerFilterButton").style.display = "none";
+		document.getElementById("headerLogo").style.display = "inline";
+
+
+	}	
 }
 
 function getTimeString(theId){
